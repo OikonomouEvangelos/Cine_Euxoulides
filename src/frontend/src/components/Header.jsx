@@ -4,11 +4,10 @@ import React, { useState } from 'react';
 import './Header.css';
 
 // Υποθετικά components/εικονίδια
-// Στην πραγματικότητα, θα χρησιμοποιούσατε μια βιβλιοθήκη όπως react-icons
 const MenuIcon = () => <div className="icon menu-icon">☰</div>;
 const HeartIcon = () => <div className="icon heart-icon">❤️</div>;
 
-// Το AvatarIcon τώρα θα μπορεί να δείχνει είτε εικόνα είτε αρχικό γράμμα
+
 const AvatarIcon = ({ imageUrl, initial }) => (
   <div className="icon avatar-icon">
     {imageUrl ? (
@@ -19,12 +18,14 @@ const AvatarIcon = ({ imageUrl, initial }) => (
   </div>
 );
 
-const Header = () => {
+// ΑΛΛΑΓΗ 1: Το Header τώρα δέχεται το onMenuToggle ως prop
+const Header = ({ onMenuToggle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleMenuClick = () => {
-    console.log('Άνοιγμα Side Menu...');
-  };
+  // ΔΙΑΓΡΑΦΗ: Η handleMenuClick δεν χρειάζεται πλέον, καθώς το App.jsx την παρέχει
+  // const handleMenuClick = () => {
+  //   console.log('Άνοιγμα Side Menu...');
+  // };
 
   const handleFavoritesClick = () => {
     console.log('Προβολή Αγαπημένων...');
@@ -39,7 +40,8 @@ const Header = () => {
       {/* 1. Αριστερό Μέρος: Κουμπί Side Menu */}
       <button
         className="header-button menu-button"
-        onClick={handleMenuClick}
+        // ΑΛΛΑΓΗ 2: Αντικατάσταση της handleMenuClick με το onMenuToggle prop
+        onClick={onMenuToggle}
         aria-label="Άνοιγμα μενού πλοήγησης"
       >
         <MenuIcon />
@@ -47,7 +49,6 @@ const Header = () => {
 
       {/* 2. Κέντρο: Logo της Εφαρμογής */}
       <div className="header-logo">
-        {/* Αφαίρεσα τα ** γιατί δεν είναι μέρος του JSX και εμφανίζονται ως κείμενο */}
         CineEuxoulides
       </div>
 
@@ -69,9 +70,7 @@ const Header = () => {
             onClick={toggleDropdown}
             aria-label="Μενού χρήστη"
           >
-            {/* Παράδειγμα: χρήση ενός αρχικού γράμματος (π.χ. 'U' για User) */}
             <AvatarIcon initial="U" />
-            {/* Ή αν έχετε URL εικόνας: <AvatarIcon imageUrl="https://via.placeholder.com/32" /> */}
           </button>
 
           {/* Dropdown Menu */}
