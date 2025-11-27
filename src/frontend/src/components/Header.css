@@ -1,0 +1,133 @@
+/* src/components/Header.css */
+
+/* --- 1. Header Container --- */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* ΝΕΟ χρώμα φόντου για τον header */
+  background-color: #394c5e;
+  color: white;
+  padding: 10px 20px;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  /* Η σκιά μπορεί να γίνει λίγο πιο σκούρα για αντίθεση */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+
+  min-width: 320px;
+}
+
+/* --- 2. Logo Style --- */
+.header-logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #EDEADE;
+  text-align: center;
+  flex-basis: 150px;
+  flex-shrink: 0;
+}
+
+/* --- 3. Δεξιά Ομάδα και Κουμπιά --- */
+.right-group {
+  display: flex;
+  align-items: center;
+  flex-basis: auto;
+  flex-shrink: 0;
+}
+
+.header-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: white; /* Το χρώμα των εικονιδίων παραμένει λευκό για αντίθεση */
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  transition: opacity 0.2s;
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
+}
+
+.header-button:hover {
+  opacity: 0.7;
+}
+
+.favorites-button {
+  margin-right: 15px;
+}
+
+/* --- (Τα υπόλοιπα styles παραμένουν ίδια) --- */
+.icon {
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.menu-icon {
+  font-size: 28px;
+}
+
+.heart-icon {
+  color: #E50914;
+}
+
+.avatar-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #52657a; /* Ένας τόνος από την παλέτα για το φόντο του avatar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background-color: #394c5e; /* Το dropdown έχει το ίδιο χρώμα με τον header */
+  border: 1px solid #52657a;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  min-width: 150px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 0;
+}
+
+.dropdown-menu a {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background-color: #52657a; /* Πιο ανοιχτό χρώμα κατά το hover */
+}
