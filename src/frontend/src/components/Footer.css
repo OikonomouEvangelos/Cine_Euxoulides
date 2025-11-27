@@ -1,0 +1,60 @@
+/* src/components/Footer.css */
+
+.app-footer {
+  /* Χρώμα φόντου: Το ελαφρώς πιο ανοιχτό σκούρο μπλε-γκρι */
+  background-color: #52657a;
+  color: #c0c0c0; /* Ανοιχτό γκρι για το κείμενο του footer */
+  padding: 40px 40px;
+  margin-top: auto; /* Τοποθετεί το footer στο κάτω μέρος της σελίδας (χάρη στο flex-direction: column του app-container) */
+  font-size: 14px;
+  line-height: 1.8;
+  border-top: 1px solid #394c5e; /* Διακριτική γραμμή διαχωρισμού */
+}
+
+/* Container για τις στήλες περιεχομένου */
+.footer-content {
+  display: flex;
+  flex-wrap: wrap; /* Επιτρέπει τις στήλες να "σπάνε" σε μικρές οθόνες */
+  justify-content: space-between;
+  max-width: 1200px; /* Προαιρετικό: κεντράρει το περιεχόμενο σε μεγάλες οθόνες */
+  margin: 0 auto;
+}
+
+.footer-column {
+  flex: 1; /* Κάθε στήλη καταλαμβάνει ίσο χώρο */
+  min-width: 200px; /* Ελάχιστο πλάτος πριν σπάσει η γραμμή */
+  margin-bottom: 20px;
+}
+
+.footer-column h4 {
+  color: white; /* Άσπρο για τους τίτλους των ενοτήτων */
+  font-size: 16px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column a {
+  color: #c0c0c0;
+  text-decoration: none;
+  transition: color 0.2s;
+  display: block;
+  padding: 2px 0;
+}
+
+.footer-column a:hover {
+  color:#192129;
+}
+
+/* Πνευματικά δικαιώματα */
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+}
