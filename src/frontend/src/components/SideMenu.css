@@ -1,0 +1,64 @@
+/* Base styles for the Side Menu */
+.sidemenu {
+  position: fixed; /* Fixed position relative to the viewport */
+  top: 0;
+  left: 0;
+  height: 100%; /* Full height */
+  width: 250px; /* Default width */
+  background-color:rgba(57, 76, 94, 0.90);
+  color: white; /* White text */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+  transform: translateX(-100%); /* Initially hide it off-screen to the left */
+  transition: transform 0.3s ease-out; /* Smooth transition for opening/closing */
+  z-index: 1000; /* Ensure it's above other content */
+  padding: 20px;
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Styles when the menu is open */
+.sidemenu.open {
+  transform: translateX(0); /* Slide into view */
+}
+
+/* Close button styling */
+.sidemenu-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2em;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  padding: 0;
+}
+
+/* Navigation list styling */
+.sidemenu-nav ul {
+  list-style: none; /* Remove bullet points */
+  padding: 0;
+  margin-top: 40px; /* Space from close button */
+}
+
+.sidemenu-nav li {
+  margin-bottom: 15px;
+}
+
+.sidemenu-nav a {
+  color: white;
+  text-decoration: none; /* Remove underline */
+  font-size: 1.2em;
+  display: block; /* Make the whole area clickable */
+  padding: 5px 0;
+}
+
+.sidemenu-nav a:hover {
+  color: white; /* Light blue on hover */
+  opacity: 0.8;
+}
+
+
+
+.sidemenu-overlay.active {
+  display: block; /* Show when active */
+}
