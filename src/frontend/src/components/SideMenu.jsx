@@ -17,7 +17,7 @@ const SideMenu = ({ isOpen, onClose }) => {
           <li><a href="#movies" onClick={onClose}>Ταινίες</a></li>
           <li><a href="#actors" onClick={onClose}>Ηθοποιοί</a></li>
           <li><a href="#directors" onClick={onClose}>Σκηνοθέτες</a></li>
-          <li><a href="#date" onClick={onClose}>Χρονολολία</a></li>
+          <li><a href="#date" onClick={onClose}>Χρονολογία</a></li>
         </ul>
       </nav>
     </div>
