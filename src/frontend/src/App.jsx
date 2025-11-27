@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Header from './components/Header';
 import SideMenu from './components/SideMenu';
+import Footer from './components/Footer';
+import './App.css';
 
 const App = () => {
 
@@ -16,7 +18,7 @@ const App = () => {
         setIsMenuOpen(false);
       };
   return (
-    // Προσθέτουμε την κλάση app-container στο κύριο div
+
     <div className="app-container">
 
       <Header onMenuToggle={toggleMenu} />
@@ -27,7 +29,7 @@ const App = () => {
         <p>Εδώ θα εμφανίζονται οι λίστες με τις ταινίες και τις σειρές. (Το κείμενο είναι τώρα ανοιχτό γκρι.)</p>
 
       </main>
-
+      <Footer />
     </div>
   );
 };
