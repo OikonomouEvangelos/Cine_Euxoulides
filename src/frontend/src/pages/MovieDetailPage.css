@@ -1,0 +1,106 @@
+/* src/frontend/src/pages/MovieDetailPage.css */
+
+/* --- 1. Container της Σελίδας --- */
+.movie-detail-container {
+    padding: 0;
+    margin: 0;
+    color: white; /* Για να φαίνονται τα γράμματα στο σκούρο φόντο */
+}
+
+/* --- 2. Hero Section (Κεντρική Αφίσα/Πληροφορίες) --- */
+.movie-hero-section {
+    position: relative;
+    height: 70vh; /* Πιάνει το 70% του ύψους της οθόνης */
+    overflow: hidden;
+}
+
+.hero-background {
+    /* Εδώ χρησιμοποιούμε την εικόνα ως background */
+    width: 100%;
+    height: 100%;
+    background-size: cover; /* Καλύπτει όλο τον χώρο */
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    /* Εφέ σκίασης για να φαίνονται τα γράμματα */
+    box-shadow: inset 0 -100px 50px rgba(0, 0, 0, 0.7);
+}
+
+.hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+    right: 40px;
+    padding-bottom: 30px;
+    z-index: 10;
+}
+
+.hero-content h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.movie-tagline {
+    font-size: 1.2em;
+    max-width: 600px; /* Όπως στο Netflix, η περιγραφή δεν πιάνει όλο το πλάτος */
+    margin-bottom: 20px;
+}
+
+/* --- 3. Interactive Content (Διάταξη 2 Στηλών) --- */
+.interactive-content {
+    display: flex; /* Χρησιμοποιούμε Flexbox για να τα βάλουμε δίπλα-δίπλα */
+    padding: 30px 40px;
+    gap: 40px; /* Διάστημα μεταξύ των στηλών */
+    background-color: #6D8196; /* Συνέχιση του χρώματος background */
+}
+
+/* Εξασφαλίζουμε ότι οι στήλες έχουν ίσο πλάτος και συμπεριφορά */
+/* Χρησιμοποιούμε rating-column και comment-column από το JSX για μεγαλύτερη ακρίβεια */
+.rating-column,
+.comment-column {
+    flex: 1 1 50%; /* Κάθε στήλη πιάνει περίπου το 50% */
+}
+
+/* --- 4. Styling Κοινών Κουμπιών (Trailer, Υποβολή Σχολίου) --- */
+
+.btn-trailer,
+.btn-secondary {
+    color: white; /* ΧΡΩΜΑ ΚΕΙΜΕΝΟΥ: Άσπρο */
+    background-color: rgba(255, 255, 255, 0.1); /* ΧΡΩΜΑ ΦΟΝΤΟΥ: Πολύ διακριτικό, διαφανές άσπρο */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Ελαφρύ περίγραμμα για να ξεχωρίζει */
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    /* Εξασφαλίζουμε ότι το κουμπί δεν πιάνει όλο το πλάτος, αν δεν είναι απαραίτητο */
+    display: inline-block;
+}
+
+.btn-trailer:hover,
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Λίγο πιο φωτεινό στο hover */
+}
+
+
+/* --- 5. Styling για το Σχολιασμό (Textarea) --- */
+.comment-section textarea {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white; /* Άσπρο κείμενο μέσα στο πεδίο */
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    resize: vertical; /* Επιτρέπει μόνο κατακόρυφη αλλαγή μεγέθους */
+}
+
+/* --- 6. Styling για τα Tabs (Cast, Crew, Details) --- */
+/* (Χρησιμοποιούνται κυρίως για τη διάταξη εδώ) */
+.detail-tabs-nav {
+    padding: 0 40px;
+}
+
+/* --- 7. Tab Content Area --- */
+.tab-content {
+    padding: 20px 40px;
+}

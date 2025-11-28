@@ -1,0 +1,60 @@
+/* src/components/SearchBar.css */
+
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  max-width: 600px; /* Μέγιστο πλάτος για να φαίνεται ωραία στο κέντρο */
+  width: 100%;
+  margin: 30px auto; /* Κεντράρει οριζόντια και δίνει απόσταση από πάνω/κάτω */
+  background-color: #52657a; /* Το χρώμα του footer ως φόντο του search bar */
+  border-radius: 8px;
+  overflow: hidden; /* Διασφαλίζει ότι τα παιδιά δεν ξεπερνούν το περίγραμμα */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.search-input {
+  flex-grow: 1; /* Καταλαμβάνει όλο τον διαθέσιμο χώρο */
+  padding: 12px 15px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  /* Χρώματα για το input */
+  background-color: #52657a;
+  color: #ffffff;
+
+  /* Στυλ για το placeholder */
+  /* Σημείωση: Χρειάζεται prefixing για συμβατότητα με παλαιότερους browsers */
+  color: #c0c0c0; /* Πιο ανοιχτό χρώμα για τον placeholder */
+}
+
+/* Αλλαγή χρώματος του placeholder όταν ο χρήστης γράφει */
+.search-input::placeholder {
+    color: #c0c0c0;
+    opacity: 1; /* Πάντα ορατό */
+}
+
+/* Στυλ του κουμπιού αναζήτησης */
+.search-button {
+  background-color: #394c5e; /* Το χρώμα του header για αντίθεση */
+  border: none;
+  cursor: pointer;
+  padding: 12px 20px;
+  transition: background-color 0.2s;
+  height: 100%;
+}
+
+.search-button:hover {
+  background-color: #44596b; /* Ελαφρώς πιο ανοιχτό στο hover */
+}
+
+/* Στυλ του εικονιδίου μέσα στο κουμπί */
+.search-icon {
+  font-size: 20px;
+  color: white;
+  line-height: 1;
+}
+
+/* Focus state: Όταν ο χρήστης κλικάρει στο πεδίο */
+.search-input:focus {
+    box-shadow: 0 0 0 2px #192129;
+}

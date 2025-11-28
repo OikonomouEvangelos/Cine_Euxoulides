@@ -1,34 +1,51 @@
 // src/App.jsx
 
 import React, { useState } from 'react';
+
+import { Routes, Route } from 'react-router-dom';
+
 import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
+
+
+import HomePage from './pages/HomePage';
+import MovieDetailPage from './pages/MovieDetailPage';
+
 import './App.css';
+
 
 const App = () => {
 
-      const [isMenuOpen, setIsMenuOpen] = useState(false);
-      const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-      };
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const toggleMenu = () => {
+    setIsMenuOpen(prev => !prev);
+  };
 
-      const closeMenu = () => {
-        setIsMenuOpen(false);
-      };
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
-
     <div className="app-container">
 
+
       <Header onMenuToggle={toggleMenu} />
-            <SideMenu isOpen={isMenuOpen} onClose={closeMenu} />
+      <SideMenu isOpen={isMenuOpen} onClose={closeMenu} />
 
-      <main>
-        <h1>Καλώς ήρθατε στο MyFlix!</h1>
-        <p>Εδώ θα εμφανίζονται οι λίστες με τις ταινίες και τις σειρές. (Το κείμενο είναι τώρα ανοιχτό γκρι.)</p>
 
-      </main>
+      {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
+
+
+      <Routes>
+
+        <Route path="/" element={<HomePage />} />
+
+        <Route path="/movie/:id" element={<MovieDetailPage />} />
+
+      </Routes>
+
       <Footer />
     </div>
   );
