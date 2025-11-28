@@ -1,0 +1,42 @@
+
+
+import React, { useState } from 'react';
+import './SearchBar.css';
+
+const SearchIcon = () => <div className="search-icon">🔍</div>;
+
+const SearchBar = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Αποτρέπει το reload της σελίδας
+    console.log('Εκτέλεση αναζήτησης για:', searchTerm);
+
+
+  };
+
+  return (
+    <form className="search-bar-container" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Αναζήτηση ταινιών, σειρών..."
+        value={searchTerm}
+        onChange={handleChange}
+        className="search-input"
+        aria-label="Πεδίο αναζήτησης περιεχομένου"
+      />
+
+
+      <button type="submit" className="search-button" aria-label="Αναζήτηση">
+        <SearchIcon />
+      </button>
+    </form>
+  );
+};
+
+export default SearchBar;
