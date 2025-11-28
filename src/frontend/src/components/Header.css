@@ -5,7 +5,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* ΝΕΟ χρώμα φόντου για τον header */
+  /* ΝΕΟ χρώμα φόντου */
   background-color: #394c5e;
   color: white;
   padding: 10px 20px;
@@ -13,7 +13,6 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  /* Η σκιά μπορεί να γίνει λίγο πιο σκούρα για αντίθεση */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 
   min-width: 320px;
@@ -23,6 +22,7 @@
 .header-logo {
   font-size: 28px;
   font-weight: bold;
+  /* Χρώμα logo: Σχεδόν λευκό */
   color: #EDEADE;
   text-align: center;
   flex-basis: 150px;
@@ -41,50 +41,62 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
-  color: white; /* Το χρώμα των εικονιδίων παραμένει λευκό για αντίθεση */
+  color: white;
   padding: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   outline: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, background-color 0.2s;
   font-size: 16px;
-  width: 40px;
-  height: 40px;
+  /* Αφαιρούμε το σταθερό πλάτος/ύψος */
 }
 
 .header-button:hover {
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
+/* Στυλ για το κουμπί Favorites (ως κείμενο) */
 .favorites-button {
-  margin-right: 15px;
+  margin-right: 40px;
+  /* Padding για να φαίνεται σαν κουμπί */
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
-/* --- (Τα υπόλοιπα styles παραμένουν ίδια) --- */
+.favorites-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- 4. Icon & Text Styles --- */
 .icon {
-  font-size: 24px;
+  font-size: 16px; /* Μέγεθος γραμματοσειράς για τα Favorites */
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: auto;
   height: 100%;
+  font-weight: bold;
+  color: white; /* Χρώμα κειμένου */
 }
 
 .menu-icon {
   font-size: 28px;
 }
 
+/* Ειδικό στυλ για το κείμενο "Favorites" (πρώην καρδιά) */
 .heart-icon {
-  color: #E50914;
+  color: white;
+  font-size: 16px;
 }
 
+/* --- 5. Avatar & Dropdown --- */
 .avatar-icon {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #52657a; /* Ένας τόνος από την παλέτα για το φόντο του avatar */
+  background-color: #52657a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,7 +122,7 @@
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  background-color: #394c5e; /* Το dropdown έχει το ίδιο χρώμα με τον header */
+  background-color: #394c5e;
   border: 1px solid #52657a;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
   min-width: 150px;
@@ -129,5 +141,5 @@
 }
 
 .dropdown-menu a:hover {
-  background-color: #52657a; /* Πιο ανοιχτό χρώμα κατά το hover */
+  background-color: #52657a;
 }

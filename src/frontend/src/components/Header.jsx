@@ -5,7 +5,7 @@ import './Header.css';
 
 // Υποθετικά components/εικονίδια
 const MenuIcon = () => <div className="icon menu-icon">☰</div>;
-const HeartIcon = () => <div className="icon heart-icon">❤️</div>;
+const HeartIcon = () => <div className="icon heart-icon">Favorites</div>;
 
 
 const AvatarIcon = ({ imageUrl, initial }) => (
