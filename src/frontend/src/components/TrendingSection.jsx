@@ -1,87 +1,107 @@
 // src/components/TrendingSection.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './TrendingSection.css';
 
 const TrendingSection = ({ title }) => {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [rotation, setRotation] = useState(0);
 
-  // --- ΣΗΜΕΙΟ ΑΛΛΑΓΗΣ ---
-  // ΣΒΗΣΕ τα γράμματα "TMDB_API_KEY" και βάλε τον πραγματικό, μακρύ κωδικό σου.
-  // Πρέπει να είναι κάπως έτσι: const API_KEY = "a1b2c3d4e5f6...";
-  // Αλλαγή της γραμμής του κλειδιού:
+  // Ref για το container που θα "πιάνει" το ποντίκι
+  const containerRef = useRef(null);
+
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
+  // 1. Λήψη Ταινιών
   useEffect(() => {
     const fetchTrendingMovies = async () => {
+      if (!API_KEY) return;
       try {
-        setIsLoading(true);
-        setError(null);
-
-        // ΔΙΟΡΘΩΣΗ: Εδώ χρησιμοποιούμε το API_KEY που ορίσαμε παραπάνω
         const url = `https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=el-GR`;
-
-        console.log("Fetching URL:", url); // Δες την κονσόλα (F12) αν βγάλει λάθος
-
         const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
-
-        setMovies(data.results);
-
+        setMovies(data.results.slice(0, 15));
       } catch (e) {
-        console.error("Could not fetch trending movies:", e);
-        setError("Αδυναμία φόρτωσης των ταινιών. Δοκιμάστε ξανά αργότερα.");
+        console.error(e);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchTrendingMovies();
-  }, []); // Το [] σημαίνει ότι τρέχει μόνο μία φορά
+  }, [API_KEY]);
 
-  if (isLoading) {
-    return <div className="trending-section loading"><p>Φόρτωση ταινιών...</p></div>;
-  }
+  // 2. ΤΟ ΑΠΟΛΥΤΟ ΚΛΕΙΔΩΜΑ ΤΟΥ SCROLL
+  useEffect(() => {
+    const element = containerRef.current;
 
-  if (error) {
-    return <div className="trending-section error"><p style={{ color: '#192129' }}>{error}</p></div>;
-  }
+    // Αν δεν έχει φορτώσει ακόμα το στοιχείο, σταματάμε
+    if (!element) return;
 
-  if (movies.length === 0) {
-    return <div className="trending-section empty"><p>Δεν βρέθηκαν δημοφιλείς ταινίες αυτή τη στιγμή.</p></div>;
-  }
+    const handleWheel = (e) => {
+      // ΑΥΤΟ ΕΙΝΑΙ ΤΟ ΚΛΕΙΔΙ: Σταματάει τη σελίδα από το να κουνηθεί
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Αλλάζει τη γωνία του γραναζιού
+      const delta = e.deltaY / 4;
+      setRotation((prev) => prev - delta);
+    };
+
+    // Προσθέτουμε τον listener "χειροκίνητα" με { passive: false }
+    // Αυτό λέει στον browser: "Περίμενε να σου πω αν θα σκρολάρεις ή όχι"
+    element.addEventListener('wheel', handleWheel, { passive: false });
+
+    // Καθαρισμός όταν φεύγουμε
+    return () => {
+      element.removeEventListener('wheel', handleWheel);
+    };
+  }, [isLoading]); // Το ξανατρέχουμε μόλις τελειώσει το loading
+
 
   return (
-    <div className="trending-section">
+    // Συνδέουμε το ref στο εξωτερικό div
+    <div className="trending-section" ref={containerRef}>
       <h2>{title || 'Τάσεις Τώρα'}</h2>
 
-      <div className="movies-row">
-        {movies.map((movie) => (
-          <Link to={`/movie/${movie.id}`} key={movie.id} className="movie-card-link">
-            <div className="movie-card">
+      {isLoading ? (
+        <div className="loading-container"><p>Loading...</p></div>
+      ) : (
+        <div className="scene">
+          <div
+            className="carousel-cylinder"
+            style={{ transform: `translateZ(-500px) rotateY(${rotation}deg)` }}
+          >
+            {movies.map((movie, index) => {
+              const totalMovies = movies.length;
+              const anglePerMovie = 360 / totalMovies;
+              const cardAngle = anglePerMovie * index;
 
-              <img
-                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image'}
-                alt={movie.title}
-                className="movie-poster"
-              />
-
-              <div className="movie-info">
-                <h3>{movie.title}</h3>
-                <p>⭐️ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}</p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+              return (
+                <Link
+                  to={`/movie/${movie.id}`}
+                  key={movie.id}
+                  className="movie-card-link"
+                  style={{
+                    transform: `rotateY(${cardAngle}deg) translateZ(500px)`
+                  }}
+                  draggable="false"
+                >
+                  <div className="movie-card">
+                    <img
+                      src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
+                      alt={movie.title}
+                      className="movie-poster"
+                      draggable="false"
+                    />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
