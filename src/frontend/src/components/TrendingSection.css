@@ -1,0 +1,124 @@
+/* src/components/TrendingSection.css */
+
+.trending-section {
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+
+.trending-section h2 {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 15px;
+  padding: 0 40px;
+}
+
+/* --- Container της Οριζόντιας Λίστας --- */
+.movies-row {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  /* ΝΕΑ ΛΟΓΙΚΗ ΓΙΑ ΤΟ HOVER SPACE */
+  /* Δημιουργούμε χώρο πάνω/κάτω για το scale, αλλά τον "τραβάμε" πίσω */
+  padding: 20px 40px;
+  margin: -20px 0;
+
+  /* ΣΗΜΑΝΤΙΚΟ: Χρησιμοποιούμε position: relative για να λειτουργήσει σωστά το z-index
+     στις κάρτες που κάνουν hover. */
+  position: relative;
+
+  /* Αφαίρεση της γραμμής κύλισης */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Αφαίρεση της γραμμής κύλισης για WebKit */
+.movies-row::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- Στυλ Κάρτας Ταινίας --- */
+.movie-card-link {
+  text-decoration: none;
+  color: inherit;
+  margin-right: 15px;
+  flex-shrink: 0;
+
+  /* ΠΡΟΣΘΗΚΗ: Κενό για να μην κρύβεται η σκιά/scale από την διπλανή κάρτα */
+  padding: 0 5px;
+}
+
+.movie-card {
+  position: relative;
+  width: 200px;
+  height: 300px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+
+  /* Εφαρμόζουμε ομαλή μετάβαση για το transform και το box-shadow */
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease-out;
+}
+
+/* ΕΦΕ HOVER */
+.movie-card-link:hover .movie-card {
+  /* 1. Μεγέθυνση κατά 10% */
+  transform: scale(1.1);
+
+  /* 2. Σκιά για να φαίνεται ότι "ανασηκώνεται" */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
+
+  /* 3. Τοποθέτηση της κάρτας πάνω από τις διπλανές */
+  z-index: 20;
+}
+
+/* --- Πληροφορίες εντός της Κάρτας (Movie Info) --- */
+.movie-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  /* Δομή για εμφάνιση στο hover (αν θέλετε να φαίνεται μόνο στο hover) */
+  /* opacity: 0;
+  transition: opacity 0.3s; */
+}
+
+/* Αν επιλέξετε να είναι κρυμμένο το info */
+/* .movie-card-link:hover .movie-info {
+    opacity: 1;
+} */
+
+.movie-info h3 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.movie-info p {
+  font-size: 14px;
+  margin: 5px 0 0;
+}
+
+/* --- Στυλ για Loading/Error/Empty States --- */
+.trending-section.loading,
+.trending-section.error,
+.trending-section.empty {
+  padding: 40px;
+  text-align: center;
+  color: white;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trending-section.loading p {
+    font-size: 1.2rem;
+}
+
+.trending-section.error p {
+    color: #192129;
+    font-weight: bold;
+}
