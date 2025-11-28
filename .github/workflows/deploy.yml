@@ -1,0 +1,45 @@
+name: Maven Build and Deploy
+
+on:
+  # Καθορίζει πότε θα τρέξει το workflow:
+  push:
+    branches:
+      - main  # Ή το όνομα του branch που χρησιμοποιείτε για deployments (π.χ., master)
+
+jobs:
+  build_and_test:
+    name: Build, Test, and Package
+    runs-on: ubuntu-latest  # Ο Runner που θα εκτελέσει τις εντολές
+
+    steps:
+      # 1. Checkout του κώδικα
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Ρύθμιση Java/Maven
+      - name: Set up JDK 17 (ή την έκδοση που χρησιμοποιείτε)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3. Εκτέλεση του Build
+      - name: Maven Build and Package
+        # Εδώ ορίζουμε τις μεταβλητές περιβάλλοντος για αυτό το βήμα
+        env:
+          # Ορίζουμε τη μεταβλητή περιβάλλοντος TMDB_API_KEY
+          # χρησιμοποιώντας την τιμή από το GitHub Secret
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }} 
+        run: |
+          # Η εντολή του Maven για Clean, Test και Package 
+          # (όπου το package process σας χρησιμοποιεί το TMDB_API_KEY)
+          mvn clean package -DskipTests 
+          
+      # 4. Βήμα Deployment (Ενδεικτικό)
+      # Αν κάνετε deployment σε κάποιον server, αυτό το βήμα θα διαφέρει
+      - name: Deploy Application (Example Step)
+        # Χρησιμοποιήστε το artifact που δημιουργήθηκε στο προηγούμενο βήμα
+        run: |
+          echo "Deployment step executed, using packaged application..."
+          # Προσθέστε εδώ τις εντολές για το deployment (π.χ., ssh, docker push, κλπ.)
