@@ -5,7 +5,7 @@
   left: 0;
   height: 100%; /* Full height */
   width: 250px; /* Default width */
-  background-color:rgba(57, 76, 94, 0.90);
+  background-color: rgba(57, 76, 94, 0.95); /* Αυξήσαμε ελάχιστα την αδιαφάνεια για να διαβάζεται καλύτερα η λίστα */
   color: white; /* White text */
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Subtle shadow */
   transform: translateX(-100%); /* Initially hide it off-screen to the left */
@@ -13,6 +13,7 @@
   z-index: 1000; /* Ensure it's above other content */
   padding: 20px;
   box-sizing: border-box; /* Include padding in width calculation */
+  overflow-y: auto; /* Προσθήκη: Αν η λίστα είναι μεγάλη, να κάνει scroll το μενού */
 }
 
 /* Styles when the menu is open */
@@ -53,12 +54,59 @@
 }
 
 .sidemenu-nav a:hover {
-  color: white; /* Light blue on hover */
-  opacity: 0.8;
+  color: #fbbf24; /* Αλλαγή σε κίτρινο (ίδιο με τα αστεράκια) για να ξεχωρίζει */
+  opacity: 1;
 }
-
-
 
 .sidemenu-overlay.active {
   display: block; /* Show when active */
+}
+
+/* ---------------------------------------------------- */
+/* ΝΕΕΣ ΠΡΟΣΘΗΚΕΣ ΓΙΑ ΤΟ ΥΠΟ-ΜΕΝΟΥ (ACCORDION) TAINIES */
+/* ---------------------------------------------------- */
+
+/* Το κουμπί που ανοίγει τη λίστα (έχει το βελάκι δίπλα) */
+.submenu-toggle {
+  display: flex;
+  justify-content: space-between; /* Το κείμενο αριστερά, το βέλος δεξιά */
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Το βελάκι (▼) */
+.arrow {
+  font-size: 0.8em;
+  transition: transform 0.3s ease; /* Κίνηση περιστροφής */
+}
+
+/* Όταν ανοίγει η λίστα, το βέλος γυρνάει ανάποδα */
+.arrow.up {
+  transform: rotate(180deg);
+}
+
+/* Το κουτί που περιέχει τα είδη (Δράση, Κωμωδία κλπ) */
+.submenu-list {
+  background-color: rgba(0, 0, 0, 0.2); /* Λίγο πιο σκούρο φόντο για να ξεχωρίζει */
+  border-radius: 8px;
+  margin-top: 5px !important; /* Override το margin-top του γενικού ul */
+  padding: 10px 0 !important;
+  margin-bottom: 10px;
+}
+
+/* Τα συγκεκριμένα Links των ειδών (π.χ. Δράση) */
+.submenu-item {
+  font-size: 0.95em !important; /* Λίγο μικρότερα γράμματα από τα κύρια μενού */
+  padding-left: 20px !important; /* Εσοχή προς τα μέσα */
+  color: #e0e0e0 !important;     /* Λίγο πιο γκρι, όχι τελείως λευκό */
+  border-left: 3px solid transparent; /* Ετοιμασία για εφέ στο hover */
+}
+
+/* Όταν περνάς το ποντίκι πάνω από ένα είδος */
+.submenu-item:hover {
+  color: #fbbf24 !important; /* Κίτρινο */
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #fbbf24; /* Κίτρινη γραμμή αριστερά */
+  padding-left: 25px !important; /* Μικρή κίνηση προς τα δεξιά */
+  transition: all 0.2s ease;
 }
