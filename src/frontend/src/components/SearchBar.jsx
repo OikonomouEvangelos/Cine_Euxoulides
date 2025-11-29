@@ -1,5 +1,5 @@
 
-
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import './SearchBar.css';
 
@@ -7,6 +7,7 @@ const SearchIcon = () => <div className="search-icon">🔍</div>;
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
@@ -15,7 +16,13 @@ const SearchBar = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Αποτρέπει το reload της σελίδας
-    console.log('Εκτέλεση αναζήτησης για:', searchTerm);
+
+    const trimmed = searchTerm.trim();
+      if (!trimmed) return;
+
+    console.log('Εκτέλεση αναζήτησης για:',  trimmed);
+
+      navigate(`/search?q=${encodeURIComponent(trimmed)}`); // Πήγαινε στη σελίδα αναζήτησης με παράμετρο q
 
 
   };

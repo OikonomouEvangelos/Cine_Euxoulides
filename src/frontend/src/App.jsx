@@ -11,6 +11,8 @@ import Footer from './components/Footer';
 // Υπάρχουσες Σελίδες
 import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
+import SearchResultsPage from './pages/SearchResultsPage';
+
 
 // --- ΝΕΑ IMPORTS (Όλες οι λειτουργίες που φτιάξαμε) ---
 import MovieCategories from './components/MovieCategories';
@@ -60,6 +62,9 @@ const App = () => {
         {/* --- ΧΡΟΝΟΛΟΓΙΑ (ΝΕΟ) --- */}
         {/* Όταν πατάς έτος (π.χ. 2024), ανοίγει το YearMovies */}
         <Route path="/year/:year" element={<YearMovies />} />
+
+        {/* --- ΝΕΑ ΣΕΛΙΔΑ ΑΝΑΖΗΤΗΣΗΣ --- */}
+        <Route path="/search" element={<SearchResultsPage />} />
 
       </Routes>
 
