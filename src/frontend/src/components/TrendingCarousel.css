@@ -1,0 +1,75 @@
+/* src/components/TrendingCarousel.css - ΤΟ 3D CAROUSEL */
+
+.carousel-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 600px; /* Χρειάζεται ύψος για το 3D */
+  overflow: hidden;
+  perspective: 1000px; /* Βάθος πεδίου */
+  background: radial-gradient(circle, rgba(50,50,50,1) 0%, rgba(0,0,0,1) 100%);
+  position: relative;
+}
+
+.carousel-title {
+  position: absolute;
+  top: 20px;
+  color: #fbbf24;
+  font-size: 2rem;
+  z-index: 100;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Ο Περιστρεφόμενος Κύλινδρος */
+.carousel-container {
+  position: relative;
+  width: 200px;
+  height: 300px;
+  transform-style: preserve-3d;
+  transition: transform 1s ease-out; /* Ομαλή κίνηση */
+}
+
+/* Οι Κάρτες στο 3D */
+.carousel-item {
+  position: absolute;
+  width: 200px;
+  height: 300px;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid white;
+  /* Η θέση (rotateY) ορίζεται από το React inline styles */
+}
+
+.carousel-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Κουμπιά Πλοήγησης */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 191, 0, 0.8);
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 50%;
+  z-index: 200;
+  color: black;
+  font-weight: bold;
+}
+
+.carousel-btn.prev { left: 50px; }
+.carousel-btn.next { right: 50px; }
+
+.carousel-btn:hover {
+  background: #fbbf24;
+  scale: 1.1;
+}

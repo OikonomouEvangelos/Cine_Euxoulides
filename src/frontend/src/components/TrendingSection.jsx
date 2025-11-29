@@ -1,107 +1,73 @@
 // src/components/TrendingSection.jsx
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './TrendingSection.css';
+import './TrendingCarousel.css'; // <--- ΠΡΟΣΟΧΗ: Κάνουμε import το ΝΕΟ css
 
-const TrendingSection = ({ title }) => {
+const TrendingSection = () => {
   const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [rotation, setRotation] = useState(0);
-
-  // Ref για το container που θα "πιάνει" το ποντίκι
-  const containerRef = useRef(null);
+  const [rotation, setRotation] = useState(0); // Η γωνία περιστροφής του καρουζέλ
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
-  // 1. Λήψη Ταινιών
   useEffect(() => {
-    const fetchTrendingMovies = async () => {
-      if (!API_KEY) return;
-      try {
-        const url = `https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=el-GR`;
-        const response = await fetch(url);
-        const data = await response.json();
-        setMovies(data.results.slice(0, 15));
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchTrendingMovies();
-  }, [API_KEY]);
+    // Φέρνουμε μόνο 8-10 ταινίες για να μην γίνει βαρύ το 3D
+    fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=el-GR`)
+      .then(res => res.json())
+      .then(data => setMovies(data.results.slice(0, 9)))
+      .catch(err => console.error(err));
+  }, []);
 
-  // 2. ΤΟ ΑΠΟΛΥΤΟ ΚΛΕΙΔΩΜΑ ΤΟΥ SCROLL
-  useEffect(() => {
-    const element = containerRef.current;
+  // Λογική Περιστροφής
+  const nextSlide = () => {
+    setRotation(rotation - (360 / movies.length));
+  };
 
-    // Αν δεν έχει φορτώσει ακόμα το στοιχείο, σταματάμε
-    if (!element) return;
+  const prevSlide = () => {
+    setRotation(rotation + (360 / movies.length));
+  };
 
-    const handleWheel = (e) => {
-      // ΑΥΤΟ ΕΙΝΑΙ ΤΟ ΚΛΕΙΔΙ: Σταματάει τη σελίδα από το να κουνηθεί
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Αλλάζει τη γωνία του γραναζιού
-      const delta = e.deltaY / 4;
-      setRotation((prev) => prev - delta);
-    };
-
-    // Προσθέτουμε τον listener "χειροκίνητα" με { passive: false }
-    // Αυτό λέει στον browser: "Περίμενε να σου πω αν θα σκρολάρεις ή όχι"
-    element.addEventListener('wheel', handleWheel, { passive: false });
-
-    // Καθαρισμός όταν φεύγουμε
-    return () => {
-      element.removeEventListener('wheel', handleWheel);
-    };
-  }, [isLoading]); // Το ξανατρέχουμε μόλις τελειώσει το loading
-
+  // Ακτίνα του κύκλου (πόσο μακριά είναι οι κάρτες από το κέντρο)
+  const radius = 350;
 
   return (
-    // Συνδέουμε το ref στο εξωτερικό div
-    <div className="trending-section" ref={containerRef}>
-      <h2>{title || 'Τάσεις Τώρα'}</h2>
+    <div className="carousel-section">
+      <h2 className="carousel-title">Trending Now</h2>
 
-      {isLoading ? (
-        <div className="loading-container"><p>Loading...</p></div>
-      ) : (
-        <div className="scene">
-          <div
-            className="carousel-cylinder"
-            style={{ transform: `translateZ(-500px) rotateY(${rotation}deg)` }}
-          >
-            {movies.map((movie, index) => {
-              const totalMovies = movies.length;
-              const anglePerMovie = 360 / totalMovies;
-              const cardAngle = anglePerMovie * index;
+      <div
+        className="carousel-container"
+        style={{ transform: `rotateY(${rotation}deg)` }}
+      >
+        {movies.map((movie, index) => {
+          // Υπολογισμός γωνίας για κάθε κάρτα
+          const angle = (360 / movies.length) * index;
 
-              return (
-                <Link
-                  to={`/movie/${movie.id}`}
-                  key={movie.id}
-                  className="movie-card-link"
-                  style={{
-                    transform: `rotateY(${cardAngle}deg) translateZ(500px)`
-                  }}
-                  draggable="false"
-                >
-                  <div className="movie-card">
-                    <img
-                      src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
-                      alt={movie.title}
-                      className="movie-poster"
-                      draggable="false"
-                    />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
+          return (
+            <div
+              className="carousel-item"
+              key={movie.id}
+              style={{
+                // Εδώ γίνεται η μαγεία του 3D:
+                // 1. Γυρνάμε την κάρτα στη γωνία της (rotateY)
+                // 2. Την σπρώχνουμε προς τα έξω (translateZ)
+                transform: `rotateY(${angle}deg) translateZ(${radius}px)`
+              }}
+            >
+              <Link to={`/movie/${movie.id}`}>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
+                  className="carousel-poster"
+                />
+              </Link>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Κουμπιά για να γυρνάει */}
+      <button className="carousel-btn prev" onClick={prevSlide}>❮</button>
+      <button className="carousel-btn next" onClick={nextSlide}>❯</button>
+
     </div>
   );
 };
