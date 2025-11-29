@@ -1,3 +1,7 @@
 spring:
   application:
     name: Euxoulides
+  # --- ΑΠΕΝΕΡΓΟΠΟΙΗΣΗ DOCKER COMPOSE ---
+  docker:
+    compose:
+      enabled: false

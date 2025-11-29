@@ -2,13 +2,17 @@
 
 .search-bar-container {
   display: flex;
-  align-items: center;
-  max-width: 600px; /* Μέγιστο πλάτος για να φαίνεται ωραία στο κέντρο */
+  align-items: center; /* Διόρθωση: Το 'right' δεν είναι έγκυρο, το center στοιχίζει κάθετα input και κουμπί */
+  max-width: 600px;
   width: 100%;
-  margin: 30px auto; /* Κεντράρει οριζόντια και δίνει απόσταση από πάνω/κάτω */
-  background-color: #52657a; /* Το χρώμα του footer ως φόντο του search bar */
+
+  /* ΑΛΛΑΓΗ ΕΔΩ: */
+  /* 30px πάνω, 0 δεξιά, 30px κάτω, auto αριστερά */
+  margin: 30px 0 30px auto;
+
+  background-color: #52657a;
   border-radius: 8px;
-  overflow: hidden; /* Διασφαλίζει ότι τα παιδιά δεν ξεπερνούν το περίγραμμα */
+  overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 

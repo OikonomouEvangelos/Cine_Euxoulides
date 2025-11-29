@@ -1,84 +1,107 @@
 // src/components/TrendingSection.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './TrendingSection.css';
-
-// ΥΠΟΘΕΤΙΚΗ ΣΤΑΘΕΡΑ: Αντικαταστήστε με το πραγματικό URL του backend σας
-const TRENDING_API_URL = '/api/movies/trending';
 
 const TrendingSection = ({ title }) => {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [rotation, setRotation] = useState(0);
 
-  // --- ΛΟΓΙΚΗ ΑΣΥΓΧΡΟΝΗΣ ΚΛΗΣΗΣ API ---
+  // Ref για το container που θα "πιάνει" το ποντίκι
+  const containerRef = useRef(null);
+
+  const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
+  // 1. Λήψη Ταινιών
   useEffect(() => {
     const fetchTrendingMovies = async () => {
+      if (!API_KEY) return;
       try {
-        setIsLoading(true); // Ξεκινάμε τη φόρτωση
-        setError(null);    // Καθαρίζουμε τυχόν προηγούμενα σφάλματα
-
-        // 1. Εκτέλεση της κλήσης API
-        const response = await fetch(TRENDING_API_URL);
-
-        // Έλεγχος για σφάλματα HTTP (π.χ. 404, 500)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // 2. Ανάλυση των δεδομένων JSON
+        const url = `https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=el-GR`;
+        const response = await fetch(url);
         const data = await response.json();
-
-        // 3. Ενημέρωση της κατάστασης (state) με τις ταινίες
-        setMovies(data.trendingMovies || data); // Υποθέτουμε ότι τα δεδομένα είναι είτε απευθείας array είτε έχουν key 'trendingMovies'
-
+        setMovies(data.results.slice(0, 15));
       } catch (e) {
-        console.error("Could not fetch trending movies:", e);
-        setError("Αδυναμία φόρτωσης των ταινιών. Δοκιμάστε ξανά αργότερα.");
+        console.error(e);
       } finally {
-        setIsLoading(false); // Τελειώνουμε τη φόρτωση
+        setIsLoading(false);
       }
     };
-
     fetchTrendingMovies();
-  }, []); // Το άδειο array ([]) εξασφαλίζει ότι το useEffect τρέχει μόνο μία φορά (στο mount)
+  }, [API_KEY]);
 
-  // --- RENDERING ΒΑΣΕΙ ΚΑΤΑΣΤΑΣΗΣ ---
+  // 2. ΤΟ ΑΠΟΛΥΤΟ ΚΛΕΙΔΩΜΑ ΤΟΥ SCROLL
+  useEffect(() => {
+    const element = containerRef.current;
 
-  if (isLoading) {
-    return <div className="trending-section loading"><p>Φόρτωση ταινιών...</p></div>;
-  }
+    // Αν δεν έχει φορτώσει ακόμα το στοιχείο, σταματάμε
+    if (!element) return;
 
-  if (error) {
-    return <div className="trending-section error"><p style={{ color: '#192129' }}>{error}</p></div>;
-  }
+    const handleWheel = (e) => {
+      // ΑΥΤΟ ΕΙΝΑΙ ΤΟ ΚΛΕΙΔΙ: Σταματάει τη σελίδα από το να κουνηθεί
+      e.preventDefault();
+      e.stopPropagation();
 
-  if (movies.length === 0) {
-    return <div className="trending-section empty"><p>Δεν βρέθηκαν δημοφιλείς ταινίες αυτή τη στιγμή.</p></div>;
-  }
+      // Αλλάζει τη γωνία του γραναζιού
+      const delta = e.deltaY / 4;
+      setRotation((prev) => prev - delta);
+    };
 
-  // --- ΚΑΝΟΝΙΚΟ RENDERING ---
+    // Προσθέτουμε τον listener "χειροκίνητα" με { passive: false }
+    // Αυτό λέει στον browser: "Περίμενε να σου πω αν θα σκρολάρεις ή όχι"
+    element.addEventListener('wheel', handleWheel, { passive: false });
+
+    // Καθαρισμός όταν φεύγουμε
+    return () => {
+      element.removeEventListener('wheel', handleWheel);
+    };
+  }, [isLoading]); // Το ξανατρέχουμε μόλις τελειώσει το loading
+
+
   return (
-    <div className="trending-section">
+    // Συνδέουμε το ref στο εξωτερικό div
+    <div className="trending-section" ref={containerRef}>
       <h2>{title || 'Τάσεις Τώρα'}</h2>
 
-      <div className="movies-row">
-        {movies.map((movie) => (
-          // ΣΗΜΕΙΩΣΗ: Υποθέτουμε ότι κάθε αντικείμενο 'movie' έχει id, title, rating και image
-          <Link to={`/movie/${movie.id}`} key={movie.id} className="movie-card-link">
-            <div className="movie-card">
-              {/* Χρησιμοποιήστε το πραγματικό URL εικόνας από το API */}
-              <img src={movie.image} alt={movie.title} className="movie-poster" />
+      {isLoading ? (
+        <div className="loading-container"><p>Loading...</p></div>
+      ) : (
+        <div className="scene">
+          <div
+            className="carousel-cylinder"
+            style={{ transform: `translateZ(-500px) rotateY(${rotation}deg)` }}
+          >
+            {movies.map((movie, index) => {
+              const totalMovies = movies.length;
+              const anglePerMovie = 360 / totalMovies;
+              const cardAngle = anglePerMovie * index;
 
-              <div className="movie-info">
-                <h3>{movie.title}</h3>
-                <p>⭐️ {movie.rating}</p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+              return (
+                <Link
+                  to={`/movie/${movie.id}`}
+                  key={movie.id}
+                  className="movie-card-link"
+                  style={{
+                    transform: `rotateY(${cardAngle}deg) translateZ(500px)`
+                  }}
+                  draggable="false"
+                >
+                  <div className="movie-card">
+                    <img
+                      src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
+                      alt={movie.title}
+                      className="movie-poster"
+                      draggable="false"
+                    />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
