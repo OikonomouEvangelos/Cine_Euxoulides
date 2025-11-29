@@ -1,0 +1,99 @@
+/* src/frontend/src/pages/QuizSelectionPage.css */
+
+.quiz-selection-container {
+    padding: 40px;
+    color: white;
+}
+
+.quiz-selection-container h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* --- 1. Ενότητα Επιλογής Δυσκολίας --- */
+.difficulty-selection {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.difficulty-card {
+    background-color: rgba(255, 255, 255, 0.1); /* Διαφανές φόντο */
+    padding: 30px 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 250px;
+    text-decoration: none; /* Αφαίρεση υπογράμμισης */
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.difficulty-card:hover {
+    transform: translateY(-5px); /* Εφέ ανύψωσης στο hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.difficulty-card h2 {
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.difficulty-card p {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-start-quiz {
+    background-color:rgba(255, 255, 255, 0.3);
+    color:white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 10px 20px;
+    margin-top: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-start-quiz:hover {
+    /* ΣΤΟ HOVER: Γίνεται πιο έντονο/αδιαφανές (πιο ορατό) */
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px); /* Ελαφρύ εφέ "ανύψωσης" */
+}
+
+/* --- 2. Ενότητα Ιστορικού --- */
+.history-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.history-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.history-section table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.history-section th, .history-section td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-section th {
+    background-color: rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+}
+
+.history-section tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
