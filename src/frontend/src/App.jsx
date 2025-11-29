@@ -14,6 +14,8 @@ import Footer from './components/Footer';
 // Υπάρχουσες Σελίδες
 import HomePage from './pages/HomePage'; // <-- Χρησιμοποιούμε αυτό ως /
 import MovieDetailPage from './pages/MovieDetailPage';
+import SearchResultsPage from './pages/SearchResultsPage';
+
 
 // --- ΛΟΙΠΑ IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -66,6 +68,8 @@ const App = () => {
         {/* --- ΧΡΟΝΟΛΟΓΙΑ --- */}
         <Route path="/year/:year" element={<YearMovies />} />
 
+        {/* --- ΝΕΑ ΣΕΛΙΔΑ ΑΝΑΖΗΤΗΣΗΣ --- */}
+        <Route path="/search" element={<SearchResultsPage />} />
         {/* --- QUIZ (ΔΙΑΤΗΡΟΥΜΕ) --- */}
         <Route path="/quiz" element={<QuizSelectionPage />} />
         <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
