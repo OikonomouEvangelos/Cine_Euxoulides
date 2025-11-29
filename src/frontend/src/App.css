@@ -11,9 +11,7 @@ body {
 
 /* --- 2. Global Application Styles --- */
 body {
-  /* Εφαρμόζει το ΝΕΟ χρώμα φόντου σε όλο το body */
   background-color: #6d8196;
-  /* Το χρώμα κειμένου παραμένει λευκό για αντίθεση */
   color: #ffffff;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.6;
@@ -29,6 +27,8 @@ body {
 /* --- 4. Main Content Area --- */
 main {
   flex-grow: 1;
+  /* ΚΡΙΣΙΜΟ: Για την απόλυτη τοποθέτηση του Quiz Spot */
+  position: relative;
   padding: 20px 40px;
 }
 
@@ -38,7 +38,119 @@ main h1 {
     margin-bottom: 20px;
 }
 
-/* Media Queries */
+/* ========================================================================= */
+/* --- 5. QUIZ LANDING SPOT (Simple Circle, Position & Animation) --- */
+/* ========================================================================= */
+
+.quiz-landing-spot {
+    position: absolute;
+    /* ΡΥΘΜΙΣΗ ΘΕΣΗΣ: Ευθυγραμμίζεται με την περιοχή Αναζήτησης/Τάσεων */
+    top: 30px;
+    left: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* ΣΤΥΛ ΚΥΚΛΟΥ */
+    width: 70px; /* Μέγεθος κύκλου */
+    height: 70px; /* Μέγεθος κύκλου */
+    background-color: transparent;
+    border:none;
+    border-radius: 50%; /* Απλός κύκλος */
+
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-decoration: none;
+    color: white;
+    transition: transform 0.2s, background-color 0.2s;
+    z-index: 10;
+}
+
+/* Εξασφαλίζουμε ότι δεν υπάρχει κείμενο */
+.quiz-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding-bottom: 0;
+}
+
+
+/* --- Εικονίδιο & Animation --- */
+.quiz-icon-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+/* Ερωτηματικό */
+.quiz-icon span {
+    font-size: 4em;
+    z-index: 2;
+    position: relative;
+    transition: transform 0.3s ease;
+    color: #ffc107; /* Χρυσό/Κίτρινο */
+    /* Για να φέρουμε το ερωτηματικό στο κέντρο του κύκλου */
+    line-height: 0.8;
+}
+
+/* Εφέ Δόνησης (Pulse Ring) */
+.quiz-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(255, 193, 7, 0.2);
+    animation: pulse 2s infinite ease-out;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+/* Όταν ο χρήστης περνάει τον κέρσορα */
+.quiz-landing-spot:hover .quiz-ring {
+    animation: none;
+    opacity: 0;
+}
+
+.quiz-landing-spot:hover {
+    background-color: #4a637d;
+    transform: scale(1.05); /* Ελαφρύ zoom */
+}
+
+
+/* ΔΙΑΓΡΑΦΗ ΤΟΥ ΚΕΙΜΕΝΟΥ (Δεν χρειάζονται πλέον) */
+.quiz-slogan,
+.quiz-title,
+.quiz-cta {
+    display: none;
+}
+
+
+/* --- 6. Media Queries & Keyframes --- */
+@keyframes pulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    70% {
+        transform: scale(1.2);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+}
+
+
 @media (max-width: 768px) {
   main {
     padding: 15px 15px;
@@ -47,4 +159,15 @@ main h1 {
   main h1 {
     font-size: 2rem;
   }
+
+ .quiz-landing-spot {
+     left: 15px;
+     top: 30px;
+     width: 60px;
+     height: 60px;
+ }
+
+ .quiz-icon span {
+     font-size: 3em;
+ }
 }

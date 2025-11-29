@@ -1,7 +1,10 @@
 // src/App.jsx
 
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom'; // Χρειάζεται το Link για το Quiz Spot
+// --- ΝΕΑ IMPORTS QUIZ ---
+import QuizSelectionPage from './pages/QuizSelectionPage';
+import QuizGamePage from './pages/QuizGamePage';
 
 // Υπάρχοντα Components
 import Header from './components/Header';
@@ -9,17 +12,17 @@ import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
 
 // Υπάρχουσες Σελίδες
-import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage'; // <-- Χρησιμοποιούμε αυτό ως /
 import MovieDetailPage from './pages/MovieDetailPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 
 
-// --- ΝΕΑ IMPORTS (Όλες οι λειτουργίες που φτιάξαμε) ---
+// --- ΛΟΙΠΑ IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
 import GenreMovies from './components/GenreMovies';
 import ActorMovies from './components/ActorMovies';
 import DirectorMovies from './components/DirectorMovies';
-import YearMovies from './components/YearMovies'; // <--- ΝΕΟ: Για τη χρονολογία
+import YearMovies from './components/YearMovies';
 
 import './App.css';
 
@@ -46,7 +49,10 @@ const App = () => {
       <Routes>
 
         {/* --- ΒΑΣΙΚΕΣ ΣΕΛΙΔΕΣ --- */}
+        {/* ΔΙΑΤΗΡΟΥΜΕ ΤΟ HOMEPAGE ΚΑΙ ΔΙΑΓΡΑΦΟΥΜΕ ΤΟ PLACEHOLDERHOMEPAGE */}
         <Route path="/" element={<HomePage />} />
+
+        {/* ΔΙΑΤΗΡΟΥΜΕ ΤΗ ΔΙΑΔΡΟΜΗ ΤΑΙΝΙΑΣ (ΑΦΑΙΡΕΣΗ ΤΗΣ ΔΙΠΛΗΣ) */}
         <Route path="/movie/:id" element={<MovieDetailPage />} />
 
         {/* --- ΚΑΤΗΓΟΡΙΕΣ ΤΑΙΝΙΩΝ --- */}
@@ -59,12 +65,20 @@ const App = () => {
         {/* --- ΣΚΗΝΟΘΕΤΕΣ --- */}
         <Route path="/directors/:directorId" element={<DirectorMovies />} />
 
-        {/* --- ΧΡΟΝΟΛΟΓΙΑ (ΝΕΟ) --- */}
-        {/* Όταν πατάς έτος (π.χ. 2024), ανοίγει το YearMovies */}
+        {/* --- ΧΡΟΝΟΛΟΓΙΑ --- */}
         <Route path="/year/:year" element={<YearMovies />} />
 
         {/* --- ΝΕΑ ΣΕΛΙΔΑ ΑΝΑΖΗΤΗΣΗΣ --- */}
         <Route path="/search" element={<SearchResultsPage />} />
+        {/* --- QUIZ (ΔΙΑΤΗΡΟΥΜΕ) --- */}
+        <Route path="/quiz" element={<QuizSelectionPage />} />
+        <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
+
+        {/* --- ΑΥΤΕΣ ΟΙ ΔΙΑΔΡΟΜΕΣ ΔΙΑΓΡΑΦΟΝΤΑΙ ΩΣ ΔΙΠΛΕΣ/ΑΝΤΙΚΡΟΥΟΜΕΝΕΣ: ---
+        <Route path="/" element={<PlaceholderHomePage />} />  <- ΠΡΟΚΑΛΕΙ ΤΟ ERROR
+        <Route path="/movie/:id" element={<MovieDetailPage />} />
+        */}
+
 
       </Routes>
 
