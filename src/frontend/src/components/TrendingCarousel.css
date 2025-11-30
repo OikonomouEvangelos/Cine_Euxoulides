@@ -1,0 +1,113 @@
+/* src/components/TrendingCarousel.css */
+
+.carousel-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 600px; /* Χρειάζεται ύψος για το 3D */
+  overflow: hidden;
+  perspective: 1000px; /* Βάθος πεδίου */
+
+  /* ΑΛΛΑΓΗ 1: Διαφανές φόντο αντί για μαύρο */
+  background: transparent;
+
+  position: relative;
+}
+
+.carousel-title {
+  position: absolute;
+  /* ΑΛΛΑΓΗ 2: Πιο ψηλά για να μην επικαλύπτει */
+  top: 0;
+  color: #fbbf24;
+  font-size: 2rem;
+  z-index: 100;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  /* Προαιρετικά: Μια μικρή σκιά για να ξεχωρίζει από το background */
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* Ο Περιστρεφόμενος Κύλινδρος */
+.carousel-container {
+  position: relative;
+  width: 200px;
+  height: 300px;
+  transform-style: preserve-3d;
+  transition: transform 1s ease-out; /* Ομαλή κίνηση */
+
+  /* ΑΛΛΑΓΗ 2b: Σπρώχνουμε λίγο κάτω τον κύλινδρο για να απομακρυνθεί από τον τίτλο */
+  margin-top: 60px;
+}
+
+/* Οι Κάρτες στο 3D */
+.carousel-item {
+  position: absolute;
+  width: 200px;
+  height: 300px;
+  left: 0;
+  top: 0;
+  border-radius: 12px; /* Λίγο πιο στρογγυλεμένες γωνίες */
+  overflow: hidden;
+
+  /* Πιο διακριτικό περίγραμμα */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  /* Αντανάκλαση για έξτρα εφέ (προαιρετικό) */
+  -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, rgba(0,0,0,0.3));
+}
+
+.carousel-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Κουμπιά Πλοήγησης */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  /* Κεντράρισμα στον άξονα Υ */
+  transform: translateY(-50%);
+
+  /* ΑΛΛΑΓΗ 3: Κομψό στυλ (Glassmorphism) */
+  background: rgba(0, 0, 0, 0.4); /* Ημιδιαφανές μαύρο */
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+
+  /* Μικρότερα και πιο διακριτικά */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* ΑΛΛΑΓΗ 4: Αόρατα αρχικά */
+  opacity: 0;
+  pointer-events: none; /* Δεν κλικάρονται όταν είναι αόρατα */
+  transition: all 0.3s ease;
+}
+
+.carousel-btn.prev { left: 40px; }
+.carousel-btn.next { right: 40px; }
+
+/* Εμφάνιση των κουμπιών ΜΟΝΟ όταν το ποντίκι είναι στο section */
+.carousel-section:hover .carousel-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hover στο ίδιο το κουμπί */
+.carousel-btn:hover {
+  background: EFE9E3;
+  color: black;
+  border-color: EFE9E3;
+  transform: translateY(-50%) scale(1.1); /* Ελαφρύ μεγάλωμα */
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); /* Κίτρινη λάμψη */
+}
