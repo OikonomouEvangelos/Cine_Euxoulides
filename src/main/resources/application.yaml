@@ -2,17 +2,20 @@ spring:
   application:
     name: Euxoulides
 
-  # --- ΡΥΘΜΙΣΕΙΣ ΣΥΝΔΕΣΗΣ ΒΑΣΗΣ (PostgreSQL) ---
   datasource:
-    url: jdbc:postgresql://localhost:5454/cine_euxoulides
-    username: postgres
-    password: 1234546
+    # Μετατρέψαμε το link σε JDBC format για την Java
+    url: jdbc:postgresql://ep-quiet-credit-ags5csnl-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
+
+    # Τα στοιχεία που μας έστειλες
+    username: neondb_owner
+    password: npg_rqdOGz1EF4YP
+
     driver-class-name: org.postgresql.Driver
 
-  # --- ΡΥΘΜΙΣΕΙΣ JPA / HIBERNATE ---
   jpa:
     hibernate:
-      # ΠΡΟΣΟΧΗ: Το 'update' κρατάει τα δεδομένα. Το 'create' τα σβήνει σε κάθε restart.
+      # Αυτό θα δημιουργήσει αυτόματα τους πίνακες (quiz_question, user_quiz_attempt)
+      # στην καινούργια Cloud βάση μόλις τρέξετε την εφαρμογή.
       ddl-auto: update
     show-sql: true
     properties:
@@ -21,7 +24,7 @@ spring:
         format_sql: true
 
 # --- ΡΥΘΜΙΣΕΙΣ TMDB API ---
+# Αυτό μένει όπως το φτιάξαμε (με το Env Variable ή hardcoded αν το προτιμάτε)
 tmdb:
   api:
-    # Αντέγραψε το κλειδί σου από το .env και βάλτο εδώ μέσα στα αυτάκια
-    key:${TMDB_API_KEY}
+    key: ${TMDB_API_KEY}
