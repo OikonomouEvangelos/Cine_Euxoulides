@@ -143,3 +143,20 @@
 .dropdown-menu a:hover {
   background-color: #52657a;
 }
+
+/* --- 6. Κουμπί Σύνδεση Χρήστη (Login) --- */
+.login-button {
+  background-color: #fbbf24;   /* Κίτρινο χρώμα */
+  color: black;                 /* Σκούρο κείμενο */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #ffd54a;   /* Πιο ανοιχτό κίτρινο στο hover */
+}
+.login-button {
+  letter-spacing: 0.5px;
