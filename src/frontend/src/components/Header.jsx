@@ -54,6 +54,21 @@ const Header = ({ onMenuToggle }) => {
 
       {/* 3. Δεξιό Μέρος: Αγαπημένα και Avatar */}
       <div className="right-group">
+
+
+          {/* Κουμπί Σύνδεσης ή Εγγραφής Χρήστη */}
+          <button
+            className="header-button login-button"
+            onClick={() => {
+               console.log('Πάτημα στο κουμπί Log In / Sign Up');
+               // Αργότερα εδώ θα μπει πλοήγηση σε Login / Sign Up σελίδα ή popup
+             }}
+             aria-label="Σύνδεση ή Εγγραφή Χρήστη"
+          >
+            Σύνδεση/Εγγραφή
+          </button>
+
+
         {/* Κουμπί Αγαπημένα */}
         <button
           className="header-button favorites-button"
