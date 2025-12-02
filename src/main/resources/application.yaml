@@ -1,7 +1,27 @@
 spring:
   application:
     name: Euxoulides
-  # --- ΑΠΕΝΕΡΓΟΠΟΙΗΣΗ DOCKER COMPOSE ---
-  docker:
-    compose:
-      enabled: false
+
+  # --- ΡΥΘΜΙΣΕΙΣ ΣΥΝΔΕΣΗΣ ΒΑΣΗΣ (PostgreSQL) ---
+  datasource:
+    url: jdbc:postgresql://localhost:5454/cine_euxoulides
+    username: postgres
+    password: 1234546
+    driver-class-name: org.postgresql.Driver
+
+  # --- ΡΥΘΜΙΣΕΙΣ JPA / HIBERNATE ---
+  jpa:
+    hibernate:
+      # ΠΡΟΣΟΧΗ: Το 'update' κρατάει τα δεδομένα. Το 'create' τα σβήνει σε κάθε restart.
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+# --- ΡΥΘΜΙΣΕΙΣ TMDB API ---
+tmdb:
+  api:
+    # Αντέγραψε το κλειδί σου από το .env και βάλτο εδώ μέσα στα αυτάκια
+    key:${TMDB_API_KEY}

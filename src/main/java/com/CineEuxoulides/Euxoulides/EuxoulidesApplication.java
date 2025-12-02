@@ -9,5 +9,4 @@ public class EuxoulidesApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EuxoulidesApplication.class, args);
 	}
-
 }
