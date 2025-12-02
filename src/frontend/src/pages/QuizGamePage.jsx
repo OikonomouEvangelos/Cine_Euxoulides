@@ -1,116 +1,140 @@
-// src/frontend/src/pages/QuizGamePage.jsx
-
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import './QuizGamePage.css';
-
-// Placeholder για τη δομή μιας ερώτησης (όπως επιστρέφει το Java Backend)
-const initialQuestions = [
-    // Αυτά θα αντικατασταθούν από τα δεδομένα του API
-    { id: 1, questionText: "Ποιος είναι ο σκηνοθέτης του Pulp Fiction;", options: ["Tarantino", "Nolan", "Spielberg", "Scott"], correctAnswerIndex: 0 }
-];
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './QuizGamePage.css'; // <--- ΣΗΜΑΝΤΙΚΟ: Βάλε το αρχείο CSS στον ίδιο φάκελο με αυτό το αρχείο
 
 const QuizGamePage = () => {
-    // Παίρνουμε το επίπεδο δυσκολίας από το URL
+    // 1. Διόρθωση: Παίρνουμε τη δυσκολία από το URL με useParams (επειδή στο App.jsx είναι :difficulty)
     const { difficulty } = useParams();
+    const navigate = useNavigate();
 
-    // Καταστάσεις (States) για τη διαχείριση του παιχνιδιού
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
-    const [quizState, setQuizState] = useState('loading'); // 'loading', 'active', 'finished'
-    const [selectedAnswer, setSelectedAnswer] = useState(null); // Η επιλογή του χρήστη
+    const [loading, setLoading] = useState(true);
+    const [gameFinished, setGameFinished] = useState(false);
 
-    // --- ΛΟΓΙΚΗ ΦΟΡΤΩΣΗΣ ΕΡΩΤΗΣΕΩΝ (useEffect) ---
+    // 2. Φόρτωση ερωτήσεων από το Backend
     useEffect(() => {
-        setQuizState('loading');
-        // Στο μέλλον, εδώ θα καλείται το GET /api/quiz/generate?difficulty=X
+        const fetchQuestions = async () => {
+            try {
+                // Διόρθωση URL: Το endpoint είναι /api/quiz/questions
+                const response = await axios.get(`http://localhost:8080/api/quiz/questions?difficulty=${difficulty}`);
+                setQuestions(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                setLoading(false);
+            }
+        };
 
-        // --- ΠΡΟΣΟΜΟΙΩΣΗ ΦΟΡΤΩΣΗΣ API ---
-        setTimeout(() => {
-            setQuestions(initialQuestions); // Χρησιμοποιούμε τα placeholder
-            setQuizState('active');
-        }, 1500);
-        // ---------------------------------
+        if (difficulty) {
+            fetchQuestions();
+        }
+    }, [difficulty]);
 
-    }, [difficulty]); // Εκτελείται όταν αλλάζει η δυσκολία (π.χ. στην αρχή)
-
-
-    // --- ΛΟΓΙΚΗ ΥΠΟΒΟΛΗΣ ΑΠΑΝΤΗΣΗΣ ---
-    const handleAnswerSubmit = () => {
-        if (selectedAnswer === null) return; // Ο χρήστης πρέπει να επιλέξει απάντηση
-
-        // Έλεγχος απάντησης (Αυτός ο έλεγχος πρέπει να γίνει ασφαλής στο Backend στο μέλλον)
+    // 3. Όταν ο χρήστης επιλέγει απάντηση
+    const handleAnswerClick = (selectedIndex) => {
         const currentQuestion = questions[currentQuestionIndex];
-        if (selectedAnswer === currentQuestion.correctAnswerIndex) {
-            setScore(prevScore => prevScore + 1);
+        let newScore = score;
+
+        // Έλεγχος αν είναι σωστό
+        if (selectedIndex === currentQuestion.correctAnswerIndex) {
+            newScore = score + 1;
+            setScore(newScore);
         }
 
-        // Προχώρησε στην επόμενη ερώτηση
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(prevIndex => prevIndex + 1);
-            setSelectedAnswer(null); // Επαναφορά επιλογής
+        // Πάμε στην επόμενη ερώτηση
+        const nextQuestion = currentQuestionIndex + 1;
+        if (nextQuestion < questions.length) {
+            setCurrentQuestionIndex(nextQuestion);
         } else {
-            // Τέλος του Quiz - Εδώ θα καλούσατε το POST /api/quiz/submit
-            setQuizState('finished');
+            // Αν τελείωσαν οι ερωτήσεις, στέλνουμε το ΤΕΛΙΚΟ σκορ
+            finishGame(newScore);
         }
     };
 
-    // --- ΠΕΡΙΕΧΟΜΕΝΟ ΑΝΑ ΚΑΤΑΣΤΑΣΗ ---
+    // 4. Υποβολή σκορ στο Backend
+    const finishGame = async (finalScore) => {
+        setGameFinished(true);
 
-    // 1. Loading
-    if (quizState === 'loading') {
-        return <main className="quiz-game-container"><h2>Φόρτωση ερωτήσεων...</h2></main>;
-    }
+        const attemptData = {
+            score: finalScore,
+            totalQuestions: questions.length, // Προσθήκη πεδίου που απαιτεί η βάση
+            difficulty: difficulty,
+            userId: 1 // Προσωρινό ID (Guest)
+        };
 
-    // 2. Finished
-    if (quizState === 'finished') {
+        try {
+            // Διόρθωση URL: Το endpoint είναι /api/quiz/attempt
+            await axios.post('http://localhost:8080/api/quiz/attempt', attemptData);
+            console.log("Score saved successfully!");
+        } catch (error) {
+            console.error("Error saving score:", error);
+        }
+    };
+
+    if (loading) return <div className="quiz-container"><h2>Φόρτωση ερωτήσεων...</h2></div>;
+
+    if (questions.length === 0) return <div className="quiz-container"><h2>Δεν βρέθηκαν ερωτήσεις!</h2></div>;
+
+    // --- ΟΘΟΝΗ ΤΕΛΟΥΣ (GAME OVER) ---
+    if (gameFinished) {
         return (
-            <main className="quiz-game-container final-screen">
-                <h2>Ολοκληρώθηκε το Quiz!</h2>
-                <h3>Το σκορ σου: {score} / {questions.length}</h3>
-                <p>Μπράβο! Τώρα μπορείς να δεις το σκορ σου στον πίνακα κατάταξης.</p>
-                {/* Σύνδεσμος για το ιστορικό */}
-                <button className="btn-main" onClick={() => console.log('Πλοήγηση στο Ιστορικό')}>
-                    Δες το Ιστορικό
-                </button>
-            </main>
+            <div className="quiz-container">
+                <div className="quiz-box results-box" style={{ textAlign: 'center', color: 'white' }}>
+                    <h2>Ολοκληρώθηκε το Quiz!</h2>
+                    <h1 style={{ color: '#ffd700', fontSize: '3rem' }}>{score} / {questions.length}</h1>
+                    <p>Η προσπάθειά σου καταχωρήθηκε.</p>
+
+                    <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                        <button
+                            className="option-btn"
+                            style={{ backgroundColor: '#2196F3' }}
+                            onClick={() => navigate('/history')}
+                        >
+                            Δες το Ιστορικό
+                        </button>
+
+                        <button
+                            className="option-btn"
+                            style={{ backgroundColor: '#4CAF50' }}
+                            onClick={() => window.location.reload()}
+                        >
+                            Παίξε ξανά
+                        </button>
+                    </div>
+                </div>
+            </div>
         );
     }
 
-    // 3. Active (Παιχνίδι σε εξέλιξη)
+    // --- ΟΘΟΝΗ ΠΑΙΧΝΙΔΙΟΥ ---
     const currentQuestion = questions[currentQuestionIndex];
-    const progress = `${currentQuestionIndex + 1} / ${questions.length}`;
 
     return (
-        <main className="quiz-game-container">
-            <h3>Επίπεδο: {difficulty.toUpperCase()}</h3>
-            <div className="quiz-progress">{progress}</div>
+        <div className="quiz-container">
+            <div className="quiz-header">
+                <span>Επίπεδο: {difficulty}</span>
+                <span>Ερώτηση {currentQuestionIndex + 1} / {questions.length}</span>
+            </div>
 
-            <div className="question-card">
-                <p className="question-text">{currentQuestion.questionText}</p>
+            <div className="quiz-box">
+                <h3 className="question-text">{currentQuestion.questionText}</h3>
 
-                <div className="options-container">
+                <div className="options-grid">
                     {currentQuestion.options.map((option, index) => (
                         <button
                             key={index}
-                            className={`option-btn ${selectedAnswer === index ? 'selected' : ''}`}
-                            onClick={() => setSelectedAnswer(index)}
+                            className="option-btn"
+                            onClick={() => handleAnswerClick(index)}
                         >
                             {option}
                         </button>
                     ))}
                 </div>
-
-                <button
-                    className="btn-submit"
-                    onClick={handleAnswerSubmit}
-                    disabled={selectedAnswer === null}
-                >
-                    {currentQuestionIndex < questions.length - 1 ? 'Επόμενη Ερώτηση' : 'Τέλος Quiz'}
-                </button>
             </div>
-        </main>
+        </div>
     );
 };
 

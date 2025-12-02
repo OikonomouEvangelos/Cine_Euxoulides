@@ -1,85 +1,102 @@
 /* src/frontend/src/pages/QuizGamePage.css */
 
-.quiz-game-container {
+/* Το κυρίως κουτί της σελίδας */
+.quiz-container {
     padding: 40px;
     color: white;
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.quiz-game-container h2, h3 {
-    color: #ffc107;
-}
-
-.quiz-progress {
+/* Η κεφαλίδα με το Επίπεδο και το Σκορ */
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 20px;
-    font-size: 1.2em;
+    font-size: 1.2rem;
     font-weight: bold;
+    color: #ffc107; /* Κίτρινο χρώμα */
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
 }
 
-/* Κάρτα Ερώτησης */
-.question-card {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+/* Το κουτί που περιέχει την ερώτηση */
+.quiz-box {
+    background-color: rgba(255, 255, 255, 0.1); /* Ημιδιαφανές */
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     margin-bottom: 30px;
 }
 
+/* Το κείμενο της ερώτησης */
 .question-text {
-    font-size: 1.5em;
-    margin-bottom: 30px;
+    font-size: 1.6em;
+    margin-bottom: 40px;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
-/* Κουμπιά Επιλογών */
-.options-container {
+/* Το πλέγμα (Grid) για τα κουμπιά απαντήσεων */
+.options-grid {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Δύο στήλες */
-    gap: 15px;
-    margin-bottom: 30px;
+    gap: 20px;
 }
 
+/* Τα κουμπιά των απαντήσεων */
 .option-btn {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
     color: white;
     border: 2px solid transparent;
-    padding: 15px;
-    font-size: 1em;
+    padding: 20px;
+    font-size: 1.1em;
     cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.2s, border-color 0.2s;
-    text-align: left;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-weight: bold;
 }
 
 .option-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #ffc107; /* Κίτρινο όταν περνάει το ποντίκι */
+    color: #1a1a1a; /* Μαύρα γράμματα */
+    transform: translateY(-3px); /* Ελαφριά κίνηση προς τα πάνω */
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
 }
 
-.option-btn.selected {
-    background-color: #ffc107; /* Κίτρινο όταν επιλεγεί */
-    color: black;
-    font-weight: bold;
-    border-color: white;
+.option-btn:active {
+    transform: translateY(0);
 }
 
-/* Κουμπί Υποβολής */
-.btn-submit {
-    background-color: #00bcd4;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    font-size: 1.1em;
-    cursor: pointer;
-    border-radius: 8px;
+/* Στυλ για την οθόνη αποτελεσμάτων */
+.results-box h2 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
 }
 
-.btn-submit:disabled {
-    background-color: #555;
-    cursor: not-allowed;
+.results-box p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    color: #ccc;
 }
 
-/* Τελική οθόνη */
-.final-screen h3 {
-    font-size: 2em;
+/* Responsive: Σε κινητά να γίνονται μια στήλη */
+@media (max-width: 600px) {
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quiz-header {
+        font-size: 1rem;
+    }
+
+    .question-text {
+        font-size: 1.3em;
+    }
 }

@@ -16,6 +16,8 @@ import HomePage from './pages/HomePage'; // <-- Χρησιμοποιούμε α�
 import MovieDetailPage from './pages/MovieDetailPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 
+import QuizHistoryPage from './pages/QuizHistoryPage';
+
 
 // --- ΛΟΙΠΑ IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -73,6 +75,8 @@ const App = () => {
         {/* --- QUIZ (ΔΙΑΤΗΡΟΥΜΕ) --- */}
         <Route path="/quiz" element={<QuizSelectionPage />} />
         <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
+
+        <Route path="/history" element={<QuizHistoryPage />} />
 
         {/* --- ΑΥΤΕΣ ΟΙ ΔΙΑΔΡΟΜΕΣ ΔΙΑΓΡΑΦΟΝΤΑΙ ΩΣ ΔΙΠΛΕΣ/ΑΝΤΙΚΡΟΥΟΜΕΝΕΣ: ---
         <Route path="/" element={<PlaceholderHomePage />} />  <- ΠΡΟΚΑΛΕΙ ΤΟ ERROR

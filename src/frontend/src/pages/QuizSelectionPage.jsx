@@ -1,66 +1,96 @@
 // src/frontend/src/pages/QuizSelectionPage.jsx
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'; // Χρειάζεται το useState και useEffect
+import { Link, useNavigate } from 'react-router-dom';
 import './QuizSelectionPage.css';
 
 const QuizSelectionPage = () => {
+    const navigate = useNavigate();
+    const [history, setHistory] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Δεδομένα για τα 3 επίπεδα δυσκολίας
+    // --- ΛΟΓΙΚΗ ΦΟΡΤΩΣΗΣ ΙΣΤΟΡΙΚΟΥ ---
+    useEffect(() => {
+        // Το API που φτιάξατε στο QuizController
+        fetch('http://localhost:8080/api/quiz/history')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch quiz history (Status: ' + response.status + ')');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setHistory(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Error fetching history:", err);
+                setError(err.message);
+                setLoading(false);
+            });
+    }, []);
+
+    // ... (Οι συναρτήσεις startQuiz και difficulties) ...
     const difficulties = [
         { level: 'easy', label: 'Επίπεδο 1: Εύκολο', description: '20 ερωτήσεις | Εισαγωγικές γνώσεις' },
         { level: 'medium', label: 'Επίπεδο 2: Μεσαίο', description: '20 ερωτήσεις | Γνώσεις από Casting/Crew' },
         { level: 'hard', label: 'Επίπεδο 3: Δύσκολο', description: '20 ερωτήσεις | Εξειδικευμένες λεπτομέρειες' },
     ];
 
-    // Placeholder δεδομένα για το ιστορικό (Θα αντικατασταθούν από API)
-    const historyData = [
-        { id: 1, difficulty: 'hard', score: 18, total: 20, date: '15/11/2025' },
-        { id: 2, difficulty: 'medium', score: 12, total: 20, date: '14/11/2025' },
-        { id: 3, difficulty: 'easy', score: 19, total: 20, date: '10/11/2025' },
-    ];
+    // Συνάρτηση για την έναρξη του Quiz
+    const startQuiz = (difficulty) => {
+        // Μεταβαίνουμε στη σελίδα παιχνιδιού, στέλνοντας τη δυσκολία
+        navigate(`/quiz/play/${difficulty}`);
+    };
 
     return (
         <main className="quiz-selection-container">
             <h1>Επίλεξε Επίπεδο Δυσκολίας</h1>
 
-            {/* 1. Ενότητα Επιλογής Δυσκολίας (Κουτιά) */}
+            {/* 1. Ενότητα Επιλογής Δυσκολίας */}
             <section className="difficulty-selection">
                 {difficulties.map((d) => (
-                    // Ο σύνδεσμος οδηγεί στη σελίδα παιχνιδιού: /quiz/play/easy, /quiz/play/medium, κλπ.
-                    <Link key={d.level} to={`/quiz/play/${d.level}`} className="difficulty-card">
+                    // ΕΝΗΜΕΡΩΣΗ: Χρησιμοποιούμε απλό div/button για να καλέσουμε το startQuiz
+                    <div key={d.level} className="difficulty-card" onClick={() => startQuiz(d.level)}>
                         <h2>{d.label}</h2>
                         <p>{d.description}</p>
                         <button className="btn-start-quiz">Ξεκίνα!</button>
-                    </Link>
+                    </div>
                 ))}
             </section>
 
-            {/* 2. Ενότητα Ιστορικού Προσπαθειών (Ταξινόμηση: Υψηλότερο Σκορ, Φθίνουσα Ημερομηνία) */}
+            {/* 2. Ενότητα Ιστορικού Προσπαθειών (Με Δεδομένα από το API) */}
             <section className="history-section">
                 <h2>🏆 Ιστορικό Αποτελεσμάτων</h2>
-                {historyData.length > 0 ? (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Επίπεδο</th>
-                                <th>Σκορ</th>
-                                <th>Ημερομηνία</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* Ταξινόμηση: Μόνο για UI, στο μέλλον θα το κάνει το Backend */}
-                            {historyData.sort((a, b) => b.score - a.score).map((attempt) => (
-                                <tr key={attempt.id}>
-                                    <td>{attempt.difficulty.toUpperCase()}</td>
-                                    <td>{attempt.score}/{attempt.total}</td>
-                                    <td>{attempt.date}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p>Δεν υπάρχουν καταγεγραμμένες προσπάθειες ακόμα.</p>
+                {loading && <p>Φόρτωση ιστορικού...</p>}
+                {error && <p className="error">Σφάλμα φόρτωσης: {error}</p>}
+
+                {!loading && !error && (
+                    <div className="history-table-wrapper">
+                        {history.length > 0 ? (
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Επίπεδο</th>
+                                        <th>Σκορ</th>
+                                        <th>Ημερομηνία</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {history.map((attempt, index) => (
+                                        <tr key={index}>
+                                            <td>{attempt.difficulty.toUpperCase()}</td>
+                                            <td>{attempt.score}/{attempt.totalQuestions}</td>
+                                            <td>{new Date(attempt.dateAttempted).toLocaleDateString('el-GR')}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>Δεν υπάρχουν καταγεγραμμένες προσπάθειες ακόμα.</p>
+                        )}
+                    </div>
                 )}
             </section>
         </main>
