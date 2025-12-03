@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import './SearchResultsPage.css';
+
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -21,7 +23,7 @@ const SearchResultsPage = () => {
   const [error, setError] = useState(null);
   const [persons, setPersons] = useState([]);
 
-  // 1. Φέρνουμε τα genres (είδη) για να μεταφράζουμε genre_ids -> ονόματα
+  // 1. Φέρνουμε genres
   useEffect(() => {
     const fetchGenres = async () => {
       if (!API_KEY) return;
@@ -44,7 +46,7 @@ const SearchResultsPage = () => {
     fetchGenres();
   }, []);
 
-  // 2. Φέρνουμε τις ταινίες που ταιριάζουν στο searchTerm
+  // 2. Φέρνουμε ταινίες
   useEffect(() => {
     const fetchMovies = async () => {
       const trimmed = searchTerm.trim();
@@ -76,60 +78,33 @@ const SearchResultsPage = () => {
     fetchMovies();
   }, [searchTerm]);
 
-useEffect(() => {
-  const fetchPersons = async () => {
-    const trimmed = searchTerm.trim();
-    if (!trimmed || !API_KEY) return;
+  // 3. Φέρνουμε άτομα (ηθοποιούς / σκηνοθέτες)
+  useEffect(() => {
+    const fetchPersons = async () => {
+      const trimmed = searchTerm.trim();
+      if (!trimmed || !API_KEY) return;
 
-    try {
-      const url = `https://api.themoviedb.org/3/search/person?api_key=${API_KEY}&language=el-GR&query=${encodeURIComponent(
-        trimmed
-      )}&page=1&include_adult=false`;
+      try {
+        const url = `https://api.themoviedb.org/3/search/person?api_key=${API_KEY}&language=el-GR&query=${encodeURIComponent(
+          trimmed
+        )}&page=1&include_adult=false`;
 
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Αποτυχία αιτήματος αναζήτησης ατόμων');
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Αποτυχία αιτήματος αναζήτησης ατόμων');
+        }
+
+        const data = await response.json();
+        setPersons(data.results || []);
+      } catch (err) {
+        console.error('Σφάλμα στην αναζήτηση ατόμων:', err);
       }
+    };
 
-      const data = await response.json();
-      setPersons(data.results || []);
-    } catch (err) {
-      console.error('Σφάλμα στην αναζήτηση ατόμων:', err);
-      // Δεν ακουμπάμε το main error για τις ταινίες, γι' αυτό δεν κάνω setError εδώ
-    }
-  };
+    fetchPersons();
+  }, [searchTerm]);
 
-  fetchPersons();
-}, [searchTerm]);
-
-useEffect(() => {
-  const fetchPersons = async () => {
-    const trimmed = searchTerm.trim();
-    if (!trimmed || !API_KEY) return;
-
-    try {
-      const url = `https://api.themoviedb.org/3/search/person?api_key=${API_KEY}&language=el-GR&query=${encodeURIComponent(
-        trimmed
-      )}&page=1&include_adult=false`;
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Αποτυχία αιτήματος αναζήτησης ατόμων');
-      }
-
-      const data = await response.json();
-      setPersons(data.results || []);
-    } catch (err) {
-      console.error('Σφάλμα στην αναζήτηση ατόμων:', err);
-      // Δεν ακουμπάμε το main error για τις ταινίες, γι' αυτό δεν κάνω setError εδώ
-    }
-  };
-
-  fetchPersons();
-}, [searchTerm]);
-
-
-
+  // Αν δεν υπάρχει αναζήτηση
   if (!searchTerm) {
     return (
       <main>
@@ -141,117 +116,87 @@ useEffect(() => {
 
   return (
     <main>
-      <h2>Αποτελέσματα για: "{searchTerm}"</h2>
+      <div className="search-page">
+        <h2 className="search-title">
+          Αποτελέσματα για: "{searchTerm}"
+        </h2>
 
-      {isLoading && <p>Φόρτωση αποτελεσμάτων...</p>}
-      {error && <p>{error}</p>}
+        {isLoading && <p>Φόρτωση αποτελεσμάτων...</p>}
+        {error && <p>{error}</p>}
 
-      {!isLoading && !error && movies.length === 0 && (
-        <p>Δεν βρέθηκαν ταινίες για αυτή την αναζήτηση.</p>
-      )}
+        {!isLoading && !error && movies.length === 0 && (
+          <p>Δεν βρέθηκαν ταινίες για αυτή την αναζήτηση.</p>
+        )}
 
-      <div className="search-results-grid">
-        {movies.map((movie) => {
-          const {
-            id,
-            title,
-            overview,
-            poster_path,
-            release_date,
-            popularity,
-            vote_average,
-            genre_ids,
-          } = movie;
+        {/* GRID ΤΑΙΝΙΩΝ */}
+        <div className="search-grid">
+          {movies.map((movie) => {
+            const { id, title, poster_path, vote_average } = movie;
 
-          const genres =
-            genre_ids && genre_ids.length > 0
-              ? genre_ids
-                  .map((gid) => genresMap[gid])
-                  .filter(Boolean)
-                  .join(', ')
-              : 'Άγνωστο';
-
-          return (
-            <Link to={`/movie/${id}`} key={id} className="search-result-card">
-              <div className="search-result-card-inner">
-                <img
-                  src={
-                    poster_path
-                      ? `https://image.tmdb.org/t/p/w342${poster_path}`
-                      : 'https://via.placeholder.com/342x513'
-                  }
-                  alt={title}
-                  className="search-result-poster"
-                />
-                <div className="search-result-info">
-                  <h3>{title}</h3>
-
-                  {release_date && (
-                    <p>
-                      <strong>Ημ. κυκλοφορίας:</strong> {release_date}
-                    </p>
-                  )}
-
-                  <p>
-                    <strong>Δημοτικότητα:</strong> {Math.round(popularity)}</p>
-                  <p>
-                    <strong>Βαθμολογία:</strong> {vote_average ?? 'N/A'}
-                  </p>
-
-                  <p>
-                    <strong>Είδη:</strong> {genres}
-                  </p>
-
-                  {overview && (
-                    <p className="search-result-overview">
-                      {overview}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-            {/* Μπλοκ για ηθοποιούς / σκηνοθέτες */}
-            {persons.length > 0 && (
-              <section className="search-persons-section">
-                <h3>Άτομα που ταιριάζουν με την αναζήτηση</h3>
-                <ul className="search-persons-list">
-                  {persons.map((person) => {
-                    const isActor = person.known_for_department === 'Acting';
-                    const isDirector = person.known_for_department === 'Directing';
-
-                    // Επιλέγουμε σε ποια σελίδα θα τον στείλουμε
-                    let targetPath = null;
-                    if (isActor) {
-                      targetPath = `/actors/${person.id}`;
-                    } else if (isDirector) {
-                      targetPath = `/directors/${person.id}`;
+            return (
+              <Link to={`/movie/${id}`} key={id}>
+                <div className="search-card">
+                  <img
+                    src={
+                      poster_path
+                        ? `https://image.tmdb.org/t/p/w342${poster_path}`
+                        : 'https://via.placeholder.com/342x513'
                     }
+                    alt={title}
+                    className="search-poster"
+                  />
 
-                    return (
-                      <li key={person.id} className="search-person-item">
-                        {targetPath ? (
-                          <Link to={targetPath}>
-                            <strong>{person.name}</strong>{' '}
-                            {isActor && <span>(Ηθοποιός)</span>}
-                            {isDirector && <span>(Σκηνοθέτης)</span>}
-                          </Link>
-                        ) : (
-                          <span>
-                            <strong>{person.name}</strong>{' '}
-                            {person.known_for_department && (
-                              <span>({person.known_for_department})</span>
-                            )}
-                          </span>
+                  <div className="search-info">
+                    <h3 title={title}>{title}</h3>
+                    <p className="search-rating">
+                      ⭐ {vote_average ? vote_average.toFixed(1) : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* ΜΠΛΟΚ ΓΙΑ ΗΘΟΠΟΙΟΥΣ / ΣΚΗΝΟΘΕΤΕΣ */}
+        {persons.length > 0 && (
+          <section className="search-persons-section">
+            <h3>Άτομα που ταιριάζουν με την αναζήτηση</h3>
+            <ul className="search-persons-list">
+              {persons.map((person) => {
+                const isActor = person.known_for_department === 'Acting';
+                const isDirector = person.known_for_department === 'Directing';
+
+                let targetPath = null;
+                if (isActor) {
+                  targetPath = `/actors/${person.id}`;
+                } else if (isDirector) {
+                  targetPath = `/directors/${person.id}`;
+                }
+
+                return (
+                  <li key={person.id} className="search-person-item">
+                    {targetPath ? (
+                      <Link to={targetPath}>
+                        <strong>{person.name}</strong>{' '}
+                        {isActor && <span>(Ηθοποιός)</span>}
+                        {isDirector && <span>(Σκηνοθέτης)</span>}
+                      </Link>
+                    ) : (
+                      <span>
+                        <strong>{person.name}</strong>{' '}
+                        {person.known_for_department && (
+                          <span>({person.known_for_department})</span>
                         )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            )}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+      </div>
     </main>
   );
 };
