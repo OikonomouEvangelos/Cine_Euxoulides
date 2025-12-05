@@ -69,7 +69,7 @@ const SideMenu = ({ isOpen, onClose }) => {
       <nav className="sidemenu-nav">
         <ul>
           {/* ΑΡΧΙΚΗ */}
-          <li><Link to="/" onClick={onClose}>Αρχική</Link></li>
+          <li><Link to="/browse" onClick={onClose}>Αρχική</Link></li>
 
           {/* --- ΤΑΙΝΙΕΣ (Accordion) --- */}
           <li>
