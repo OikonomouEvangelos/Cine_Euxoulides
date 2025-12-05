@@ -170,4 +170,40 @@ main h1 {
  .quiz-icon span {
      font-size: 3em;
  }
-}
+ {movies.map((movie) => (
+   <div
+     key={movie.id}
+     className="movie-card" {/* <--- ΑΥΤΟ ΠΡΕΠΕΙ ΝΑ ΠΡΟΣΘΕΣΕΙΣ */}
+     onClick={() => navigate(`/movie/${movie.id}`)}
+   >
+     <img src={...} alt={movie.title} />
+     <h3>{movie.title}</h3>
+     {/* ... τα υπόλοιπα στοιχεία ... */}
+   </div>
+ ))
+ /* ========================================================================= */
+ /* --- MOVIE CARDS (Hover Effects) --- */
+ /* ========================================================================= */
+
+ .movie-card {
+     transition: all 0.3s ease-in-out;
+     cursor: pointer;
+     border-radius: 8px; /* Στρογγυλεμένες γωνίες */
+     position: relative;
+     /* Κρατάει την εικόνα μέσα στα όρια αν κάνουμε zoom */
+     overflow: hidden;
+ }
+
+ .movie-card:hover {
+     transform: scale(1.05); /* Zoom 5% */
+     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Σκιά που την σηκώνει */
+     z-index: 10; /* Την φέρνει μπροστά από τις άλλες */
+ }
+
+ /* Προαιρετικά: Αν θες η εικόνα να πιάνει όλο τον χώρο σωστά */
+ .movie-card img {
+     width: 100%;
+     height: auto;
+     display: block;
+     border-radius: 8px;
+ }
