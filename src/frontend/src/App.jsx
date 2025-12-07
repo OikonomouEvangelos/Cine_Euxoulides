@@ -19,6 +19,8 @@ import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';   // ← ★★★ ΠΡΟΣΤΕΘΗΚΕ
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 // --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -70,6 +72,17 @@ const App = () => {
 
       {/* Όλες οι άλλες σελίδες χρησιμοποιούν το AppLayout */}
       <Route element={<AppLayout />}>
+
+      {/* 2. Η ΚΥΡΙΩΣ ΕΦΑΡΜΟΓΗ (Με Header/Footer) */}
+      {/* Όλες οι παρακάτω σελίδες κληρονομούν το Layout */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+
 
         <Route path="/browse" element={<HomePage />} />
 
