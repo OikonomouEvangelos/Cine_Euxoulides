@@ -18,9 +18,8 @@ import QuizHistoryPage from './pages/QuizHistoryPage';
 import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop';   // ← ★★★ ΠΡΟΣΤΕΘΗΚΕ
-import ProtectedRoute from './components/ProtectedRoute';
-
+import ScrollToTop from './components/ScrollToTop';
+import ProtectedRoute from './components/ProtectedRoute'; // Βεβαιώσου ότι υπάρχει αυτό το αρχείο
 
 // --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -34,6 +33,7 @@ import './App.css';
 
 
 // --- LAYOUT COMPONENT ---
+// Αυτό περιέχει τη δομή της εφαρμογής (Header, Menu, Footer)
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -52,9 +52,10 @@ const AppLayout = () => {
 
       {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
+      {/* Εδώ εμφανίζονται οι σελίδες */}
       <Outlet />
 
-      {/* ★★★ Το κουμπί Scroll To Top εμφανίζεται σε όλες τις σελίδες */}
+      {/* Το κουμπί Scroll To Top */}
       <ScrollToTop />
 
       <Footer />
@@ -67,14 +68,11 @@ const App = () => {
   return (
     <Routes>
 
-      {/* Welcome Page χωρίς layout */}
+      {/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Header/Footer) */}
       <Route path="/" element={<WelcomePage />} />
 
-      {/* Όλες οι άλλες σελίδες χρησιμοποιούν το AppLayout */}
-      <Route element={<AppLayout />}>
-
-      {/* 2. Η ΚΥΡΙΩΣ ΕΦΑΡΜΟΓΗ (Με Header/Footer) */}
-      {/* Όλες οι παρακάτω σελίδες κληρονομούν το Layout */}
+      {/* 2. PROTECTED ROUTES: Όλες οι εσωτερικές σελίδες */}
+      {/* Ελέγχει αν είσαι συνδεδεμένος και μετά φορτώνει το Layout */}
       <Route
         element={
           <ProtectedRoute>
@@ -82,23 +80,28 @@ const App = () => {
           </ProtectedRoute>
         }
       >
-
-
+        {/* Αρχική Εφαρμογής */}
         <Route path="/browse" element={<HomePage />} />
 
+        {/* Λεπτομέρειες Ταινίας */}
         <Route path="/movie/:id" element={<MovieDetailPage />} />
 
+        {/* Κατηγορίες */}
         <Route path="/movies" element={<MovieCategories />} />
         <Route path="/category/:genreId" element={<GenreMovies />} />
-        <Route path="/movies/:genreId" element={<GenreMovies />} />
+        <Route path="/movies/:genreId" element={<GenreMovies />} /> {/* Fallback */}
 
+        {/* Ηθοποιοί & Σκηνοθέτες */}
         <Route path="/actors/:actorId" element={<ActorMovies />} />
         <Route path="/directors/:directorId" element={<DirectorMovies />} />
 
+        {/* Χρονιά */}
         <Route path="/year/:year" element={<YearMovies />} />
 
+        {/* Αναζήτηση */}
         <Route path="/search" element={<SearchResultsPage />} />
 
+        {/* Quiz Section */}
         <Route path="/quiz" element={<QuizSelectionPage />} />
         <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
         <Route path="/history" element={<QuizHistoryPage />} />
