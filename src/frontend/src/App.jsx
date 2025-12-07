@@ -18,6 +18,8 @@ import QuizHistoryPage from './pages/QuizHistoryPage';
 import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 // --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ/ΛΙΣΤΩΝ (Από την ομάδα σου) ---
 import MovieCategories from './components/MovieCategories';
@@ -71,7 +73,14 @@ const App = () => {
 
       {/* 2. Η ΚΥΡΙΩΣ ΕΦΑΡΜΟΓΗ (Με Header/Footer) */}
       {/* Όλες οι παρακάτω σελίδες κληρονομούν το Layout */}
-      <Route element={<AppLayout />}>
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+
 
         {/* Η Αρχική σελίδα της εφαρμογής είναι πλέον το /browse */}
         <Route path="/browse" element={<HomePage />} />

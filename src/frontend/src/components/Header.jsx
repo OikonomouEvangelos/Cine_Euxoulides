@@ -1,6 +1,7 @@
 // src/components/Header.jsx
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
 // Υποθετικά components/εικονίδια
@@ -26,6 +27,24 @@ const Header = ({ onMenuToggle }) => {
   // const handleMenuClick = () => {
   //   console.log('Άνοιγμα Side Menu...');
   // };
+
+  const navigate = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+
+    // 🧹 Καθαρίζουμε ό,τι αφορά τον χρήστη
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userFirstName');
+
+    // Κλείνουμε το dropdown
+    setIsDropdownOpen(false);
+
+    // Πηγαίνουμε πίσω στην σελίδα welcome/login
+    navigate('/');
+  };
+
 
   const handleFavoritesClick = () => {
     console.log('Προβολή Αγαπημένων...');
@@ -78,7 +97,7 @@ const Header = ({ onMenuToggle }) => {
             <div className="dropdown-menu">
               <a href="#profile">Προφίλ</a>
               <a href="#account">Λογαριασμός</a>
-              <a href="#logout">Αποσύνδεση</a>
+              <a href="#logout" onClick={handleLogout}>Αποσύνδεση</a>
             </div>
           )}
         </div>
