@@ -43,10 +43,13 @@
   top: 0;
   border-radius: 12px;
 
-  /* 3D Context */
-  transform-style: preserve-3d;
+  /* ΣΗΜΑΝΤΙΚΟ: Κόβει ό,τι βγαίνει έξω από τις γωνίες */
+  overflow: hidden;
 
   border: 1px solid rgba(255, 255, 255, 0.3);
+  /* Fix για το κόψιμο στις γωνίες */
+  transform: translateZ(0);
+
   -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, rgba(0,0,0,0.3));
 }
 
@@ -57,7 +60,6 @@
   height: 100%;
   position: relative;
   text-decoration: none;
-  transform-style: preserve-3d;
 }
 
 /* --- 5. Η ΕΙΚΟΝΑ --- */
@@ -66,11 +68,10 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  border-radius: 12px;
 }
 
 /* ========================================================= */
-/* --- 6. ΤΟ OVERLAY & ΚΕΙΜΕΝΑ --- */
+/* --- 6. ΤΟ OVERLAY (ΕΔΩ ΑΛΛΑΞΕ ΤΟ ΧΡΩΜΑ) --- */
 /* ========================================================= */
 .carousel-overlay {
   position: absolute;
@@ -79,24 +80,21 @@
   width: 100%;
   height: 100%;
 
-  /* Το Ανοιχτό Μπλε */
-  background-color: rgba(33, 150, 243, 0.75);
-  border-radius: 12px;
+  /* --- Η ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ --- */
+  /* Σκούρο Μπλε-Γκρι (Dark Slate Blue) με διαφάνεια 0.9 */
+  /* Ταιριάζει με το Header */
+  background-color: rgba(44, 62, 80, 0.9);
 
-  /* ΚΕΝΤΡΑΡΙΣΜΑ FLEXBOX */
+  /* Κεντράρισμα */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   text-align: center;
 
   padding: 10px;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
 }
 
 .carousel-item:hover .carousel-overlay {
@@ -106,48 +104,42 @@
 /* --- ΤΑ ΑΣΤΕΡΙΑ --- */
 .overlay-stars {
   width: 100%;
-  text-align: center;
-
   color: #fbbf24;
   font-size: 1.4rem;
   font-weight: bold;
   margin-bottom: 8px;
   text-shadow: 0 2px 5px rgba(0,0,0,0.5);
 
-  transform: translateZ(0px);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* Κίνηση: Από κάτω προς τα πάνω (όχι 3D pop-out για να μην βγαίνει έξω) */
+  transform: translateY(20px);
+  transition: transform 0.4s ease;
 }
 
-/* --- Ο ΑΡΙΘΜΟΣ ΨΗΦΩΝ (ΝΕΟ) --- */
+/* --- Ο ΑΡΙΘΜΟΣ ΨΗΦΩΝ --- */
 .vote-count {
-  font-size: 0.9rem;       /* Πιο μικρό μέγεθος */
-  opacity: 0.8;            /* Λίγο πιο αχνό */
-  margin-left: 5px;        /* Απόσταση από το αστέρι */
-  font-weight: normal;     /* Όχι bold */
-  color: #e2e8f0;          /* Ανοιχτό γκρι */
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-left: 5px;
+  font-weight: normal;
+  color: #e2e8f0;
 }
 
 /* --- Ο ΤΙΤΛΟΣ --- */
 .overlay-title {
   width: 100%;
-  text-align: center;
-
   color: white;
   font-size: 0.9rem;
   font-weight: 500;
   line-height: 1.2;
 
-  transform: translateZ(0px);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: translateY(20px);
+  transition: transform 0.4s ease;
 }
 
-/* --- 3D POP-OUT EFFECT --- */
-.carousel-item:hover .overlay-stars {
-  transform: translateZ(50px);
-}
-
+/* --- HOVER EFFECT --- */
+.carousel-item:hover .overlay-stars,
 .carousel-item:hover .overlay-title {
-  transform: translateZ(40px);
+  transform: translateY(0);
 }
 
 /* ========================================================= */
