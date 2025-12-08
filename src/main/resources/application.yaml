@@ -3,19 +3,13 @@ spring:
     name: Euxoulides
 
   datasource:
-    # Μετατρέψαμε το link σε JDBC format για την Java
     url: jdbc:postgresql://ep-quiet-credit-ags5csnl-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
-
-    # Τα στοιχεία που μας έστειλες
     username: neondb_owner
     password: npg_rqdOGz1EF4YP
-
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      # Αυτό θα δημιουργήσει αυτόματα τους πίνακες (quiz_question, user_quiz_attempt)
-      # στην καινούργια Cloud βάση μόλις τρέξετε την εφαρμογή.
       ddl-auto: update
     show-sql: true
     properties:
@@ -23,8 +17,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
-# --- ΡΥΘΜΙΣΕΙΣ TMDB API ---
-# Αυτό μένει όπως το φτιάξαμε (με το Env Variable ή hardcoded αν το προτιμάτε)
+
+
+server:
+  port: 8080
+
 tmdb:
   api:
-    key: ${TMDB_API_KEY}
+
+    key: d166af459b20ece5176f1e92a23e3aa1
+  base:
+    url: https://api.themoviedb.org/3
