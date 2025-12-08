@@ -36,3 +36,4 @@ build/
 
 ### ENV ###
 .env
+application.yaml
