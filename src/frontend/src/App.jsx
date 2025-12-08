@@ -14,14 +14,14 @@ import QuizSelectionPage from './pages/QuizSelectionPage';
 import QuizGamePage from './pages/QuizGamePage';
 import QuizHistoryPage from './pages/QuizHistoryPage';
 
-// --- IMPORTS COMPONENTS ---
+// --- IMPORTS COMPONENTS (Διορθωμένα Paths: απευθείας στο components/) ---
 import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import ProtectedRoute from './components/ProtectedRoute'; // Βεβαιώσου ότι υπάρχει αυτό το αρχείο
+import ProtectedRoute from './components/ProtectedRoute';
 
-// --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
+// --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ (Διορθωμένα Paths: απευθείας στο components/) ---
 import MovieCategories from './components/MovieCategories';
 import GenreMovies from './components/GenreMovies';
 import ActorMovies from './components/ActorMovies';
@@ -31,9 +31,7 @@ import YearMovies from './components/YearMovies';
 // --- CSS ---
 import './App.css';
 
-
 // --- LAYOUT COMPONENT ---
-// Αυτό περιέχει τη δομή της εφαρμογής (Header, Menu, Footer)
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -52,27 +50,20 @@ const AppLayout = () => {
 
       {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
-      {/* Εδώ εμφανίζονται οι σελίδες */}
       <Outlet />
-
-      {/* Το κουμπί Scroll To Top */}
       <ScrollToTop />
-
       <Footer />
     </div>
   );
 };
 
-
 const App = () => {
   return (
     <Routes>
-
-      {/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Header/Footer) */}
+      {/* 1. PUBLIC ROUTE: Welcome Page */}
       <Route path="/" element={<WelcomePage />} />
 
-      {/* 2. PROTECTED ROUTES: Όλες οι εσωτερικές σελίδες */}
-      {/* Ελέγχει αν είσαι συνδεδεμένος και μετά φορτώνει το Layout */}
+      {/* 2. PROTECTED ROUTES */}
       <Route
         element={
           <ProtectedRoute>
@@ -89,7 +80,7 @@ const App = () => {
         {/* Κατηγορίες */}
         <Route path="/movies" element={<MovieCategories />} />
         <Route path="/category/:genreId" element={<GenreMovies />} />
-        <Route path="/movies/:genreId" element={<GenreMovies />} /> {/* Fallback */}
+        <Route path="/movies/:genreId" element={<GenreMovies />} />
 
         {/* Ηθοποιοί & Σκηνοθέτες */}
         <Route path="/actors/:actorId" element={<ActorMovies />} />
@@ -107,7 +98,6 @@ const App = () => {
         <Route path="/history" element={<QuizHistoryPage />} />
 
       </Route>
-
     </Routes>
   );
 };
