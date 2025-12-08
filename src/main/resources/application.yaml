@@ -28,3 +28,7 @@ spring:
 tmdb:
   api:
     key: ${TMDB_API_KEY}
+
+google:
+  client-id: 1005494521790-5tisd69v12pj2cqsjmfi7eru6lhhv7lh.apps.googleusercontent.com
+
