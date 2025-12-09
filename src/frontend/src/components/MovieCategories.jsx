@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './TrendingSection.css'; // Χρησιμοποιούμε το ίδιο στυλ
 
+
 const MovieCategories = () => {
   const genres = [
     { id: 28, name: "Δράση" },
@@ -17,6 +18,7 @@ const MovieCategories = () => {
 
   return (
     <div className="trending-section" style={{ minHeight: '100vh', padding: '40px 20px' }}>
+
       <h2 style={{ marginBottom: '30px', textAlign: 'center' }}>Επιλέξτε Κατηγορία</h2>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
