@@ -1,7 +1,8 @@
 // src/App.jsx
 
 import React, { useState } from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+// ΑΦΑΙΡΕΣΑΜΕ το BrowserRouter από εδώ, γιατί υπάρχει ήδη στο main.jsx
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 
 // --- IMPORTS ΣΕΛΙΔΩΝ ---
 import WelcomePage from './pages/WelcomePage';
@@ -19,7 +20,8 @@ import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import ProtectedRoute from './components/ProtectedRoute'; // Βεβαιώσου ότι υπάρχει αυτό το αρχείο
+import ProtectedRoute from './components/ProtectedRoute';
+import SearchBar from './components/SearchBar';
 
 // --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -33,9 +35,11 @@ import './App.css';
 
 
 // --- LAYOUT COMPONENT ---
-// Αυτό περιέχει τη δομή της εφαρμογής (Header, Menu, Footer)
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Το location χρειάζεται για να ξέρουμε σε ποια σελίδα είμαστε
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(prev => !prev);
@@ -45,6 +49,15 @@ const AppLayout = () => {
     setIsMenuOpen(false);
   };
 
+  // --- ΛΟΓΙΚΗ ΑΠΟΚΡΥΨΗΣ SEARCH BAR ---
+  // Ορίζουμε σε ποιες σελίδες ΔΕΝ θέλουμε την κεντρική μπάρα
+  // επειδή έχουμε βάλει δική μας (custom) μέσα στο αρχείο της σελίδας.
+  const shouldHideGlobalSearch =
+      location.pathname.startsWith('/movie/') ||   // Σελίδα Ταινίας (Custom toolbar)
+      location.pathname.startsWith('/movies') ||   // Σελίδα Κατηγοριών (Custom toolbar)
+      location.pathname.startsWith('/category') || // Σελίδα Κατηγοριών (εναλλακτικό)
+      location.pathname === '/browse';             // Αρχική Σελίδα (Custom toolbar δίπλα στο Quiz)
+
   return (
     <div className="app-container">
       <Header onMenuToggle={toggleMenu} />
@@ -52,12 +65,31 @@ const AppLayout = () => {
 
       {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
-      {/* Εδώ εμφανίζονται οι σελίδες */}
+      {/* --- ΕΛΕΓΧΟΣ ΕΜΦΑΝΙΣΗΣ ΚΕΝΤΡΙΚΗΣ ΜΠΑΡΑΣ --- */}
+      {/* Εμφανίζεται ΜΟΝΟ αν ΔΕΝ είμαστε σε σελίδα της λίστας shouldHideGlobalSearch.
+         Άρα στο '/search' θα εμφανιστεί κανονικά.
+      */}
+      {!shouldHideGlobalSearch && (
+        <div
+          className="global-search-wrapper"
+          style={{
+            margin: '30px 0',
+            display: 'flex',
+            justifyContent: 'center', /* Κεντράρισμα */
+            padding: '0 20px'
+          }}
+        >
+          {/* Περιορίζουμε το πλάτος για να μην είναι τεράστια */}
+          <div style={{ width: '100%', maxWidth: '500px' }}>
+            <SearchBar />
+          </div>
+        </div>
+      )}
+
+      {/* Εδώ εμφανίζονται οι σελίδες (Outlet) */}
       <Outlet />
 
-      {/* Το κουμπί Scroll To Top */}
       <ScrollToTop />
-
       <Footer />
     </div>
   );
@@ -66,13 +98,13 @@ const AppLayout = () => {
 
 const App = () => {
   return (
+    // Το Router υπάρχει ήδη στο main.jsx, οπότε εδώ βάζουμε μόνο Routes
     <Routes>
 
-      {/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Header/Footer) */}
+      {/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Layout) */}
       <Route path="/" element={<WelcomePage />} />
 
       {/* 2. PROTECTED ROUTES: Όλες οι εσωτερικές σελίδες */}
-      {/* Ελέγχει αν είσαι συνδεδεμένος και μετά φορτώνει το Layout */}
       <Route
         element={
           <ProtectedRoute>
@@ -89,7 +121,7 @@ const App = () => {
         {/* Κατηγορίες */}
         <Route path="/movies" element={<MovieCategories />} />
         <Route path="/category/:genreId" element={<GenreMovies />} />
-        <Route path="/movies/:genreId" element={<GenreMovies />} /> {/* Fallback */}
+        <Route path="/movies/:genreId" element={<GenreMovies />} />
 
         {/* Ηθοποιοί & Σκηνοθέτες */}
         <Route path="/actors/:actorId" element={<ActorMovies />} />
