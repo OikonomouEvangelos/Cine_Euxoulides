@@ -1,28 +1,27 @@
 /* src/frontend/src/pages/MovieDetailPage.css */
 
-/* --- 1. Container της Σελίδας --- */
+/* --- 1. Container --- */
 .movie-detail-container {
     padding: 0;
     margin: 0;
-    color: white; /* Για να φαίνονται τα γράμματα στο σκούρο φόντο */
+    color: white;
+    background-color: #6D8196; /* User requested Blue/Grey */
+    min-height: 100vh;
 }
 
-/* --- 2. Hero Section (Κεντρική Αφίσα/Πληροφορίες) --- */
+/* --- 2. Hero Section --- */
 .movie-hero-section {
     position: relative;
-    height: 70vh; /* Πιάνει το 70% του ύψους της οθόνης */
+    height: 70vh;
     overflow: hidden;
 }
 
 .hero-background {
-    /* Εδώ χρησιμοποιούμε την εικόνα ως background */
     width: 100%;
     height: 100%;
-    background-size: cover; /* Καλύπτει όλο τον χώρο */
+    background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-
-    /* Εφέ σκίασης για να φαίνονται τα γράμματα */
     box-shadow: inset 0 -100px 50px rgba(0, 0, 0, 0.7);
 }
 
@@ -38,69 +37,221 @@
 .hero-content h1 {
     font-size: 3em;
     margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 .movie-tagline {
     font-size: 1.2em;
-    max-width: 600px; /* Όπως στο Netflix, η περιγραφή δεν πιάνει όλο το πλάτος */
+    max-width: 600px;
     margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
-/* --- 3. Interactive Content (Διάταξη 2 Στηλών) --- */
+/* --- 3. Interactive Content --- */
 .interactive-content {
-    display: flex; /* Χρησιμοποιούμε Flexbox για να τα βάλουμε δίπλα-δίπλα */
+    display: flex;
     padding: 30px 40px;
-    gap: 40px; /* Διάστημα μεταξύ των στηλών */
-    background-color: #6D8196; /* Συνέχιση του χρώματος background */
+    gap: 40px;
+    background-color: #6D8196;
 }
 
-/* Εξασφαλίζουμε ότι οι στήλες έχουν ίσο πλάτος και συμπεριφορά */
-/* Χρησιμοποιούμε rating-column και comment-column από το JSX για μεγαλύτερη ακρίβεια */
 .rating-column,
 .comment-column {
-    flex: 1 1 50%; /* Κάθε στήλη πιάνει περίπου το 50% */
+    flex: 1 1 50%;
 }
 
-/* --- 4. Styling Κοινών Κουμπιών (Trailer, Υποβολή Σχολίου) --- */
-
+/* --- 4. Buttons --- */
 .btn-trailer,
 .btn-secondary {
-    color: white; /* ΧΡΩΜΑ ΚΕΙΜΕΝΟΥ: Άσπρο */
-    background-color: rgba(255, 255, 255, 0.1); /* ΧΡΩΜΑ ΦΟΝΤΟΥ: Πολύ διακριτικό, διαφανές άσπρο */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Ελαφρύ περίγραμμα για να ξεχωρίζει */
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.2s ease;
-    /* Εξασφαλίζουμε ότι το κουμπί δεν πιάνει όλο το πλάτος, αν δεν είναι απαραίτητο */
     display: inline-block;
+    font-size: 1rem;
 }
 
 .btn-trailer:hover,
 .btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Λίγο πιο φωτεινό στο hover */
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-
-/* --- 5. Styling για το Σχολιασμό (Textarea) --- */
+/* --- 5. Comment Textarea --- */
 .comment-section textarea {
     width: 100%;
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white; /* Άσπρο κείμενο μέσα στο πεδίο */
+    color: white;
     padding: 10px;
     margin-bottom: 10px;
     box-sizing: border-box;
-    resize: vertical; /* Επιτρέπει μόνο κατακόρυφη αλλαγή μεγέθους */
+    resize: vertical;
+    font-family: inherit;
 }
 
-/* --- 6. Styling για τα Tabs (Cast, Crew, Details) --- */
-/* (Χρησιμοποιούνται κυρίως για τη διάταξη εδώ) */
+.comment-section textarea::placeholder {
+    color: #ddd;
+}
+
+/* --- 6. Tabs Navigation --- */
 .detail-tabs-nav {
     padding: 0 40px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 20px;
 }
 
-/* --- 7. Tab Content Area --- */
+.tab-btn {
+    background: none;
+    border: none;
+    color: #ddd;
+    font-size: 1.1rem;
+    margin-right: 20px;
+    cursor: pointer;
+    padding-bottom: 5px;
+}
+
+.tab-btn.active {
+    color: white;
+    border-bottom: 2px solid white;
+}
+
+/* --- 7. Tab Content --- */
 .tab-content {
     padding: 20px 40px;
+    color: #eee;
+}
+
+/* =========================================
+   NEW CSS FOR REVIEWS, LIKES, & REPLIES
+   ========================================= */
+
+/* Individual Review Container */
+.review-item {
+    background-color: rgba(0, 0, 0, 0.15); /* Slightly darker than background */
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Action Buttons Container (Like/Dislike/Reply) */
+.review-actions {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Style for the Vote Buttons */
+.action-btn {
+    background: none;
+    border: none;
+    color: #cfd8dc; /* Light Grey text */
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and number */
+}
+
+.action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Specific color for Reply button */
+.reply-btn {
+    color: #90caf9; /* Light Blue */
+    font-weight: bold;
+}
+
+.reply-btn:hover {
+    color: #bbdefb;
+}
+
+/* Reply Input Form (Hidden until clicked) */
+.reply-form {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.reply-input {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    font-family: inherit;
+}
+
+.btn-small {
+    background-color: #546e7a; /* Darker Blue/Grey */
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-small:hover {
+    background-color: #455a64;
+}
+
+/* Nested Replies List (Indentation) */
+.replies-list {
+    margin-top: 15px;
+    margin-left: 20px; /* Indent from left */
+    padding-left: 15px;
+    border-left: 2px solid rgba(255, 255, 255, 0.15); /* Vertical line */
+}
+
+/* Individual Reply Item */
+.reply-item {
+    background-color: rgba(255, 255, 255, 0.05); /* Lighter than review bg */
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* --- Favorite Heart Button --- */
+.btn-favorite {
+    background-color: rgba(255, 255, 255, 0.1); /* Διαφανές γκρι αρχικά */
+    color: white; /* Λευκή καρδιά */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%; /* Κυκλικό σχήμα */
+    width: 45px;
+    height: 45px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding-top: 4px;
+}
+
+.btn-favorite:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1); /* Ελαφριά μεγέθυνση όταν περνάει το ποντίκι */
+}
+
+/* --- ACTIVE STATE (Όταν είναι στα αγαπημένα) --- */
+.btn-favorite.active {
+    background-color: rgba(229, 9, 20, 0.1); /* Ελαφρύ κόκκινο φόντο */
+    color: #e50914; /* Κόκκινη καρδιά */
+    border-color: #e50914;
+    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4); /* Κόκκινη λάμψη */
 }

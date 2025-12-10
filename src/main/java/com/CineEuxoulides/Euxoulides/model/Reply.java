@@ -20,6 +20,7 @@ public class Reply {
     // FetchType.LAZY is best for performance (don't load the whole review just to see a reply)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Review review;
 
     // --- Author Data ---

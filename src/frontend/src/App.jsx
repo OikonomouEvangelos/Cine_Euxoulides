@@ -1,15 +1,16 @@
 // src/App.jsx
 
 import React, { useState } from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom'; // Προστέθηκε το Outlet
+import { Routes, Route, Outlet } from 'react-router-dom';
 
-// --- IMPORTS ΣΕΛΙΔΩΝ ---
-import WelcomePage from './pages/WelcomePage'; // Η νέα σελίδα εισόδου
+// --- IMPORTS PAGES ---
+import WelcomePage from './pages/WelcomePage';
 import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import SearchResultsPage from './pages/SearchResultsPage';
+import FavoritesPage from './pages/FavoritesPage'; // <--- NEW IMPORT
 
-// --- IMPORTS QUIZ (Από την ομάδα σου) ---
+// --- IMPORTS QUIZ ---
 import QuizSelectionPage from './pages/QuizSelectionPage';
 import QuizGamePage from './pages/QuizGamePage';
 import QuizHistoryPage from './pages/QuizHistoryPage';
@@ -19,7 +20,7 @@ import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
 
-// --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ/ΛΙΣΤΩΝ (Από την ομάδα σου) ---
+// --- IMPORTS CATEGORIES/LISTS ---
 import MovieCategories from './components/MovieCategories';
 import GenreMovies from './components/GenreMovies';
 import ActorMovies from './components/ActorMovies';
@@ -29,10 +30,6 @@ import YearMovies from './components/YearMovies';
 // --- CSS ---
 import './App.css';
 
-
-// --- LAYOUT COMPONENT ---
-// Αυτό το component περιέχει τη λογική του Μενού και το Header/Footer
-// Εμφανίζεται ΜΟΝΟ αφού ο χρήστης πατήσει "Είσοδος"
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -51,7 +48,6 @@ const AppLayout = () => {
 
       {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
-      {/* Το Outlet είναι το σημείο που "φορτώνουν" οι σελίδες (Home, Quiz, Movies κλπ) */}
       <Outlet />
 
       <Footer />
@@ -59,42 +55,36 @@ const AppLayout = () => {
   );
 };
 
-
 const App = () => {
   return (
     <Routes>
-
-      {/* 1. Η ΣΕΛΙΔΑ ΚΑΛΩΣΟΡΙΣΜΑΤΟΣ (Χωρίς Header/Footer) */}
-      {/* Είναι η πρώτη σελίδα που βλέπει ο χρήστης στο "/" */}
+      {/* 1. WELCOME PAGE */}
       <Route path="/" element={<WelcomePage />} />
 
-
-      {/* 2. Η ΚΥΡΙΩΣ ΕΦΑΡΜΟΓΗ (Με Header/Footer) */}
-      {/* Όλες οι παρακάτω σελίδες κληρονομούν το Layout */}
+      {/* 2. MAIN APP */}
       <Route element={<AppLayout />}>
 
-        {/* Η Αρχική σελίδα της εφαρμογής είναι πλέον το /browse */}
         <Route path="/browse" element={<HomePage />} />
 
-        {/* ΛΕΠΤΟΜΕΡΕΙΕΣ ΤΑΙΝΙΑΣ */}
+        {/* MOVIE DETAILS */}
         <Route path="/movie/:id" element={<MovieDetailPage />} />
 
-        {/* ΚΑΤΗΓΟΡΙΕΣ (Συγχρονισμένο με το SideMenu που φτιάξαμε) */}
-        {/* Σημείωση: Στο SideMenu βάλαμε /category/:id, εδώ το προσαρμόζω για να ταιριάζει */}
+        {/* --- FAVORITES ROUTE --- */}
+        <Route path="/favorites" element={<FavoritesPage />} />
+
+        {/* CATEGORIES */}
         <Route path="/movies" element={<MovieCategories />} />
-        {/* Αν το SideMenu στέλνει στο /category/:id, άλλαξε το path παρακάτω σε "/category/:genreId" */}
         <Route path="/category/:genreId" element={<GenreMovies />} />
-        {/* Κρατάμε και το παλιό για συμβατότητα αν χρειαστεί */}
         <Route path="/movies/:genreId" element={<GenreMovies />} />
 
-        {/* ΗΘΟΠΟΙΟΙ & ΣΚΗΝΟΘΕΤΕΣ */}
+        {/* ACTORS & DIRECTORS */}
         <Route path="/actors/:actorId" element={<ActorMovies />} />
         <Route path="/directors/:directorId" element={<DirectorMovies />} />
 
-        {/* ΧΡΟΝΟΛΟΓΙΑ */}
+        {/* YEAR */}
         <Route path="/year/:year" element={<YearMovies />} />
 
-        {/* ΑΝΑΖΗΤΗΣΗ */}
+        {/* SEARCH */}
         <Route path="/search" element={<SearchResultsPage />} />
 
         {/* QUIZ SYSTEM */}
@@ -103,7 +93,6 @@ const App = () => {
         <Route path="/history" element={<QuizHistoryPage />} />
 
       </Route>
-
     </Routes>
   );
 };

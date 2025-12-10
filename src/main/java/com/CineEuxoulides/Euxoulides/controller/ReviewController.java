@@ -99,4 +99,18 @@ public class ReviewController {
         Reply reply = reviewService.addReply(userId, username, reviewId, content);
         return ResponseEntity.ok(reply);
     }
+
+    // --- 6. Delete Review ---
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<String> deleteReview(@PathVariable Long reviewId, @RequestParam String userId) {
+        reviewService.deleteReview(reviewId, userId);
+        return ResponseEntity.ok("Review deleted");
+    }
+
+    // --- 7. Delete Reply ---
+    @DeleteMapping("/reply/{replyId}")
+    public ResponseEntity<String> deleteReply(@PathVariable Long replyId, @RequestParam String userId) {
+        reviewService.deleteReply(replyId, userId);
+        return ResponseEntity.ok("Reply deleted");
+    }
 }

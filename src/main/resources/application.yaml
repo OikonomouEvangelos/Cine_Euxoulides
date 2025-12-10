@@ -27,4 +27,4 @@ spring:
 # Αυτό μένει όπως το φτιάξαμε (με το Env Variable ή hardcoded αν το προτιμάτε)
 tmdb:
   api:
-    key: ${TMDB_API_KEY}
+    key: 12345

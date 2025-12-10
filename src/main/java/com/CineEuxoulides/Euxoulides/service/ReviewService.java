@@ -120,4 +120,35 @@ public class ReviewService {
 
         reviewRepository.save(review);
     }
+
+    // --- 4. Delete Review (Cascades to Replies) ---
+    @Transactional
+    public void deleteReview(Long reviewId, String userId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (!review.getUserId().equals(userId)) {
+            throw new RuntimeException("You can only delete your own review");
+        }
+
+        reviewRepository.delete(review);
+    }
+
+    // --- 5. Delete Reply ---
+    @Transactional
+    public void deleteReply(Long replyId, String userId) {
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new RuntimeException("Reply not found"));
+
+        if (!reply.getUserId().equals(userId)) {
+            throw new RuntimeException("You can only delete your own reply");
+        }
+
+        Review parent = reply.getReview();
+        replyRepository.delete(reply);
+
+        // Update parent stats
+        parent.setReplyCount(parent.getReplyCount() - 1);
+        reviewRepository.save(parent);
+    }
 }
