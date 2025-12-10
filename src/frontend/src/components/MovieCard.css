@@ -1,0 +1,76 @@
+/* ΓΕΝΙΚΟ PAGE (αν θες να το κρατήσεις και αλλού) */
+.movies-page {
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.movies-title {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 30px;
+  padding-left: 16px;
+  border-left: 5px solid #fbbf24;
+}
+
+/* Όλα τα links μέσα στο grid να φαίνονται σαν κάρτες, όχι σαν μπλε links */
+.movies-grid a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* GRID (ΚΟΙΝΟ ΠΑΝΤΟΥ) */
+.movies-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+/* CARD (ΚΟΙΝΗ ΠΑΝΤΟΥ) */
+.movie-card {
+  width: 220px;
+  height: 430px;               /* ΣΤΑΘΕΡΟ ύψος για όλες τις κάρτες */
+  background-color: #222;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;               /* Για να μοιράζεται χώρος εικόνα/κείμενο */
+  flex-direction: column;
+}
+
+.movie-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+  cursor: pointer;
+}
+
+.movie-poster {
+  width: 100%;
+  flex: 1;                     /* Πιάνει όλο το πάνω μέρος της κάρτας */
+  height: 330px;               /* backup, για να είναι όλες ίδιες */
+  object-fit: cover;
+  background-color: #000;      /* αν δεν φορτώσει η εικόνα, να φαίνεται μαύρο */
+}
+
+.movie-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.movie-info h3 {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: white;
+  text-decoration: none;       /* να ΜΗΝ είναι ποτέ υπογραμμισμένος ο τίτλος */
+}
+
+.movie-rating {
+  color: #fbbf24;
+  font-weight: bold;
+  margin: 0;
+}

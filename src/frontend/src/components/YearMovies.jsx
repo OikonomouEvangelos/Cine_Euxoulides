@@ -1,7 +1,7 @@
 // src/frontend/src/components/YearMovies.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import './TrendingSection.css';
+import "../components/MovieCard.css";
 
 const YearMovies = () => {
   const { year } = useParams(); // Παίρνουμε το έτος από το URL
@@ -37,24 +37,31 @@ const YearMovies = () => {
   if (loading) return <div className="trending-section" style={{color:'white', padding:'20px'}}>Φόρτωση...</div>;
 
   return (
-    <div className="trending-section" style={{ minHeight: '100vh' }}>
+    <div className="search-page" style={{ minHeight: '100vh' }}>
       <div style={{ padding: '20px' }}>
         <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none' }}>← Πίσω στην Αρχική</Link>
       </div>
 
       <h2 style={{ paddingLeft: '20px' }}>Ταινίες του <span style={{color: '#fbbf24'}}>{year}</span></h2>
 
-      <div className="movies-row" style={{ flexWrap: 'wrap', justifyContent: 'center', overflow: 'visible' }}>
+      <div className="movies-grid">
         {movies.map((movie) => (
           <Link to={`/movie/${movie.id}`} key={movie.id} className="movie-card-link">
-            <div className="movie-card" style={{ marginBottom: '30px', margin: '15px' }}>
+            <div className="movie-card">
               <img
-                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
+                src={
+                  movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w342${movie.poster_path}`
+                    : 'https://via.placeholder.com/342x513'
+                }
                 alt={movie.title} className="movie-poster"
               />
               <div className="movie-info">
                 <h3>{movie.title}</h3>
-                <p>⭐️ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}</p>
+                <p className="movie-rating">
+                  ⭐ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}
+                </p>
+
               </div>
             </div>
           </Link>

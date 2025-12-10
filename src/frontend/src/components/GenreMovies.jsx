@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import './TrendingSection.css';
 import SearchBar from './SearchBar'; // Βεβαιώσου ότι είναι στον ίδιο φάκελο
-import './MovieRow.css';
+import './MovieCard.css';
 
 const GenreMovies = () => {
   const { genreId } = useParams();
@@ -25,7 +24,7 @@ const GenreMovies = () => {
   }, [genreId]);
 
   return (
-    <div className="trending-section" style={{ minHeight: '100vh', paddingTop: '20px' }}>
+    <div className="search-page" style={{ minHeight: '100vh', paddingTop: '20px' }}>
 
       {/* --- HEADER TOOLBAR (Back Button + Search) --- */}
       <div style={{
@@ -60,17 +59,19 @@ const GenreMovies = () => {
       <h2 style={{ paddingLeft: '40px', color: 'white' }}>Ταινίες Κατηγορίας</h2>
 
       {/* GRID ΤΑΙΝΙΩΝ */}
-      <div className="movies-row" style={{ flexWrap: 'wrap', justifyContent: 'center', overflow: 'visible' }}>
+      <div className="movies-grid">
         {movies.map((movie) => (
           <Link to={`/movie/${movie.id}`} key={movie.id} className="movie-card-link">
-            <div className="movie-card" style={{ marginBottom: '30px', margin: '15px' }}>
+            <div className="movie-card">
               <img
-                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
+                src={movie.poster_path ? `https://image.tmdb.org/t/p/w342${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
                 alt={movie.title} className="movie-poster"
               />
               <div className="movie-info">
                 <h3>{movie.title}</h3>
-                <p>⭐️ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}</p>
+                <p className="movie-rating">
+                  ⭐ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}
+                </p>
               </div>
             </div>
           </Link>
