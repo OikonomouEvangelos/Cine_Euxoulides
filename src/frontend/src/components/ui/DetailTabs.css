@@ -2,30 +2,42 @@
 
 .detail-tabs-nav {
     display: flex;
-    gap: 15px;
-    padding: 20px 40px;
+    gap: 30px;
+    padding: 0 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
 }
 
 .tab-btn {
-    /* ΕΠΙΘΥΜΗΤΑ ΣΤΥΛ: */
-    color: white; /* ΧΡΩΜΑ ΚΕΙΜΕΝΟΥ: Άσπρο */
-    background-color: rgba(255, 255, 255, 0.1); /* ΧΡΩΜΑ ΦΟΝΤΟΥ: Διαφανές Άσπρο */
-
-    /* Ρυθμίσεις Browser Reset: */
+    background: transparent;
     border: none;
-    padding: 10px 15px;
+    color: #aab;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 15px 0;
     cursor: pointer;
-    font-size: 1em;
-    border-radius: 5px;
-    transition: background-color 0.2s ease;
+    position: relative;
+    font-family: inherit;
+    transition: color 0.2s;
 }
 
 .tab-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
-/* Styling για το επιλεγμένο tab (active) */
 .tab-btn.active {
-    background-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
     font-weight: bold;
+}
+
+/* Green underline for active tab */
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #00e054;
+    box-shadow: 0 -2px 5px rgba(0, 224, 84, 0.4);
 }

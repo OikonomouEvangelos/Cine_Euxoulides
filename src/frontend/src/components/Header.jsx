@@ -1,11 +1,13 @@
 // src/components/Header.jsx
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // <--- Import Link
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
+// Υποθετικά components/εικονίδια
 const MenuIcon = () => <div className="icon menu-icon">☰</div>;
 const HeartIcon = () => <div className="icon heart-icon">Favorites</div>;
+
 
 const AvatarIcon = ({ imageUrl, initial }) => (
   <div className="icon avatar-icon">
@@ -17,8 +19,36 @@ const AvatarIcon = ({ imageUrl, initial }) => (
   </div>
 );
 
+// ΑΛΛΑΓΗ 1: Το Header τώρα δέχεται το onMenuToggle ως prop
 const Header = ({ onMenuToggle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // ΔΙΑΓΡΑΦΗ: Η handleMenuClick δεν χρειάζεται πλέον, καθώς το App.jsx την παρέχει
+  // const handleMenuClick = () => {
+  //   console.log('Άνοιγμα Side Menu...');
+  // };
+
+  const navigate = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+
+    // 🧹 Καθαρίζουμε ό,τι αφορά τον χρήστη
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userFirstName');
+
+    // Κλείνουμε το dropdown
+    setIsDropdownOpen(false);
+
+    // Πηγαίνουμε πίσω στην σελίδα welcome/login
+    navigate('/');
+  };
+
+
+  const handleFavoritesClick = () => {
+    console.log('Προβολή Αγαπημένων...');
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -26,42 +56,38 @@ const Header = ({ onMenuToggle }) => {
 
   return (
     <header className="app-header">
-      {/* 1. Left: Menu Button */}
+      {/* 1. Αριστερό Μέρος: Κουμπί Side Menu */}
       <button
         className="header-button menu-button"
+        // ΑΛΛΑΓΗ 2: Αντικατάσταση της handleMenuClick με το onMenuToggle prop
         onClick={onMenuToggle}
-        aria-label="Open navigation menu"
+        aria-label="Άνοιγμα μενού πλοήγησης"
       >
         <MenuIcon />
       </button>
 
-      {/* 2. Center: Logo */}
+      {/* 2. Κέντρο: Logo της Εφαρμογής */}
       <div className="header-logo">
-        {/* Link Logo to Home */}
-        <Link to="/browse" style={{ textDecoration: 'none', color: 'inherit' }}>
-            CineEuxoulides
-        </Link>
+        CineEuxoulides
       </div>
 
-      {/* 3. Right: Favorites & Avatar */}
+      {/* 3. Δεξιό Μέρος: Αγαπημένα και Avatar */}
       <div className="right-group">
-
-        {/* --- FAVORITES BUTTON CHANGED TO LINK --- */}
-        <Link
-          to="/favorites"
+        {/* Κουμπί Αγαπημένα */}
+        <button
           className="header-button favorites-button"
-          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}
-          aria-label="Favorites"
+          onClick={handleFavoritesClick}
+          aria-label="Αγαπημένα"
         >
           <HeartIcon />
-        </Link>
+        </button>
 
-        {/* Avatar Button */}
+        {/* Κουμπί Avatar Χρήστη */}
         <div className="user-avatar-container">
           <button
             className="header-button avatar-button"
             onClick={toggleDropdown}
-            aria-label="User menu"
+            aria-label="Μενού χρήστη"
           >
             <AvatarIcon initial="U" />
           </button>
@@ -69,9 +95,9 @@ const Header = ({ onMenuToggle }) => {
           {/* Dropdown Menu */}
           {isDropdownOpen && (
             <div className="dropdown-menu">
-              <a href="#profile">Profile</a>
-              <a href="#account">Account</a>
-              <a href="#logout">Logout</a>
+              <a href="#profile">Προφίλ</a>
+              <a href="#account">Λογαριασμός</a>
+              <a href="#logout" onClick={handleLogout}>Αποσύνδεση</a>
             </div>
           )}
         </div>

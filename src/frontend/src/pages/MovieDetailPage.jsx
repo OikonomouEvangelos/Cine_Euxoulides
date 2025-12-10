@@ -1,178 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+
+import DetailTabs from '../components/ui/DetailTabs';
+import RatingSection from '../components/ui/RatingSection';
 import './MovieDetailPage.css';
-import ReviewsList from '../components/ReviewsList';
-import StarRating from '../components/StarRating';
+import SearchBar from '../components/SearchBar';
+
 
 const MovieDetailPage = () => {
     const { id } = useParams();
-    const currentMovieId = id || 550;
-    const currentUserId = "user123";
 
-    // --- STATE ---
-    const [myRating, setMyRating] = useState(0);
-    const [myComment, setMyComment] = useState("");
-    const [existingReviewId, setExistingReviewId] = useState(null);
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [movie, setMovie] = useState(null);
+    const [credits, setCredits] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // --- FAVORITE STATE ---
-    const [isFavorite, setIsFavorite] = useState(false);
+    // CHANGE: Default tab is now 'cast' since Overview is static
+    const [activeTab, setActiveTab] = useState('cast');
 
-    // Static Movie Data
-    const movie = {
-        title: "Movie Title",
-        imageUrl: "https://via.placeholder.com/1200x500?text=Movie+Poster+Background",
-        description: "This is a short description of the movie, featuring key plot points and reviews. Duration, year, and genre can be displayed here.",
-        tagline: "A story that will captivate you."
-    };
-
-    // --- LOAD DATA ---
     useEffect(() => {
-        // 1. Load Review
-        fetch(`http://localhost:8080/api/reviews/movie/${currentMovieId}`)
-            .then(res => res.json())
-            .then(data => {
-                const reviews = data.content || [];
-                const myReview = reviews.find(r => r.userId === currentUserId);
-                if (myReview) {
-                    setMyRating(myReview.rating || 0);
-                    setMyComment(myReview.comment || "");
-                    setExistingReviewId(myReview.id);
-                }
-            })
-            .catch(err => console.error(err));
+        const fetchData = async () => {
+            try {
+                const movieRes = await fetch(`/api/movie/${id}`);
+                if (!movieRes.ok) throw new Error("Could not fetch movie.");
+                const movieData = await movieRes.json();
+                setMovie(movieData);
 
-        // 2. Load Favorite Status
-        fetch(`http://localhost:8080/api/favorites/check?userId=${currentUserId}&movieId=${currentMovieId}`)
-            .then(res => res.json())
-            .then(isFav => setIsFavorite(isFav))
-            .catch(err => console.error("Fav check failed:", err));
-
-    }, [currentMovieId, refreshKey]);
-
-    // --- TOGGLE FAVORITE ---
-    const handleToggleFavorite = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/api/favorites/toggle", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: currentUserId, movieId: Number(currentMovieId) })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setIsFavorite(data.isFavorite); // Update UI based on backend response
+                const credsRes = await fetch(`/api/movie/${id}/credits`);
+                if (credsRes.ok) setCredits(await credsRes.json());
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            console.error("Toggle failed:", error);
-        }
-    };
-
-    // --- SUBMIT REVIEW ---
-    const handleSubmit = async () => {
-        if (myRating === 0 && myComment.trim() === "") {
-            alert("Please provide a rating or a comment!");
-            return;
-        }
-        const payload = {
-            userId: currentUserId,
-            username: "Guest User",
-            movieId: Number(currentMovieId),
-            rating: myRating,
-            comment: myComment
         };
-        try {
-            const response = await fetch("http://localhost:8080/api/reviews/add", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            if (response.ok) {
-                alert("Review saved successfully!");
-                setRefreshKey(old => old + 1);
-            } else {
-                alert("Failed.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
+        fetchData();
+    }, [id]);
+
+    if (loading) return <div className="movie-detail-container" style={{padding:'100px', textAlign:'center'}}>Loading...</div>;
+    if (error || !movie) return <div className="movie-detail-container">Error: {error}</div>;
+
+    // Helpers
+    const backdropUrl = movie.backdrop_path
+        ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+        : '';
+    const posterUrl = movie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : 'https://via.placeholder.com/230x345';
+    const year = movie.release_date ? movie.release_date.split('-')[0] : '';
+
+    // Tab Content Logic
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case 'cast':
+                return (
+                    <div className="cast-scroller">
+                        {credits?.cast?.slice(0, 15).map(actor => (
+                            <div key={actor.id} className="actor-card">
+                                <img
+                                    src={actor.profile_path ? `https://image.tmdb.org/t/p/w200${actor.profile_path}` : 'https://via.placeholder.com/90x135'}
+                                    alt={actor.name}
+                                />
+                                <p className="actor-name">{actor.name}</p>
+                                <p className="actor-char">{actor.character}</p>
+                            </div>
+                        ))}
+                    </div>
+                );
+            case 'details':
+                            return (
+                                <div className="tech-details-grid">
+
+                                    {/* Left Side: Text Info */}
+                                    <div className="tech-text">
+                                        <p><strong>Original Title:</strong> {movie.original_title}</p>
+                                        <p><strong>Status:</strong> {movie.status}</p>
+                                        <p><strong>Release Date:</strong> {movie.release_date}</p>
+                                        <p><strong>Original Language:</strong> {movie.original_language?.toUpperCase()}</p>
+                                    </div>
+
+                                    {/* Right Side: The Rating Chart */}
+                                    <div className="rating-chart-container">
+                                        <h4 style={{marginTop:0, marginBottom:'15px', color:'white'}}>Rating Analysis</h4>
+
+                                        {/* Bar 1: User Score */}
+                                        <div className="chart-row">
+                                            <div className="chart-label">
+                                                <span>User Score</span>
+                                                <span>{movie.vote_average.toFixed(1)} / 10</span>
+                                            </div>
+                                            <div className="chart-track">
+                                                <div
+                                                    className="chart-fill score-fill"
+                                                    style={{ width: `${movie.vote_average * 10}%` }}
+                                                ></div>
+                                            </div>
+                                            <small style={{color:'#667', fontSize:'0.7rem'}}>{movie.vote_count.toLocaleString()} votes</small>
+                                        </div>
+
+                                        {/* Bar 2: Popularity (Normalized) */}
+                                        {/* We cap popularity visual at 100 for the bar, though it can go higher */}
+                                        <div className="chart-row" style={{marginTop:'15px'}}>
+                                            <div className="chart-label">
+                                                <span>Trend / Popularity</span>
+                                                <span>{Math.round(movie.popularity)}</span>
+                                            </div>
+                                            <div className="chart-track">
+                                                <div
+                                                    className="chart-fill pop-fill"
+                                                    style={{ width: `${Math.min(movie.popularity, 100)}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            );
         }
     };
 
     return (
         <div className="movie-detail-container">
-            {/* Hero */}
-            <section className="movie-hero-section">
-                <div className="hero-background" style={{ backgroundImage: `url(${movie.imageUrl})` }}>
-                    <div className="hero-content">
-                        <h1>{movie.title}</h1>
-                        <p className="movie-tagline">{movie.description}</p>
+            <div className="movie-top-toolbar">
+                            <Link to="/browse" className="back-btn"> {/* Κράτησα το back-btn για να μην χαλάσει το στυλ σου */}
+                                &larr; Back to Browse
+                            </Link>
 
-                        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                            <button className="btn-trailer">Watch Trailer</button>
-
-                            {/* HEART BUTTON */}
-                            <button
-                                className={`btn-favorite ${isFavorite ? 'active' : ''}`}
-                                onClick={handleToggleFavorite}
-                                title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-                            >
-                                ❤
-                            </button>
+                            <div className="movie-page-search">
+                                <SearchBar />
+                            </div>
                         </div>
+            <div className="backdrop-layer" style={{ backgroundImage: `url(${backdropUrl})` }} />
 
+            <div className="content-wrapper">
+
+                {/* --- LEFT COLUMN: POSTER --- */}
+                <div className="poster-column">
+                    <img src={posterUrl} alt={movie.title} className="poster-img" />
+
+                    <div className="interaction-panel" style={{textAlign:'center'}}>
+                        <small style={{display:'block', marginBottom:'5px', color:'#00e054'}}>RATE THIS FILM</small>
+                        <RatingSection movieId={movie.id} initialRating={movie.vote_average} />
                     </div>
-                </div>
-            </section>
 
-            {/* Content */}
-            <section className="interactive-content">
-                <div className="rating-column">
-                   <div style={{ padding: '20px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                        <h3 style={{ marginTop: 0, borderBottom: '1px solid rgba(255,255,255,0.3)', paddingBottom: '10px' }}>
-                            {existingReviewId ? "Your Rating (Click to Change)" : "Rate this movie"}
-                        </h3>
-                        <div style={{ marginTop: '10px' }}>
-                            <StarRating
-                                rating={myRating}
-                                onRatingChange={(newRating) => setMyRating(newRating)}
-                                editable={true}
-                            />
+                    <button className="btn-trailer" onClick={() => alert("Trailer coming soon")}>
+                        ▶ Trailer
+                    </button>
+                </div>
+
+                {/* --- RIGHT COLUMN: INFO & TABS --- */}
+                <div className="info-column">
+
+                    <h1 className="movie-title">
+                        {movie.title} <span className="year">{year}</span>
+                    </h1>
+
+                    <div className="director-line">
+                        <span>Directed by</span> Unknown
+                    </div>
+
+                    {movie.tagline && <div className="tagline">{movie.tagline}</div>}
+
+                    {/* 1. STATIC SYNOPSIS (Always visible now) */}
+                    <div className="synopsis">
+                        {movie.overview}
+                    </div>
+
+                    {/* 2. TABS BELOW SYNOPSIS */}
+                    <div style={{marginTop: '40px'}}>
+                        <DetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
+                        <div className="tab-content-area" style={{marginTop:'15px'}}>
+                            {renderTabContent()}
                         </div>
-                        <p style={{ fontSize: '0.9rem', color: '#ccc', marginTop: '5px' }}>
-                            {myRating > 0 ? `Selected: ${myRating}` : "Tap stars to rate"}
-                        </p>
-                   </div>
-                </div>
+                    </div>
 
-                <div className="comment-column">
-                    <section className="comment-section">
-                        <h3 style={{ marginTop: 0, marginBottom: '15px' }}>
-                            {existingReviewId ? "Edit Your Review" : "Leave a Comment"}
-                        </h3>
-                        <textarea
-                            value={myComment}
-                            onChange={(e) => setMyComment(e.target.value)}
-                            placeholder="Write your review here..."
-                            rows="4"
-                        ></textarea>
-                        <button className="btn-secondary" onClick={handleSubmit}>
-                            {existingReviewId ? "Update Review" : "Submit Review"}
-                        </button>
-                    </section>
-                    <ReviewsList key={refreshKey} movieId={currentMovieId} refreshTrigger={refreshKey} />
                 </div>
-            </section>
-
-            {/* Tabs */}
-            <div className="detail-tabs-nav">
-                <div style={{ display: 'flex', marginBottom: '20px' }}>
-                    <button className="tab-btn active">Cast</button>
-                    <button className="tab-btn">Crew</button>
-                    <button className="tab-btn">Details</button>
-                </div>
-            </div>
-            <div className="tab-content">
-                <p>Cast, Crew, and Details data will be loaded here based on the selected tab.</p>
             </div>
         </div>
     );

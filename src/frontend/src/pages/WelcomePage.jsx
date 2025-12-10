@@ -3,11 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './WelcomePage.css';
+import axios from 'axios';
+
 
 const WelcomePage = () => {
   const navigate = useNavigate();
   const [isSignIn, setIsSignIn] = useState(true);
   const [posters, setPosters] = useState([]);
+  const [firstName, setFirstName] = useState('');   // Όνομα
+  const [lastName, setLastName] = useState('');     // Επώνυμο
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+
+
 
   // Fetch Posters για το Background
   useEffect(() => {
@@ -23,10 +32,58 @@ const WelcomePage = () => {
       .catch(err => console.error(err));
   }, []);
 
-  const handleAuth = (e) => {
+  const handleAuth = async (e) => {
     e.preventDefault();
-    navigate('/browse');
+
+    try {
+      if (isSignIn) {
+        // LOGIN
+        const response = await axios.post('http://localhost:8080/api/auth/login', {
+          email,
+          password
+        });
+
+        console.log('Login success:', response.data);
+        const data = response.data;
+
+        // Αποθηκεύουμε το token & λίγα στοιχεία χρήστη
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userEmail', data.email);
+          localStorage.setItem('userFirstName', data.firstName);
+        }
+
+        navigate('/browse');
+
+      } else {
+        // REGISTER
+        const response = await axios.post('http://localhost:8080/api/auth/register', {
+          firstName,
+          lastName,
+          email,
+          password
+        });
+
+        console.log('Register success:', response.data);
+
+        const data = response.data;
+
+        // Αποθηκεύουμε το token & λίγα στοιχεία χρήστη
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userEmail', data.email);
+          localStorage.setItem('userFirstName', data.firstName);
+        }
+
+        navigate('/browse');
+      }
+
+    } catch (error) {
+      console.error('Auth error:', error);
+      alert('Λάθος στοιχεία ή πρόβλημα σύνδεσης');
+    }
   };
+
 
   const handleGoogleLogin = () => {
     navigate('/browse');
@@ -72,14 +129,53 @@ const WelcomePage = () => {
       <div className="auth-box">
         <h2>{isSignIn ? 'Σύνδεση' : 'Εγγραφή'}</h2>
 
+        {!isSignIn && (
+          <>
+            {/* Πεδίο Όνομα */}
+            <div className="input-group">
+              <input
+                type="text"
+                required
+                placeholder=" "
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+              <label>Όνομα</label>
+            </div>
+
+            {/* Πεδίο Επώνυμο */}
+            <div className="input-group">
+              <input
+                type="text"
+                required
+                placeholder=" "
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+              <label>Επώνυμο</label>
+            </div>
+          </>
+        )}
+
+
         <form onSubmit={handleAuth}>
           <div className="input-group">
-            <input type="email" required placeholder=" " />
+            <input type="email"
+            required
+            placeholder=" "
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            />
             <label>Email</label>
           </div>
 
           <div className="input-group">
-            <input type="password" required placeholder=" " />
+            <input type="password"
+            required
+            placeholder=" "
+             value={password}
+             onChange={(e) => setPassword(e.target.value)}
+             />
             <label>Κωδικός πρόσβασης</label>
           </div>
 

@@ -2,55 +2,94 @@
 
 .trending-section {
   padding: 20px;
-  min-height: 100vh; /* Να πιάνει όλο το ύψος */
-  /* background-color: #1a1a1a; Αν θες μόνιμο χρώμα φόντου */
+  min-height: 100vh;
 }
 
 .trending-section h2 {
   color: white;
   margin-bottom: 20px;
   padding-left: 20px;
-  border-left: 5px solid #fbbf24; /* Ωραία κίτρινη γραμμή δίπλα στον τίτλο */
+  border-left: 5px solid #fbbf24;
 }
 
-/* --- ΤΟ ΠΛΕΓΜΑ (GRID) --- */
-/* Αυτό είναι που έλειπε ή είχε χαλάσει */
+/* --- GRID --- */
 .movies-row {
   display: flex;
-  flex-wrap: wrap;        /* Επιτρέπει στις ταινίες να κατεβαίνουν σε επόμενη γραμμή */
-  gap: 30px;              /* Απόσταση μεταξύ των καρτών */
-  justify-content: center; /* Κεντράρισμα στη σελίδα */
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
   padding: 20px 0;
 }
 
-/* --- Η ΚΑΡΤΑ --- */
 .movie-card-link {
   text-decoration: none;
   color: white;
-  /* ΑΦΑΙΡΕΣΑΜΕ το position: absolute που δημιουργούσε το πρόβλημα */
+  display: block; /* Σημαντικό για το layout */
 }
 
+/* --- Η ΚΑΡΤΑ --- */
 .movie-card {
-  width: 220px;           /* Σταθερό πλάτος */
+  width: 220px;
   background-color: #222;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Σκιά για βάθος */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 100%;
+  position: relative; /* Απαραίτητο για να κάτσει το μπλε layer από πάνω */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
 }
 
-/* Εφέ όταν περνάς το ποντίκι */
+/* Όταν κάνεις hover, σηκώνουμε ελάχιστα την κάρτα */
 .movie-card:hover {
-  transform: translateY(-10px); /* Σηκώνεται λίγο προς τα πάνω */
-  box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4); /* Κίτρινη λάμψη */
+  transform: scale(1.02);
   cursor: pointer;
 }
 
 .movie-poster {
   width: 100%;
-  height: 330px;          /* Σταθερό ύψος εικόνας */
-  object-fit: cover;      /* Να γεμίζει χωρίς να παραμορφώνεται */
+  height: 330px;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- ΤΟ ΜΠΛΕ LAYER (OVERLAY) --- */
+.movie-overlay {
+  position: absolute; /* Κάθεται πάνω από την εικόνα */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  /* Μπλε χρώμα με διαφάνεια (Blue See-through) */
+  background-color: rgba(0, 48, 143, 0.75);
+
+  /* Κεντράρισμα περιεχομένου (των αστεριών) */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* Αόρατο αρχικά */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Εμφάνιση στο Hover */
+.movie-card:hover .movie-overlay {
+  opacity: 1;
+}
+
+/* Στυλ για τα αστέρια μέσα στο μπλε layer */
+.overlay-content {
+  color: #fbbf24;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover .overlay-content {
+  transform: translateY(0);
 }
 
 .movie-info {
@@ -60,14 +99,8 @@
 
 .movie-info h3 {
   font-size: 1rem;
-  margin: 0 0 10px 0;
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Τελιτσες (...) αν είναι μεγάλος ο τίτλος */
-}
-
-.movie-info p {
-  color: #fbbf24; /* Κίτρινο χρώμα για τη βαθμολογία */
-  font-weight: bold;
-  margin: 0;
+  text-overflow: ellipsis;
 }

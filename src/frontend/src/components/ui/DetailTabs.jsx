@@ -1,15 +1,13 @@
-// src/frontend/src/components/ui/DetailTabs.jsx
+import React from 'react';
 import './DetailTabs.css';
-import React, { useState } from 'react';
-// Θα χρειαστείτε styling στο DetailTabs.css
 
-const DetailTabs = () => {
-    const [activeTab, setActiveTab] = useState('cast'); // Cast, Crew, Details
+const DetailTabs = ({ activeTab, onTabChange }) => {
 
+    // REMOVED 'Overview' because it will be static text now
     const tabs = [
         { id: 'cast', label: 'Cast' },
-        { id: 'crew', label: 'Crew' },
-        { id: 'details', label: 'Details' },
+        { id: 'details', label: 'Tech Details' },
+        // You can add 'reviews' or 'crew' here later
     ];
 
     return (
@@ -18,7 +16,7 @@ const DetailTabs = () => {
                 <button
                     key={tab.id}
                     className={activeTab === tab.id ? 'tab-btn active' : 'tab-btn'}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => onTabChange(tab.id)}
                 >
                     {tab.label}
                 </button>

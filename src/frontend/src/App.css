@@ -171,3 +171,16 @@ main h1 {
      font-size: 3em;
  }
 }
+/* --- Γενικό Toolbar για σελίδες Κατηγοριών/Λιστών --- */
+.page-toolbar {
+  display: flex; /* Τα βάζει στην ίδια ευθεία */
+  justify-content: space-between; /* Σπρώχνει τα άκρα (αριστερά-δεξιά) */
+  align-items: center; /* Κεντράρισμα στον κάθετο άξονα */
+  padding: 20px 40px; /* Λίγο "αέρα" γύρω γύρω */
+  margin-bottom: 20px;
+}
+
+/* Το κουτί της αναζήτησης να μην είναι τεράστιο */
+.toolbar-search-box {
+  width: 300px; /* Σταθερό πλάτος για να φαίνεται ωραίο */
+}
