@@ -132,8 +132,7 @@
 
 /* --- 7. Back Button --- */
 .back-btn {
-    position: absolute;
-    top: 20px; left: 20px;
+    display: inline-block;
     z-index: 100;
     color: #99aabb;
     text-decoration: none;
@@ -252,4 +251,36 @@
         border-top: 1px solid #2c3440;
         padding-top: 20px;
     }
+}
+/* Το container που φτιάξαμε για το κουμπί και την μπάρα */
+.movie-top-toolbar {
+  display: flex;
+  justify-content: space-between; /* Το ένα αριστερά, το άλλο δεξιά */
+  align-items: center;
+  padding: 20px 40px; /* Λίγο περιθώριο */
+  position: relative;
+  z-index: 10; /* Για να είναι σίγουρα πάνω από την εικόνα */
+  width: 100%;                    /* Να πιάνει όλο το πλάτος */
+  box-sizing: border-box;
+}
+
+/* Στυλ για το κουμπί Back (αν δεν έχεις ήδη) */
+.back-button {
+  color: white;
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Περιορίζουμε λίγο το πλάτος της μπάρας σε αυτή τη σελίδα για να μην είναι τεράστια */
+.movie-page-search {
+    width: 100%;
+    max-width: 400px; /* Ρύθμισέ το όπως θες */
 }

@@ -1,7 +1,7 @@
 // src/frontend/src/components/DirectorMovies.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import './TrendingSection.css';
+import './MovieCard.css';
 
 const DirectorMovies = () => {
   const { directorId } = useParams();
@@ -47,27 +47,29 @@ const DirectorMovies = () => {
     fetchDirectorCredits();
   }, [directorId]);
 
-  if (loading) return <div className="trending-section" style={{color:'white', padding:'20px'}}>Φόρτωση...</div>;
+    if (loading) return <div className="search-page" style={{color:'white', padding:'20px'}}>Φόρτωση...</div>;
 
   return (
-    <div className="trending-section" style={{ minHeight: '100vh' }}>
+    <div className="search-page" style={{ minHeight: '100vh' }}>
       <div style={{ padding: '20px' }}>
         <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none' }}>← Πίσω στην Αρχική</Link>
       </div>
 
       <h2 style={{ paddingLeft: '20px' }}>Σκηνοθεσία: <span style={{color: '#fbbf24'}}>{directorName}</span></h2>
 
-      <div className="movies-row" style={{ flexWrap: 'wrap', justifyContent: 'center', overflow: 'visible' }}>
+      <div className="movies-grid">
         {movies.map((movie) => (
           <Link to={`/movie/${movie.id}`} key={movie.id} className="movie-card-link">
-            <div className="movie-card" style={{ marginBottom: '30px', margin: '15px' }}>
+            <div className="movie-card">
               <img
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 alt={movie.title} className="movie-poster"
               />
               <div className="movie-info">
                 <h3>{movie.title}</h3>
-                <p>⭐️ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}</p>
+                <p className="movie-rating">
+                  ⭐ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}
+                </p>
               </div>
             </div>
           </Link>
