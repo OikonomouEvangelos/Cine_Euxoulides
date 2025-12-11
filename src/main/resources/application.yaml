@@ -17,14 +17,15 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
-
-
 server:
   port: 8080
 
 tmdb:
   api:
-
-    key: d166af459b20ece5176f1e92a23e3aa1
+    key: ${TMDB_API_KEY}
   base:
     url: https://api.themoviedb.org/3
+
+google:
+  client-id: 1005494521790-5tisd69v12pj2cqsjmfi7eru6lhhv7lh.apps.googleusercontent.com
+  key: d166af459b20ece5176f1e92a23e3aa1
