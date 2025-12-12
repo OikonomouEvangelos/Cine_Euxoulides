@@ -8,8 +8,6 @@ const StarRating = ({ rating, onRatingChange, editable = false }) => {
 
         const { left, width } = e.target.getBoundingClientRect();
         const percent = (e.clientX - left) / width;
-
-        // If mouse is on left 50%, it's X.5. Else it's X.0
         const isHalf = percent < 0.5;
         const value = isHalf ? index + 0.5 : index + 1;
         setHover(value);
@@ -30,19 +28,13 @@ const StarRating = ({ rating, onRatingChange, editable = false }) => {
                 const fullValue = i + 1;
                 const halfValue = i + 0.5;
 
-                // Determine fill state
-                // 100% fill
                 let fill = '0%';
-                let color = '#e4e5e9'; // Grey
-
                 const effectiveRating = hover || rating;
 
                 if (effectiveRating >= fullValue) {
                     fill = '100%';
-                    color = '#ffc107'; // Yellow
                 } else if (effectiveRating >= halfValue) {
                     fill = '50%';
-                    color = '#ffc107';
                 }
 
                 return (
@@ -50,19 +42,17 @@ const StarRating = ({ rating, onRatingChange, editable = false }) => {
                         key={i}
                         style={{
                             cursor: editable ? 'pointer' : 'default',
-                            fontSize: '24px',
-                            marginRight: '2px',
+                            fontSize: '34px',
+                            marginRight: '4px',
                             position: 'relative',
-                            color: '#e4e5e9', // Background color of star
+                            color: '#4a5568',
                             display: 'inline-block'
                         }}
                         onMouseMove={(e) => handleMouseMove(e, i)}
                         onMouseLeave={() => setHover(0)}
                         onClick={(e) => handleClick(e, i)}
                     >
-                        {/* We render a grey star background, and a yellow star on top clipped */}
-                        <span style={{ color: '#e4e5e9' }}>★</span>
-
+                        <span style={{ color: '#4a5568' }}>★</span>
                         <span style={{
                             position: 'absolute',
                             left: 0,
@@ -70,7 +60,7 @@ const StarRating = ({ rating, onRatingChange, editable = false }) => {
                             width: fill,
                             overflow: 'hidden',
                             color: '#ffc107',
-                            pointerEvents: 'none' // Let clicks pass through to parent
+                            pointerEvents: 'none'
                         }}>
                             ★
                         </span>

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "favorites", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"userId", "movieId"}) // Prevents duplicates
+        @UniqueConstraint(columnNames = {"userId", "movieId"})
 })
 public class Favorite {
 
@@ -13,11 +13,13 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // CHANGED: Long -> String to match Database VARCHAR
     @Column(nullable = false)
     private String userId;
 
+    // CHANGED: Long -> String to match Database VARCHAR
     @Column(nullable = false)
-    private Long movieId;
+    private String movieId;
 
     private LocalDateTime addedAt;
 
@@ -25,7 +27,7 @@ public class Favorite {
         this.addedAt = LocalDateTime.now();
     }
 
-    public Favorite(String userId, Long movieId) {
+    public Favorite(String userId, String movieId) {
         this.userId = userId;
         this.movieId = movieId;
         this.addedAt = LocalDateTime.now();
@@ -33,6 +35,6 @@ public class Favorite {
 
     public Long getId() { return id; }
     public String getUserId() { return userId; }
-    public Long getMovieId() { return movieId; }
+    public String getMovieId() { return movieId; }
     public LocalDateTime getAddedAt() { return addedAt; }
 }

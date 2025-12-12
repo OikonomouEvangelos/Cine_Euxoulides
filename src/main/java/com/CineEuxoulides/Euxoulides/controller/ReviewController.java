@@ -1,9 +1,14 @@
 package com.CineEuxoulides.Euxoulides.controller;
 
+import com.CineEuxoulides.Euxoulides.dto.ReviewDTO;
 import com.CineEuxoulides.Euxoulides.model.Reply;
 import com.CineEuxoulides.Euxoulides.model.Review;
+import com.CineEuxoulides.Euxoulides.model.ReviewVote;
 import com.CineEuxoulides.Euxoulides.repository.ReviewRepository;
+import com.CineEuxoulides.Euxoulides.repository.ReviewVoteRepository;
 import com.CineEuxoulides.Euxoulides.service.ReviewService;
+import com.CineEuxoulides.Euxoulides.security.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,12 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reviews")
-@CrossOrigin(origins = "http://localhost:5173") // Allows your React Frontend to talk to this Backend
+@CrossOrigin("*")
 public class ReviewController {
 
     @Autowired
@@ -26,28 +32,59 @@ public class ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    // --- 1. Get Reviews for a Movie (The "Smart Feed") ---
-    @GetMapping("/movie/{movieId}")
-    public ResponseEntity<Page<Review>> getMovieReviews(
-            @PathVariable Long movieId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String currentUserId // Optional: to put user's own review at top
-    ) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Review> reviews;
+    @Autowired
+    private ReviewVoteRepository reviewVoteRepository;
 
-        if (currentUserId != null) {
-            reviews = reviewRepository.findByMovieIdAndUserIdNot(movieId, currentUserId, pageable);
-        } else {
-            reviews = reviewRepository.findByMovieId(movieId, pageable);
+    private Claims getClaimsFromHeader(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing Authorization header");
         }
-        return ResponseEntity.ok(reviews);
+        String token = authHeader.substring(7);
+        return JwtUtil.extractAllClaims(token);
     }
 
-    // --- 2. Get Statistics (For the Hover Box) ---
+    private String getUserIdAsString(Claims claims) {
+        return String.valueOf(claims.get("id"));
+    }
+
+    @GetMapping("/movie/{movieId}")
+    public ResponseEntity<Page<ReviewDTO>> getMovieReviews(
+            @PathVariable String movieId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestHeader(value = "Authorization", required = false) String authHeader
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviewsPage = reviewRepository.findByMovieId(movieId, pageable);
+        Page<ReviewDTO> dtoPage = reviewsPage.map(ReviewDTO::new);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ") && !dtoPage.isEmpty()) {
+            try {
+                Claims claims = getClaimsFromHeader(authHeader);
+                String currentUserId = getUserIdAsString(claims);
+
+                List<Long> reviewIds = reviewsPage.getContent().stream()
+                        .map(Review::getId)
+                        .collect(Collectors.toList());
+
+                if (!reviewIds.isEmpty()) {
+                    List<ReviewVote> myVotes = reviewVoteRepository.findByUserIdAndReviewIdIn(currentUserId, reviewIds);
+                    Map<Long, Integer> voteMap = myVotes.stream()
+                            .collect(Collectors.toMap(v -> v.getReview().getId(), ReviewVote::getVoteType));
+
+                    dtoPage.forEach(dto -> {
+                        if (voteMap.containsKey(dto.getId())) {
+                            dto.setCurrentUserVote(voteMap.get(dto.getId()));
+                        }
+                    });
+                }
+            } catch (Exception e) { }
+        }
+        return ResponseEntity.ok(dtoPage);
+    }
+
     @GetMapping("/movie/{movieId}/stats")
-    public ResponseEntity<Map<String, Object>> getMovieStats(@PathVariable Long movieId) {
+    public ResponseEntity<Map<String, Object>> getMovieStats(@PathVariable String movieId) {
         Double avgRating = reviewRepository.getAverageRating(movieId);
         Long totalRatings = reviewRepository.countRatings(movieId);
         Long totalComments = reviewRepository.countComments(movieId);
@@ -60,57 +97,120 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    // --- 3. Add or Update a Review ---
     @PostMapping("/add")
-    public ResponseEntity<Review> addReview(@RequestBody Map<String, Object> payload) {
-        String userId = (String) payload.get("userId");
-        String username = (String) payload.get("username");
-        Long movieId = ((Number) payload.get("movieId")).longValue();
+    public ResponseEntity<?> addReview(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, Object> payload
+    ) {
+        try {
+            Claims claims = getClaimsFromHeader(authHeader);
+            String userId = getUserIdAsString(claims);
+            String firstName = claims.get("firstName", String.class);
+            String lastName = claims.get("lastName", String.class);
+            String username = (firstName != null ? firstName : "User") + " " + (lastName != null ? lastName : "");
 
-        // Handle nullable rating/comment safely
-        Double rating = payload.get("rating") != null ? ((Number) payload.get("rating")).doubleValue() : null;
-        String comment = (String) payload.get("comment");
+            String movieId = String.valueOf(payload.get("movieId"));
+            Double rating = payload.get("rating") != null ? ((Number) payload.get("rating")).doubleValue() : null;
+            String comment = (String) payload.get("comment");
 
-        Review savedReview = reviewService.saveOrUpdateReview(userId, username, movieId, rating, comment);
-        return ResponseEntity.ok(savedReview);
+            Review savedReview = reviewService.saveOrUpdateReview(userId, username, movieId, rating, comment);
+            return ResponseEntity.ok(savedReview);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error adding review: " + e.getMessage());
+        }
     }
 
-    // --- 4. Vote on a Review (Like/Dislike) ---
     @PostMapping("/{reviewId}/vote")
     public ResponseEntity<String> voteOnReview(
             @PathVariable Long reviewId,
-            @RequestParam String userId,
-            @RequestParam int voteType // 1 for Like, -1 for Dislike
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam int voteType
     ) {
-        reviewService.voteOnReview(userId, reviewId, voteType);
-        return ResponseEntity.ok("Vote registered successfully");
+        try {
+            Claims claims = getClaimsFromHeader(authHeader);
+            String userId = getUserIdAsString(claims);
+
+            reviewService.voteOnReview(userId, reviewId, voteType);
+            return ResponseEntity.ok("Vote registered");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
-    // --- 5. Add a Reply ---
     @PostMapping("/{reviewId}/reply")
-    public ResponseEntity<Reply> addReply(
+    public ResponseEntity<?> addReply(
             @PathVariable Long reviewId,
+            @RequestHeader("Authorization") String authHeader,
             @RequestBody Map<String, String> payload
     ) {
-        String userId = payload.get("userId");
-        String username = payload.get("username");
-        String content = payload.get("content");
+        try {
+            Claims claims = getClaimsFromHeader(authHeader);
+            String userId = getUserIdAsString(claims);
+            String firstName = claims.get("firstName", String.class);
+            String lastName = claims.get("lastName", String.class);
+            String username = firstName + " " + lastName;
 
-        Reply reply = reviewService.addReply(userId, username, reviewId, content);
-        return ResponseEntity.ok(reply);
+            String content = payload.get("content");
+
+            Reply reply = reviewService.addReply(userId, username, reviewId, content);
+            return ResponseEntity.ok(reply);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
-    // --- 6. Delete Review ---
+    // --- NEW ENDPOINT: Edit Reply ---
+    @PutMapping("/reply/{replyId}")
+    public ResponseEntity<?> editReply(
+            @PathVariable Long replyId,
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, String> payload
+    ) {
+        try {
+            Claims claims = getClaimsFromHeader(authHeader);
+            String userId = getUserIdAsString(claims);
+            String content = payload.get("content");
+
+            Reply reply = reviewService.editReply(replyId, userId, content);
+            return ResponseEntity.ok(reply);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<String> deleteReview(@PathVariable Long reviewId, @RequestParam String userId) {
-        reviewService.deleteReview(reviewId, userId);
-        return ResponseEntity.ok("Review deleted");
+    public ResponseEntity<String> deleteReview(
+            @PathVariable Long reviewId,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        try {
+            Claims claims = getClaimsFromHeader(authHeader);
+            String userId = getUserIdAsString(claims);
+
+            reviewService.deleteReview(reviewId, userId);
+            return ResponseEntity.ok("Review deleted");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
-    // --- 7. Delete Reply ---
     @DeleteMapping("/reply/{replyId}")
-    public ResponseEntity<String> deleteReply(@PathVariable Long replyId, @RequestParam String userId) {
-        reviewService.deleteReply(replyId, userId);
-        return ResponseEntity.ok("Reply deleted");
+    public ResponseEntity<String> deleteReply(
+            @PathVariable Long replyId,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        try {
+            Claims claims = getClaimsFromHeader(authHeader);
+            String userId = getUserIdAsString(claims);
+
+            reviewService.deleteReply(replyId, userId);
+            return ResponseEntity.ok("Reply deleted");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 }

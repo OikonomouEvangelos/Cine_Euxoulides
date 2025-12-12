@@ -14,18 +14,18 @@ public class FavoriteService {
     @Autowired
     private FavoriteRepository favoriteRepository;
 
-    // Returns true if added, false if removed
     @Transactional
-    public boolean toggleFavorite(String userId, Long movieId) {
+    // CHANGED: Arguments are now String
+    public boolean toggleFavorite(String userId, String movieId) {
         Optional<Favorite> existing = favoriteRepository.findByUserIdAndMovieId(userId, movieId);
 
         if (existing.isPresent()) {
             favoriteRepository.delete(existing.get());
-            return false; // Removed
+            return false;
         } else {
             Favorite favorite = new Favorite(userId, movieId);
             favoriteRepository.save(favorite);
-            return true; // Added
+            return true;
         }
     }
 }

@@ -1,74 +1,48 @@
-package com.CineEuxoulides.Euxoulides.model;
+package com.CineEuxoulides.Euxoulides.dto;
 
-import jakarta.persistence.*;
+import com.CineEuxoulides.Euxoulides.model.Reply;
+import com.CineEuxoulides.Euxoulides.model.Review;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "reviews", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"userId", "movieId"})
-})
-public class Review {
+public class ReviewDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // CHANGED to String
-    @Column(nullable = false)
     private String userId;
-
-    @Column(nullable = false)
     private String username;
-
-    // CHANGED to String
-    @Column(nullable = false)
     private String movieId;
-
     private Double rating;
-
-    @Column(columnDefinition = "TEXT")
     private String comment;
-
-    @Column(nullable = false)
-    private boolean isEdited = false;
-
-    @Column(nullable = false, updatable = false)
+    private boolean isEdited;
     private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
+    private int likeCount;
+    private int dislikeCount;
+    private int replyCount;
+    private List<Reply> replies;
 
-    private int likeCount = 0;
-    private int dislikeCount = 0;
-    private int replyCount = 0;
+    // NEW FIELD: The logged-in user's vote (0 = none, 1 = like, -1 = dislike)
+    private int currentUserVote;
 
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replies = new ArrayList<>();
-
-    public Review() {}
-
-    public Review(String userId, String username, String movieId, Double rating, String comment) {
-        this.userId = userId;
-        this.username = username;
-        this.movieId = movieId;
-        this.rating = rating;
-        this.comment = comment;
+    public ReviewDTO(Review review) {
+        this.id = review.getId();
+        this.userId = review.getUserId();
+        this.username = review.getUsername();
+        this.movieId = review.getMovieId();
+        this.rating = review.getRating();
+        this.comment = review.getComment();
+        this.isEdited = review.isEdited();
+        this.createdAt = review.getCreatedAt();
+        this.updatedAt = review.getUpdatedAt();
+        this.likeCount = review.getLikeCount();
+        this.dislikeCount = review.getDislikeCount();
+        this.replyCount = review.getReplyCount();
+        this.replies = review.getReplies();
+        this.currentUserVote = 0; // Default
     }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.isEdited = false;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUserId() { return userId; }
@@ -82,8 +56,9 @@ public class Review {
     public String getComment() { return comment; }
     public void setComment(String comment) { this.comment = comment; }
     public boolean isEdited() { return isEdited; }
-    public void setEdited(boolean edited) { isEdited = edited; }
+    public void setEdited(boolean isEdited) { this.isEdited = isEdited; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     public int getLikeCount() { return likeCount; }
@@ -94,5 +69,7 @@ public class Review {
     public void setReplyCount(int replyCount) { this.replyCount = replyCount; }
     public List<Reply> getReplies() { return replies; }
     public void setReplies(List<Reply> replies) { this.replies = replies; }
-    public int getHeatScore() { return likeCount + dislikeCount + replyCount; }
+
+    public int getCurrentUserVote() { return currentUserVote; }
+    public void setCurrentUserVote(int currentUserVote) { this.currentUserVote = currentUserVote; }
 }

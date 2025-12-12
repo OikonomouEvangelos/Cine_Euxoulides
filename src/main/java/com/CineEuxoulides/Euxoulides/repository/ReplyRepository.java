@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
-    // Basic CRUD operations are handled automatically by JpaRepository
+    // No specific methods needed here, JpaRepository handles standard CRUD
 }

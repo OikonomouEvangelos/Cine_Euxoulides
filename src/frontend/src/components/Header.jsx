@@ -23,11 +23,6 @@ const AvatarIcon = ({ imageUrl, initial }) => (
 const Header = ({ onMenuToggle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // ΔΙΑΓΡΑΦΗ: Η handleMenuClick δεν χρειάζεται πλέον, καθώς το App.jsx την παρέχει
-  // const handleMenuClick = () => {
-  //   console.log('Άνοιγμα Side Menu...');
-  // };
-
   const navigate = useNavigate();
 
   const handleLogout = (e) => {
@@ -45,9 +40,9 @@ const Header = ({ onMenuToggle }) => {
     navigate('/');
   };
 
-
+  // --- ΑΛΛΑΓΗ: Πλοήγηση στα Favorites ---
   const handleFavoritesClick = () => {
-    console.log('Προβολή Αγαπημένων...');
+    navigate('/favorites');
   };
 
   const toggleDropdown = () => {

@@ -11,12 +11,10 @@ import java.util.Optional;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    // Check if a specific movie is favorited (for the Heart button)
-    boolean existsByUserIdAndMovieId(String userId, Long movieId);
+    // CHANGED: Arguments are now String
+    boolean existsByUserIdAndMovieId(String userId, String movieId);
 
-    // Find the record to delete it
-    Optional<Favorite> findByUserIdAndMovieId(String userId, Long movieId);
+    Optional<Favorite> findByUserIdAndMovieId(String userId, String movieId);
 
-    // Get list of favorites
     Page<Favorite> findByUserId(String userId, Pageable pageable);
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,75 +26,71 @@ public class ReviewService {
     @Autowired
     private ReplyRepository replyRepository;
 
-    // --- 1. Add or Update Review (The "Upsert" Logic) ---
     @Transactional
-    public Review saveOrUpdateReview(String userId, String username, Long movieId, Double rating, String comment) {
-        // Check if this user already reviewed this movie
+    public Review saveOrUpdateReview(String userId, String username, String movieId, Double rating, String comment) {
         Optional<Review> existing = reviewRepository.findByUserIdAndMovieId(userId, movieId);
 
         if (existing.isPresent()) {
             Review review = existing.get();
-            // Update fields
             if (rating != null) review.setRating(rating);
-
-            // Logic: Mark as edited only if the comment text actually changes
             if (comment != null && !comment.equals(review.getComment())) {
                 review.setComment(comment);
                 review.setEdited(true);
             } else if (comment != null) {
-                // If comment is same, just ensure it's set (in case it was null before)
                 review.setComment(comment);
             }
-
-            // Always update timestamp
             review.setUpdatedAt(LocalDateTime.now());
             return reviewRepository.save(review);
         } else {
-            // Create new Review
             Review newReview = new Review(userId, username, movieId, rating, comment);
             return reviewRepository.save(newReview);
         }
     }
 
-    // --- 2. Vote on a Review (Like/Dislike) ---
     @Transactional
-    public void voteOnReview(String userId, Long reviewId, int voteType) {
+    public synchronized void voteOnReview(String userId, Long reviewId, int voteType) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
 
-        // RULE: Block Self-Like
         if (review.getUserId().equals(userId)) {
             throw new RuntimeException("You cannot vote on your own review.");
         }
 
-        Optional<ReviewVote> existingVote = reviewVoteRepository.findByUserIdAndReviewId(userId, reviewId);
+        List<ReviewVote> existingVotes = reviewVoteRepository.findAllByUserIdAndReviewId(userId, reviewId);
 
-        if (existingVote.isPresent()) {
-            ReviewVote vote = existingVote.get();
+        boolean wasLike = false;
+        boolean wasDislike = false;
 
-            if (vote.getVoteType() == voteType) {
-                // User clicked the same button again -> Remove vote (Toggle Off)
-                reviewVoteRepository.delete(vote);
-                updateReviewCounts(review, -voteType, 0); // Remove the effect
-            } else {
-                // User changed vote (Like -> Dislike)
-                // 1. Remove old effect
-                updateReviewCounts(review, -vote.getVoteType(), 0);
-                // 2. Update vote
-                vote.setVoteType(voteType);
-                reviewVoteRepository.save(vote);
-                // 3. Add new effect
-                updateReviewCounts(review, voteType, 0);
+        // Cleanup existing votes
+        for (ReviewVote vote : existingVotes) {
+            if (vote.getVoteType() == 1) {
+                wasLike = true;
+                review.setLikeCount(Math.max(0, review.getLikeCount() - 1));
+            } else if (vote.getVoteType() == -1) {
+                wasDislike = true;
+                review.setDislikeCount(Math.max(0, review.getDislikeCount() - 1));
             }
-        } else {
-            // New Vote
+            reviewVoteRepository.delete(vote);
+        }
+        reviewVoteRepository.flush();
+
+        boolean shouldAdd = true;
+        if (voteType == 1 && wasLike) shouldAdd = false;
+        if (voteType == -1 && wasDislike) shouldAdd = false;
+
+        if (shouldAdd) {
             ReviewVote newVote = new ReviewVote(review, userId, voteType);
             reviewVoteRepository.save(newVote);
-            updateReviewCounts(review, voteType, 0);
+
+            if (voteType == 1) {
+                review.setLikeCount(review.getLikeCount() + 1);
+            } else if (voteType == -1) {
+                review.setDislikeCount(review.getDislikeCount() + 1);
+            }
         }
+        reviewRepository.save(review);
     }
 
-    // --- 3. Add a Reply ---
     @Transactional
     public Reply addReply(String userId, String username, Long reviewId, String content) {
         Review review = reviewRepository.findById(reviewId)
@@ -101,27 +98,26 @@ public class ReviewService {
 
         Reply reply = new Reply(review, userId, username, content);
         Reply savedReply = replyRepository.save(reply);
-
-        // Update the "Heat Score" of the parent review (Replies count as activity)
         updateReviewCounts(review, 0, 1);
-
         return savedReply;
     }
 
-    // --- Helper: Updates the Heat Score counters on the Parent Review ---
-    private void updateReviewCounts(Review review, int voteChange, int replyChange) {
-        if (voteChange == 1) review.setLikeCount(review.getLikeCount() + 1);
-        if (voteChange == -1) review.setDislikeCount(review.getDislikeCount() + 1);
+    @Transactional
+    public Reply editReply(Long replyId, String userId, String newContent) {
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new RuntimeException("Reply not found"));
 
-        // If we are removing votes (negative change)
-        if (voteChange == -1 && review.getLikeCount() < 0) review.setLikeCount(0); // Safety check (optional)
+        if (!reply.getUserId().equals(userId)) {
+            throw new RuntimeException("You can only edit your own reply");
+        }
 
-        review.setReplyCount(review.getReplyCount() + replyChange);
-
-        reviewRepository.save(review);
+        reply.setContent(newContent);
+        reply.setEdited(true);
+        reply.setUpdatedAt(LocalDateTime.now());
+        return replyRepository.save(reply);
     }
 
-    // --- 4. Delete Review (Cascades to Replies) ---
+    // --- UPDATED DELETE METHOD ---
     @Transactional
     public void deleteReview(Long reviewId, String userId) {
         Review review = reviewRepository.findById(reviewId)
@@ -131,10 +127,14 @@ public class ReviewService {
             throw new RuntimeException("You can only delete your own review");
         }
 
+        // 1. Manually delete all votes linked to this review first
+        // This prevents the "Foreign Key Constraint" error
+        reviewVoteRepository.deleteAllByReviewId(reviewId);
+
+        // 2. Delete the review (Replies will be deleted automatically by Cascade)
         reviewRepository.delete(review);
     }
 
-    // --- 5. Delete Reply ---
     @Transactional
     public void deleteReply(Long replyId, String userId) {
         Reply reply = replyRepository.findById(replyId)
@@ -147,8 +147,15 @@ public class ReviewService {
         Review parent = reply.getReview();
         replyRepository.delete(reply);
 
-        // Update parent stats
-        parent.setReplyCount(parent.getReplyCount() - 1);
+        // Decrement reply count safely
+        parent.setReplyCount(Math.max(0, parent.getReplyCount() - 1));
         reviewRepository.save(parent);
+    }
+
+    private void updateReviewCounts(Review review, int voteChange, int replyChange) {
+        if (voteChange == 1) review.setLikeCount(review.getLikeCount() + 1);
+        if (voteChange == -1) review.setDislikeCount(review.getDislikeCount() + 1);
+        review.setReplyCount(review.getReplyCount() + replyChange);
+        reviewRepository.save(review);
     }
 }
