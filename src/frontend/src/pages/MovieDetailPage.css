@@ -1,286 +1,269 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Roboto:wght@300;400;700&display=swap');
-
-/* --- 1. Main Container (The Letterboxd Dark Theme) --- */
 .movie-detail-container {
-    background-color: #14181c; /* Deep Dark Grey */
-    color: #99aabb; /* Soft Blue-Grey Text */
-    font-family: 'Roboto', sans-serif; /* Default UI Font */
+    color: #ffffff;
     min-height: 100vh;
+    background-color: #0f172a;
     position: relative;
     overflow-x: hidden;
 }
 
-/* --- 2. The Backdrop (Behind Everything) --- */
 .backdrop-layer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 600px;
+    height: 60vh;
     background-size: cover;
-    background-position: center top;
-    z-index: 0;
-    opacity: 0.5;
-    /* The Magic Fade Effect */
-    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    background-position: center;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    opacity: 0.4;
+    z-index: 1;
 }
 
-/* --- 3. Content Wrapper (Centers everything) --- */
+.movie-top-toolbar {
+    position: relative;
+    z-index: 10;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-btn {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
 .content-wrapper {
     position: relative;
-    z-index: 1; /* Sits on top of backdrop */
-    max-width: 950px;
-    margin: 0 auto;
-    padding-top: 150px; /* Push down to reveal backdrop */
-    padding-bottom: 50px;
+    z-index: 5;
     display: flex;
-    gap: 50px; /* Space between Poster and Text */
+    max-width: 1200px;
+    margin: 40px auto;
+    gap: 40px; /* Reduced gap to keep structure tight */
+    padding: 0 20px;
 }
 
-/* --- 4. Left Column: Poster & Actions --- */
 .poster-column {
-    flex: 0 0 230px; /* Fixed width */
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    flex: 0 0 280px; /* Slightly smaller to save space */
 }
 
 .poster-img {
     width: 100%;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    border-radius: 8px; /* Sharper corners */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* --- 5. Right Column: Info & Tabs --- */
+.interaction-panel {
+    text-align: center;
+    margin-top: 15px;
+    /* Removed heavy background/padding to blend in */
+}
+
+.community-rating-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.cr-label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.cr-score {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cr-value {
+    font-size: 1.4rem; /* Smaller font */
+    font-weight: 700;
+    color: #fff;
+}
+
+.cr-count {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.btn-submit-rating {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 8px 12px; /* Smaller button */
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.btn-submit-rating:hover {
+    background-color: #1d4ed8;
+}
+
 .info-column {
     flex: 1;
     padding-top: 10px;
 }
 
-/* Typography */
 .movie-title {
-    font-family: 'Merriweather', serif; /* Serif font like Letterboxd */
-    font-weight: 900;
-    font-size: 3rem;
-    color: #ffffff;
-    margin: 0;
+    font-size: 2.8rem;
+    font-weight: 800;
     line-height: 1.1;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 
 .year {
-    font-size: 0.5em;
-    font-weight: 400;
-    color: #8899aa;
-    margin-left: 10px;
-}
-
-.director-line {
-    margin-top: 10px;
-    font-size: 1.1rem;
-    color: #ffffff;
-}
-
-.director-line span {
-    color: #99aabb;
-    font-size: 0.9rem;
+    font-weight: 300;
+    color: #ccc;
+    font-size: 1.8rem;
 }
 
 .tagline {
-    font-size: 0.95rem;
     font-style: italic;
-    color: #8899aa;
-    border-left: 3px solid #00e054; /* Green Accent */
-    padding-left: 12px;
-    margin: 20px 0;
+    color: #94a3b8;
+    margin-bottom: 15px;
 }
 
 .synopsis {
-    font-family: 'Merriweather', serif;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #aab;
-    margin-bottom: 30px;
-}
-
-/* --- 6. Interaction Area (Rating/Review) --- */
-/* We style the imported components to fit */
-.interaction-panel {
-    background: #1f242b;
-    border-radius: 6px;
-    padding: 15px;
-    margin-top: 20px;
-    border: 1px solid #2c3440;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    font-size: 1rem;
+    color: #e2e8f0;
 }
 
 .btn-trailer {
-    width: 100%;
-    padding: 10px;
-    background: #2c3440;
+    background-color: #ef5350;
     color: white;
     border: none;
+    padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.8rem;
     transition: background 0.2s;
+    width: 100%;
 }
-.btn-trailer:hover { background: #456; }
 
-/* --- 7. Back Button --- */
-.back-btn {
-    display: inline-block;
-    z-index: 100;
-    color: #99aabb;
-    text-decoration: none;
-    font-weight: bold;
-    background: rgba(20,24,28,0.8);
-    padding: 8px 16px;
-    border-radius: 4px;
-    transition: 0.2s;
+.btn-trailer:hover {
+    background-color: #e53935;
 }
-.back-btn:hover { color: white; background: #2c3440; }
 
-/* --- 8. Cast Grid (Horizontal Scroll) --- */
+.comment-input-area {
+    margin-bottom: 30px;
+}
+
+.comment-input {
+    width: 100%;
+    background-color: rgba(30, 41, 59, 0.6);
+    color: #ffffff;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+}
+
+.comment-input:focus {
+    border-color: #60a5fa;
+    background-color: rgba(30, 41, 59, 0.9);
+}
+
+/* Cast Scroller - Keep original tight layout */
 .cast-scroller {
     display: flex;
-    gap: 15px;
     overflow-x: auto;
-    padding-bottom: 10px;
-    margin-top: 10px;
+    gap: 12px;
+    padding-bottom: 5px;
 }
-/* Hide scrollbar */
-.cast-scroller::-webkit-scrollbar { height: 6px; }
-.cast-scroller::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
 .actor-card {
-    min-width: 90px;
+    flex: 0 0 90px;
     text-align: center;
 }
+
 .actor-card img {
     width: 90px;
-    height: 135px;
+    height: 90px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 50%;
     margin-bottom: 5px;
-    border: 1px solid #333;
 }
-.actor-name { font-size: 0.85rem; color: white; margin: 0; }
-.actor-char { font-size: 0.75rem; color: #667788; margin: 0; }
-/* --- Tech Details Grid (New Layout) --- */
+
+.actor-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.actor-char {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* Tech Details Grid */
 .tech-details-grid {
-    display: flex;
-    gap: 40px;
-    background: rgba(255,255,255,0.03); /* Subtle card background */
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #2c3440;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
 .tech-text {
-    flex: 1;
-}
-.tech-text p {
-    margin-bottom: 12px;
-    color: #99aabb;
     font-size: 0.95rem;
-    border-bottom: 1px solid #2c3440;
-    padding-bottom: 5px;
-}
-.tech-text strong {
-    color: white;
-    margin-right: 8px;
+    color: #e2e8f0;
 }
 
-/* --- Rating Chart Styles --- */
+/* --- Restored Chart Styles for Tech Details --- */
 .rating-chart-container {
-    flex: 1;
-    border-left: 1px solid #2c3440;
-    padding-left: 40px;
+    margin-top: 5px;
 }
 
 .chart-row {
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
 }
 
 .chart-label {
     display: flex;
     justify-content: space-between;
-    font-size: 0.85rem;
-    color: #fff;
-    margin-bottom: 5px;
-    font-weight: bold;
+    font-size: 0.9rem;
+    color: #cbd5e1;
 }
 
 .chart-track {
-    width: 100%;
-    height: 10px;
-    background-color: #1f242b; /* Dark track background */
-    border-radius: 5px;
+    background: #334155;
+    height: 8px;
+    border-radius: 4px;
     overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
 }
 
-/* Animations for the bars */
 .chart-fill {
     height: 100%;
-    border-radius: 5px;
-    transition: width 1s ease-out;
+    border-radius: 4px;
 }
 
-.score-fill {
-    background: linear-gradient(90deg, #ff4500, #ff8c00, #00e054); /* Red to Green gradient */
-}
+.score-fill { background: #4ade80; }
+.pop-fill { background: #60a5fa; }
 
-.pop-fill {
-    background: linear-gradient(90deg, #1e90ff, #00bfff); /* Blue gradient */
-}
-
-/* Responsive adjustment for mobile */
-@media (max-width: 768px) {
-    .tech-details-grid {
-        flex-direction: column;
-        gap: 20px;
-    }
-    .rating-chart-container {
-        border-left: none;
-        padding-left: 0;
-        border-top: 1px solid #2c3440;
-        padding-top: 20px;
-    }
-}
-/* Το container που φτιάξαμε για το κουμπί και την μπάρα */
-.movie-top-toolbar {
-  display: flex;
-  justify-content: space-between; /* Το ένα αριστερά, το άλλο δεξιά */
-  align-items: center;
-  padding: 20px 40px; /* Λίγο περιθώριο */
-  position: relative;
-  z-index: 10; /* Για να είναι σίγουρα πάνω από την εικόνα */
-  width: 100%;                    /* Να πιάνει όλο το πλάτος */
-  box-sizing: border-box;
-}
-
-/* Στυλ για το κουμπί Back (αν δεν έχεις ήδη) */
-.back-button {
-  color: white;
-  text-decoration: none;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.back-button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Περιορίζουμε λίγο το πλάτος της μπάρας σε αυτή τη σελίδα για να μην είναι τεράστια */
-.movie-page-search {
-    width: 100%;
-    max-width: 400px; /* Ρύθμισέ το όπως θες */
+/* Reviews Tab specific */
+.reviews-tab-container {
+    margin-top: 20px;
 }

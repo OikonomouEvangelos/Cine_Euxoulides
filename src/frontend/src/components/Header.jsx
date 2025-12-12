@@ -29,9 +29,15 @@ const Header = ({ onMenuToggle }) => {
     navigate('/');
   };
 
+// --- ΑΛΛΑΓΗ: Πλοήγηση στα Favorites (Από Favorites-Kouts) ---
+  const handleFavoritesClick = () => {
+    navigate('/favorites');
+  };
+
+  // --- Dropdown Toggle (Συνδυασμένο) ---
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  // --- ΑΝΟΙΓΜΑ ΦΙΛΩΝ ---
+  // --- ΑΝΟΙΓΜΑ ΦΙΛΩΝ (Από develop) ---
   const handleOpenFriends = (e) => {
     e.preventDefault();
     setIsFriendsOpen(true);   // Ανοίγει το Modal

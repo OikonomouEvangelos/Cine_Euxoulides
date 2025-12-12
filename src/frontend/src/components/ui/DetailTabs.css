@@ -1,8 +1,6 @@
-/* src/frontend/src/components/ui/DetailTabs.css */
-
 .detail-tabs-nav {
     display: flex;
-    gap: 30px;
+    align-items: center; /* Aligns the heart icon with text */
     padding: 0 40px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     margin: 20px 0;
@@ -19,6 +17,7 @@
     position: relative;
     font-family: inherit;
     transition: color 0.2s;
+    margin-right: 30px; /* Replaces the 'gap' to ensure tabs have space */
 }
 
 .tab-btn:hover {
