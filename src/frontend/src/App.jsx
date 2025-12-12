@@ -1,6 +1,7 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+// ΑΦΑΙΡΕΣΑΜΕ το BrowserRouter από εδώ, γιατί υπάρχει ήδη στο main.jsx
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 
 // --- IMPORTS PAGES ---
 import WelcomePage from './pages/WelcomePage';
@@ -22,6 +23,7 @@ import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
+import SearchBar from './components/SearchBar';
 
 // --- IMPORTS CATEGORIES ---
 import MovieCategories from './components/MovieCategories';
@@ -32,22 +34,60 @@ import YearMovies from './components/YearMovies';
 
 import './App.css';
 
+// --- LAYOUT COMPONENT ---
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => setIsMenuOpen(prev => !prev);
-  const closeMenu = () => setIsMenuOpen(false);
+  // Το location χρειάζεται για να ξέρουμε σε ποια σελίδα είμαστε
+  const location = useLocation();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(prev => !prev);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  // --- ΛΟΓΙΚΗ ΑΠΟΚΡΥΨΗΣ SEARCH BAR ---
+  // Ορίζουμε σε ποιες σελίδες ΔΕΝ θέλουμε την κεντρική μπάρα
+  // επειδή έχουμε βάλει δική μας (custom) μέσα στο αρχείο της σελίδας.
+  const shouldHideGlobalSearch =
+      location.pathname.startsWith('/movie/') ||   // Σελίδα Ταινίας (Custom toolbar)
+      location.pathname.startsWith('/movies') ||   // Σελίδα Κατηγοριών (Custom toolbar)
+      location.pathname.startsWith('/category') || // Σελίδα Κατηγοριών (εναλλακτικό)
+      location.pathname === '/browse';             // Αρχική Σελίδα (Custom toolbar δίπλα στο Quiz)
 
   return (
-    <>
-      {/* 1. Placing the Easter Egg here so it overlays everything when offline */}
+<>
+      {/* 1. Easter Egg (Από HugginFace) - Μπαίνει πρώτο για να είναι από πάνω */}
       <BugInvaders />
 
-      {/* 2. Your Actual App Structure */}
+      {/* 2. Η κυρίως δομή της εφαρμογής */}
       <div className="app-container">
         <Header onMenuToggle={toggleMenu} />
         <SideMenu isOpen={isMenuOpen} onClose={closeMenu} />
+
         {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
+
+        {/* --- ΕΛΕΓΧΟΣ ΕΜΦΑΝΙΣΗΣ ΚΕΝΤΡΙΚΗΣ ΜΠΑΡΑΣ (Από main) --- */}
+        {/* Εμφανίζεται ΜΟΝΟ αν ΔΕΝ είμαστε σε σελίδα που πρέπει να κρύβεται */}
+        {!shouldHideGlobalSearch && (
+          <div
+            className="global-search-wrapper"
+            style={{
+              margin: '30px 0',
+              display: 'flex',
+              justifyContent: 'center', /* Κεντράρισμα */
+              padding: '0 20px'
+            }}
+          >
+            {/* Περιορίζουμε το πλάτος για να μην είναι τεράστια */}
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+              <SearchBar />
+            </div>
+          </div>
+        )}
 
         {/* Main Content */}
         <Outlet />
@@ -61,14 +101,26 @@ const AppLayout = () => {
 
 const App = () => {
   return (
+    // Το Router υπάρχει ήδη στο main.jsx, οπότε εδώ βάζουμε μόνο Routes
     <Routes>
+{/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Layout) */}
       <Route path="/" element={<WelcomePage />} />
-      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+
+      {/* 2. PROTECTED ROUTES: Όλες οι εσωτερικές σελίδες */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        {/* Αρχική Εφαρμογής */}
         <Route path="/browse" element={<HomePage />} />
         <Route path="/movie/:id" element={<MovieDetailPage />} />
         <Route path="/movies" element={<MovieCategories />} />
         <Route path="/category/:genreId" element={<GenreMovies />} />
         <Route path="/movies/:genreId" element={<GenreMovies />} />
+{/* Ηθοποιοί & Σκηνοθέτες */}
         <Route path="/actors/:actorId" element={<ActorMovies />} />
         <Route path="/directors/:directorId" element={<DirectorMovies />} />
         <Route path="/year/:year" element={<YearMovies />} />

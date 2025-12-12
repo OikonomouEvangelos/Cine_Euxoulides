@@ -5,6 +5,8 @@ import axios from 'axios';
 import DetailTabs from '../components/ui/DetailTabs';
 import RatingSection from '../components/ui/RatingSection';
 import './MovieDetailPage.css';
+import SearchBar from '../components/SearchBar';
+
 
 const MovieDetailPage = () => {
     const { id } = useParams();
@@ -100,6 +102,15 @@ const MovieDetailPage = () => {
 
     return (
         <div className="movie-detail-container">
+<div className="movie-top-toolbar">
+                <Link to="/browse" className="back-btn">
+                    &larr; Back to Browse
+                </Link>
+
+                <div className="movie-page-search">
+                    <SearchBar />
+                </div>
+            </div>
             <div className="backdrop-layer" style={{ backgroundImage: `url(${backdropUrl})` }} />
             <div className="movie-detail-overlay">
                 <div className="content-wrapper">

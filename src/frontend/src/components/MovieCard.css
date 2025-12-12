@@ -1,9 +1,10 @@
-.search-page {
+/* ΓΕΝΙΚΟ PAGE (αν θες να το κρατήσεις και αλλού) */
+.movies-page {
   padding: 40px 20px;
   min-height: 100vh;
 }
 
-.search-title {
+.movies-title {
   color: white;
   font-size: 24px;
   margin-bottom: 30px;
@@ -12,22 +13,22 @@
 }
 
 /* Όλα τα links μέσα στο grid να φαίνονται σαν κάρτες, όχι σαν μπλε links */
-.search-grid a {
+.movies-grid a {
   text-decoration: none;
   color: inherit;
   display: block;
 }
 
-/* GRID */
-.search-grid {
+/* GRID (ΚΟΙΝΟ ΠΑΝΤΟΥ) */
+.movies-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
   justify-content: center;
 }
 
-/* CARD */
-.search-card {
+/* CARD (ΚΟΙΝΗ ΠΑΝΤΟΥ) */
+.movie-card {
   width: 220px;
   height: 430px;               /* ΣΤΑΘΕΡΟ ύψος για όλες τις κάρτες */
   background-color: #222;
@@ -39,13 +40,13 @@
   flex-direction: column;
 }
 
-.search-card:hover {
+.movie-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
   cursor: pointer;
 }
 
-.search-poster {
+.movie-poster {
   width: 100%;
   flex: 1;                     /* Πιάνει όλο το πάνω μέρος της κάρτας */
   height: 330px;               /* backup, για να είναι όλες ίδιες */
@@ -53,12 +54,12 @@
   background-color: #000;      /* αν δεν φορτώσει η εικόνα, να φαίνεται μαύρο */
 }
 
-.search-info {
+.movie-info {
   padding: 15px;
   text-align: center;
 }
 
-.search-info h3 {
+.movie-info h3 {
   font-size: 1rem;
   margin: 0 0 10px 0;
   white-space: nowrap;
@@ -68,7 +69,7 @@
   text-decoration: none;       /* να ΜΗΝ είναι ποτέ υπογραμμισμένος ο τίτλος */
 }
 
-.search-rating {
+.movie-rating {
   color: #fbbf24;
   font-weight: bold;
   margin: 0;

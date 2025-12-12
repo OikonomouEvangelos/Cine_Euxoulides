@@ -193,6 +193,20 @@
     border-bottom: 2px solid var(--lb-green);
 }
 
+/* --- 7. Back Button --- */
+.back-btn {
+    display: inline-block;
+    z-index: 100;
+    color: #99aabb;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(20,24,28,0.8);
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+}
+
 /* Cast Grid */
 .cast-scroller {
     display: grid;
@@ -268,24 +282,57 @@
     .movie-meta-row {
         justify-content: center;
     }
-
-    .director-line {
+.director-line {
         text-align: center;
     }
+} /* <--- Εδώ κλείνει το Media Query */
 
-
-}
+/* --- Back Link Style (Από HugginFace) --- */
 .back-link {
-         display: block;
-         color: #99aabb;       /* Muted blue-grey text */
-         text-decoration: none;
-         font-size: 0.9rem;
-         font-weight: bold;
-         margin-bottom: 15px;  /* Space between arrow and poster */
-         transition: color 0.2s;
-     }
+     display: block;
+     color: #99aabb;       /* Muted blue-grey text */
+     text-decoration: none;
+     font-size: 0.9rem;
+     font-weight: bold;
+     margin-bottom: 15px;  /* Space between arrow and poster */
+     transition: color 0.2s;
+}
 
-     .back-link:hover {
-         color: #ffffff;
-         transform: translateX(-3px);
-     }
+.back-link:hover {
+     color: #ffffff;
+     transform: translateX(-3px);
+}
+
+/* --- Movie Top Toolbar Styles (Από main) --- */
+/* Το container που φτιάξαμε για το κουμπί και την μπάρα */
+.movie-top-toolbar {
+  display: flex;
+  justify-content: space-between; /* Το ένα αριστερά, το άλλο δεξιά */
+  align-items: center;
+  padding: 20px 40px; /* Λίγο περιθώριο */
+  position: relative;
+  z-index: 10; /* Για να είναι σίγουρα πάνω από την εικόνα */
+  width: 100%;                    /* Να πιάνει όλο το πλάτος */
+  box-sizing: border-box;
+}
+
+/* Στυλ για το κουμπί Back (αν δεν έχεις ήδη) */
+.back-button {
+  color: white;
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Περιορίζουμε λίγο το πλάτος της μπάρας σε αυτή τη σελίδα για να μην είναι τεράστια */
+.movie-page-search {
+    width: 100%;
+    max-width: 400px; /* Ρύθμισέ το όπως θες */
+}
