@@ -1,7 +1,7 @@
 // src/frontend/src/components/ActorMovies.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import './TrendingSection.css'; // Το ίδιο στυλ για τις κάρτες
+import MovieCard from './MovieCard';
 
 const ActorMovies = () => {
   const { actorId } = useParams(); // Παίρνουμε το ID του ηθοποιού από το URL
@@ -56,24 +56,15 @@ const ActorMovies = () => {
 
       <h2 style={{ paddingLeft: '20px' }}>Ταινίες με: <span style={{color: '#fbbf24'}}>{actorName}</span></h2>
 
-      <div className="movies-row" style={{ flexWrap: 'wrap', justifyContent: 'center', overflow: 'visible' }}>
+      <div
+        className="movies-row"
+        style={{ flexWrap: 'wrap', justifyContent: 'center', overflow: 'visible' }}
+      >
         {movies.map((movie) => (
-          <Link to={`/movie/${movie.id}`} key={movie.id} className="movie-card-link">
-            <div className="movie-card" style={{ marginBottom: '30px', margin: '15px' }}>
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title} className="movie-poster"
-              />
-              <div className="movie-info">
-                <h3>{movie.title}</h3>
-                {/* Εμφανίζουμε και τον ρόλο που έπαιξε (character) αν υπάρχει */}
-                <p style={{fontSize: '0.8em', color: '#ccc'}}>{movie.character}</p>
-                <p>⭐️ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}</p>
-              </div>
-            </div>
-          </Link>
+          <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
+
     </div>
   );
 };

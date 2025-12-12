@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './MovieRow.css';
+import MovieCard from './MovieCard';
+
 
 const MovieRow = ({ title, fetchUrl }) => {
   const [movies, setMovies] = useState([]);
@@ -39,20 +41,10 @@ const MovieRow = ({ title, fetchUrl }) => {
 
         <div className="row-posters" ref={rowRef}>
           {movies.map((movie) => (
-            <Link key={movie.id} to={`/movie/${movie.id}`} className="row-poster-link">
-              <img
-                className="row-poster"
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-                loading="lazy"
-              />
-              <div className="row-overlay">
-                <h4>{movie.title}</h4>
-                <p>⭐️ {movie.vote_average?.toFixed(1)}</p>
-              </div>
-            </Link>
+            <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>
+
 
         <button className="handle right-handle" onClick={() => scroll('right')}>›</button>
       </div>
