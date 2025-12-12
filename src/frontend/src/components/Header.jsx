@@ -59,9 +59,12 @@ const Header = ({ onMenuToggle }) => {
         <div className="right-group">
 
 
-          <button className="header-button favorites-button">
-            <HeartIcon />
-          </button>
+        <button
+          className="header-button favorites-button"
+          onClick={handleFavoritesClick} //
+        >
+          <HeartIcon />
+        </button>
 
           {/* AVATAR + DROPDOWN */}
           <div className="user-avatar-container">
