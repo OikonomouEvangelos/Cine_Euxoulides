@@ -66,6 +66,8 @@ const Header = ({ onMenuToggle }) => {
           <HeartIcon />
         </button>
 
+
+
           {/* AVATAR + DROPDOWN */}
           <div className="user-avatar-container">
             <button className="header-button avatar-button" onClick={toggleDropdown}>
