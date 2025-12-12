@@ -2,6 +2,10 @@ package com.CineEuxoulides.Euxoulides.domain;
 
 import jakarta.persistence.*;
 
+
+import java.util.HashSet;
+import java.util.Set;
+
 // Entity = πίνακας στη βάση
 @Entity
 @Table(name = "users")   // Θα δημιουργηθεί πίνακας "users" στη PostgreSQL
@@ -24,6 +28,15 @@ public class User {
     // Κωδικός (προς το παρόν απλό string, αργότερα θα γίνει hashed)
     @Column(nullable = false)
     private String password;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private Set<User> friends = new HashSet<>();
 
     // ====== Getters & Setters ======
 
@@ -65,5 +78,15 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    // Getters & Setters για friends
+    public Set<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Set<User> friends) {
+        this.friends = friends;
     }
 }
