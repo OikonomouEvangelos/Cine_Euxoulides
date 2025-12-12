@@ -1,46 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Roboto:wght@300;400;700&display=swap');
-
-/* --- 1. Main Container (The Letterboxd Dark Theme) --- */
-.movie-detail-container {
-    background-color: #14181c; /* Deep Dark Grey */
-    color: #99aabb; /* Soft Blue-Grey Text */
-    font-family: 'Roboto', sans-serif; /* Default UI Font */
-    min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
+/* --- 1. GLOBAL VARIABLES (Letterboxd Theme) --- */
+:root {
+    --lb-bg: #14181c;
+    --lb-panel: #2c3440;
+    --lb-text-main: #ffffff;
+    --lb-text-muted: #99aabb;
+    --lb-green: #00e054;
+    --lb-orange: #ff8000;
+    --lb-hover: #445566;
+    font-family: 'Graphik', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-/* --- 2. The Backdrop (Behind Everything) --- */
+/* --- 2. CONTAINER & BACKDROP --- */
+.movie-detail-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--lb-bg);
+    color: var(--lb-text-main);
+    overflow: hidden; /* Prevents scrollbars if backdrop is huge */
+}
+
+/* The Blurred Backdrop Image */
 .backdrop-layer {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 600px;
+    top: 0; left: 0; width: 100%; height: 70vh; /* Covers top half */
     background-size: cover;
-    background-position: center top;
+    background-position: center 20%;
+    opacity: 0.3; /* Subtle background */
+    filter: blur(0px); /* Optional: Blur it for focus */
     z-index: 0;
-    opacity: 0.5;
-    /* The Magic Fade Effect */
     mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
 }
 
-/* --- 3. Content Wrapper (Centers everything) --- */
-.content-wrapper {
-    position: relative;
-    z-index: 1; /* Sits on top of backdrop */
-    max-width: 950px;
-    margin: 0 auto;
-    padding-top: 150px; /* Push down to reveal backdrop */
-    padding-bottom: 50px;
+/* The Gradient Overlay */
+.movie-detail-overlay {
+    position: relative; /* Sit on top of backdrop */
+    z-index: 1;
+    width: 100%;
+    min-height: 100vh;
     display: flex;
-    gap: 50px; /* Space between Poster and Text */
+    justify-content: center;
+    padding-top: 120px; /* Space for Header */
+    padding-bottom: 50px;
+    background: linear-gradient(to bottom, rgba(20, 24, 28, 0.6) 0%, var(--lb-bg) 80%);
 }
 
-/* --- 4. Left Column: Poster & Actions --- */
+/* --- 3. MAIN LAYOUT (The Fix!) --- */
+/* This matches <div className="content-wrapper"> */
+.content-wrapper {
+    display: flex;
+    flex-direction: row; /* Forces Side-by-Side layout */
+    max-width: 1050px;
+    width: 90%;
+    gap: 50px;
+    align-items: flex-start;
+}
+
+/* --- 4. LEFT COLUMN (Poster) --- */
 .poster-column {
-    flex: 0 0 230px; /* Fixed width */
+    flex-shrink: 0;
+    width: 230px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -50,206 +70,222 @@
     width: 100%;
     border-radius: 4px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
-/* --- 5. Right Column: Info & Tabs --- */
+.interaction-panel {
+    background: var(--lb-panel);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* --- 5. RIGHT COLUMN (Info) --- */
+/* This matches <div className="info-column"> */
 .info-column {
-    flex: 1;
+    flex: 1; /* Takes up all remaining space */
     padding-top: 10px;
 }
 
-/* Typography */
 .movie-title {
-    font-family: 'Merriweather', serif; /* Serif font like Letterboxd */
+    font-family: 'Merriweather', serif; /* Elegant Serif font */
+    font-size: 2.5rem;
     font-weight: 900;
-    font-size: 3rem;
-    color: #ffffff;
-    margin: 0;
+    margin: 0 0 5px;
     line-height: 1.1;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
 }
 
 .year {
-    font-size: 0.5em;
-    font-weight: 400;
-    color: #8899aa;
+    font-weight: 300;
+    opacity: 0.6;
+    font-size: 1.8rem;
     margin-left: 10px;
 }
 
 .director-line {
-    margin-top: 10px;
     font-size: 1.1rem;
-    color: #ffffff;
+    margin-bottom: 15px;
+    color: var(--lb-text-main);
+    font-weight: bold;
 }
 
 .director-line span {
-    color: #99aabb;
-    font-size: 0.9rem;
+    font-weight: normal;
+    color: var(--lb-text-muted);
+}
+
+.movie-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--lb-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 25px;
+}
+
+.runtime {
+    color: var(--lb-text-main);
+}
+
+.genres-list {
+    display: flex;
+    gap: 6px;
+}
+
+.genre-tag {
+    background: #1f262e;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--lb-text-muted);
+    text-transform: uppercase;
+    border: 1px solid #333;
 }
 
 .tagline {
-    font-size: 0.95rem;
     font-style: italic;
-    color: #8899aa;
-    border-left: 3px solid #00e054; /* Green Accent */
-    padding-left: 12px;
-    margin: 20px 0;
+    color: var(--lb-text-muted);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    border-left: 3px solid var(--lb-green);
+    padding-left: 15px;
 }
 
+/* --- 6. SYNOPSIS --- */
 .synopsis {
     font-family: 'Merriweather', serif;
     font-size: 1.1rem;
     line-height: 1.6;
-    color: #aab;
+    color: #b8cdd6; /* Cool white text */
     margin-bottom: 30px;
+    max-width: 800px;
 }
 
-/* --- 6. Interaction Area (Rating/Review) --- */
-/* We style the imported components to fit */
-.interaction-panel {
-    background: #1f242b;
-    border-radius: 6px;
-    padding: 15px;
-    margin-top: 20px;
-    border: 1px solid #2c3440;
-}
-
-.btn-trailer {
-    width: 100%;
-    padding: 10px;
-    background: #2c3440;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    transition: background 0.2s;
-}
-.btn-trailer:hover { background: #456; }
-
-/* --- 7. Back Button --- */
-.back-btn {
-    position: absolute;
-    top: 20px; left: 20px;
-    z-index: 100;
-    color: #99aabb;
-    text-decoration: none;
-    font-weight: bold;
-    background: rgba(20,24,28,0.8);
-    padding: 8px 16px;
-    border-radius: 4px;
-    transition: 0.2s;
-}
-.back-btn:hover { color: white; background: #2c3440; }
-
-/* --- 8. Cast Grid (Horizontal Scroll) --- */
-.cast-scroller {
+/* --- 7. TABS & DETAILS --- */
+/* Tab Buttons */
+.tab-header {
     display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    margin-top: 10px;
+    gap: 20px;
+    border-bottom: 1px solid #445566;
+    margin-bottom: 20px;
 }
-/* Hide scrollbar */
-.cast-scroller::-webkit-scrollbar { height: 6px; }
-.cast-scroller::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: var(--lb-text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding-bottom: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+}
+
+.tab-btn:hover {
+    color: white;
+}
+
+.tab-btn.active {
+    color: var(--lb-green);
+    border-bottom: 2px solid var(--lb-green);
+}
+
+/* Cast Grid */
+.cast-scroller {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
 
 .actor-card {
-    min-width: 90px;
-    text-align: center;
+    background: var(--lb-panel);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: transform 0.2s;
 }
+
+.actor-card:hover {
+    transform: translateY(-5px);
+}
+
 .actor-card img {
-    width: 90px;
-    height: 135px;
+    width: 100%;
+    height: 140px;
     object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    border: 1px solid #333;
 }
-.actor-name { font-size: 0.85rem; color: white; margin: 0; }
-.actor-char { font-size: 0.75rem; color: #667788; margin: 0; }
-/* --- Tech Details Grid (New Layout) --- */
+
+.actor-info {
+    padding: 8px;
+}
+
+.actor-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin: 0;
+    color: white;
+}
+
+.actor-char {
+    font-size: 0.75rem;
+    color: var(--lb-text-muted);
+    margin: 2px 0 0;
+}
+
+/* Tech Grid */
 .tech-details-grid {
     display: flex;
     gap: 40px;
-    background: rgba(255,255,255,0.03); /* Subtle card background */
+    background: #191f26;
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #2c3440;
 }
 
-.tech-text {
-    flex: 1;
-}
 .tech-text p {
-    margin-bottom: 12px;
-    color: #99aabb;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #2c3440;
-    padding-bottom: 5px;
-}
-.tech-text strong {
-    color: white;
-    margin-right: 8px;
+    margin: 8px 0;
+    color: var(--lb-text-muted);
+    font-size: 0.9rem;
 }
 
-/* --- Rating Chart Styles --- */
-.rating-chart-container {
-    flex: 1;
-    border-left: 1px solid #2c3440;
-    padding-left: 40px;
-}
-
-.chart-row {
-    margin-bottom: 10px;
-}
-
-.chart-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #fff;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.chart-track {
-    width: 100%;
-    height: 10px;
-    background-color: #1f242b; /* Dark track background */
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
-}
-
-/* Animations for the bars */
-.chart-fill {
-    height: 100%;
-    border-radius: 5px;
-    transition: width 1s ease-out;
-}
-
-.score-fill {
-    background: linear-gradient(90deg, #ff4500, #ff8c00, #00e054); /* Red to Green gradient */
-}
-
-.pop-fill {
-    background: linear-gradient(90deg, #1e90ff, #00bfff); /* Blue gradient */
-}
-
-/* Responsive adjustment for mobile */
+/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
-    .tech-details-grid {
+    .content-wrapper {
         flex-direction: column;
-        gap: 20px;
+        align-items: center;
+        gap: 30px;
     }
-    .rating-chart-container {
-        border-left: none;
-        padding-left: 0;
-        border-top: 1px solid #2c3440;
-        padding-top: 20px;
+
+    .poster-column {
+        width: 180px;
     }
+
+    .info-column {
+        text-align: center;
+    }
+
+    .movie-meta-row {
+        justify-content: center;
+    }
+
+    .director-line {
+        text-align: center;
+    }
+
+
 }
+.back-link {
+         display: block;
+         color: #99aabb;       /* Muted blue-grey text */
+         text-decoration: none;
+         font-size: 0.9rem;
+         font-weight: bold;
+         margin-bottom: 15px;  /* Space between arrow and poster */
+         transition: color 0.2s;
+     }
+
+     .back-link:hover {
+         color: #ffffff;
+         transform: translateX(-3px);
+     }

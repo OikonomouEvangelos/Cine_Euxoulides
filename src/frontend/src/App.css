@@ -27,129 +27,166 @@ body {
 /* --- 4. Main Content Area --- */
 main {
   flex-grow: 1;
-  /* ΚΡΙΣΙΜΟ: Για την απόλυτη τοποθέτηση του Quiz Spot */
-  position: relative;
+  position: relative; /* Critical for absolute positioning */
   padding: 20px 40px;
 }
 
 main h1 {
-    color: white;
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
 }
 
 /* ========================================================================= */
-/* --- 5. QUIZ LANDING SPOT (Simple Circle, Position & Animation) --- */
+/* --- 5. QUIZ LANDING SPOT (Top Left) --- */
 /* ========================================================================= */
 
 .quiz-landing-spot {
-    position: absolute;
-    /* ΡΥΘΜΙΣΗ ΘΕΣΗΣ: Ευθυγραμμίζεται με την περιοχή Αναζήτησης/Τάσεων */
-    top: 30px;
-    left: 40px;
+  position: absolute;
+  top: 30px;
+  left: 40px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    /* ΣΤΥΛ ΚΥΚΛΟΥ */
-    width: 70px; /* Μέγεθος κύκλου */
-    height: 70px; /* Μέγεθος κύκλου */
-    background-color: transparent;
-    border:none;
-    border-radius: 50%; /* Απλός κύκλος */
+  width: 70px;
+  height: 70px;
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
 
-
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-decoration: none;
-    color: white;
-    transition: transform 0.2s, background-color 0.2s;
-    z-index: 10;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s, background-color 0.2s;
+  z-index: 10;
 }
 
-/* Εξασφαλίζουμε ότι δεν υπάρχει κείμενο */
 .quiz-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding-bottom: 0;
 }
 
-
-/* --- Εικονίδιο & Animation --- */
 .quiz-icon-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
 }
 
-/* Ερωτηματικό */
 .quiz-icon span {
-    font-size: 4em;
-    z-index: 2;
-    position: relative;
-    transition: transform 0.3s ease;
-    color: #ffc107; /* Χρυσό/Κίτρινο */
-    /* Για να φέρουμε το ερωτηματικό στο κέντρο του κύκλου */
-    line-height: 0.8;
+  font-size: 4em;
+  z-index: 2;
+  position: relative;
+  transition: transform 0.3s ease;
+  color: #ffc107;
+  line-height: 0.8;
 }
 
-/* Εφέ Δόνησης (Pulse Ring) */
 .quiz-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: rgba(255, 193, 7, 0.2);
-    animation: pulse 2s infinite ease-out;
-    z-index: 1;
-    top: 0;
-    left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(255, 193, 7, 0.2);
+  animation: pulse 2s infinite ease-out;
+  z-index: 1;
+  top: 0;
+  left: 0;
 }
 
-/* Όταν ο χρήστης περνάει τον κέρσορα */
 .quiz-landing-spot:hover .quiz-ring {
-    animation: none;
-    opacity: 0;
+  animation: none;
+  opacity: 0;
 }
 
 .quiz-landing-spot:hover {
-    background-color: #4a637d;
-    transform: scale(1.05); /* Ελαφρύ zoom */
+  background-color: #4a637d;
+  transform: scale(1.05);
 }
 
-
-/* ΔΙΑΓΡΑΦΗ ΤΟΥ ΚΕΙΜΕΝΟΥ (Δεν χρειάζονται πλέον) */
 .quiz-slogan,
 .quiz-title,
 .quiz-cta {
-    display: none;
+  display: none;
 }
 
-
-/* --- 6. Media Queries & Keyframes --- */
 @keyframes pulse {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-    70% {
-        transform: scale(1.2);
-        opacity: 0.2;
-    }
-    100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
+  0% { transform: scale(0.9); opacity: 0.7; }
+  70% { transform: scale(1.2); opacity: 0.2; }
+  100% { transform: scale(0.9); opacity: 0.7; }
 }
 
+/* ========================================================================= */
+/* --- 6. AI SCANNER BUTTON (Top Right - Moved Down) --- */
+/* ========================================================================= */
+
+.ai-fab-button {
+  position: absolute;
+
+  /* POSITIONING: Top Right */
+  /* ✅ UPDATED: Moved down to 110px to clear the search bar */
+  top: 110px;
+  right: 40px;
+  left: auto;
+
+  /* Shape & Style */
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+
+  background: linear-gradient(135deg, #e50914, #b20710);
+  color: white;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  z-index: 100;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ai-fab-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
+  border-color: white;
+}
+
+/* Red Pulse Animation */
+.ai-fab-button::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(229, 9, 20, 0.6);
+  animation: red-pulse-ring 2s infinite ease-out;
+}
+
+.ai-fab-button:hover::after {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes red-pulse-ring {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* ========================================================================= */
+/* --- 7. MEDIA QUERIES (Mobile) --- */
+/* ========================================================================= */
 
 @media (max-width: 768px) {
   main {
@@ -160,14 +197,83 @@ main h1 {
     font-size: 2rem;
   }
 
- .quiz-landing-spot {
-     left: 15px;
-     top: 30px;
-     width: 60px;
-     height: 60px;
- }
+  /* Move Quiz Button slightly */
+  .quiz-landing-spot {
+    left: 15px;
+    top: 30px;
+    width: 60px;
+    height: 60px;
+  }
 
- .quiz-icon span {
-     font-size: 3em;
- }
+  .quiz-icon span {
+    font-size: 3em;
+  }
+
+  /* Move AI Button for Mobile */
+  .ai-fab-button {
+    right: 15px;
+    left: auto;
+
+    /* Ensure it stays down on mobile too */
+    top: 110px;
+
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* ========================================================================= */
+/* --- 8. MODAL STYLES (Global) --- */
+/* ========================================================================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: #181818;
+  padding: 25px;
+  border-radius: 20px;
+  position: relative;
+  max-width: 450px;
+  width: 90%;
+  border: 1px solid #333;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  color: white;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 28px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+  color: white;
+}
+
+/* src/App.css */
+
+/* Hide Scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide Scrollbar for IE, Edge and Firefox */
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

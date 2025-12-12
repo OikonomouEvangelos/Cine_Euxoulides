@@ -1,9 +1,8 @@
 // src/App.jsx
-
 import React, { useState } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 
-// --- IMPORTS ΣΕΛΙΔΩΝ ---
+// --- IMPORTS PAGES ---
 import WelcomePage from './pages/WelcomePage';
 import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
@@ -14,100 +13,70 @@ import QuizSelectionPage from './pages/QuizSelectionPage';
 import QuizGamePage from './pages/QuizGamePage';
 import QuizHistoryPage from './pages/QuizHistoryPage';
 
+// --- IMPORTS EASTER EGG ---
+import BugInvaders from './BugInvaders';
+
 // --- IMPORTS COMPONENTS ---
 import Header from './components/Header';
 import SideMenu from './components/SideMenu';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import ProtectedRoute from './components/ProtectedRoute'; // Βεβαιώσου ότι υπάρχει αυτό το αρχείο
+import ProtectedRoute from './components/ProtectedRoute';
 
-// --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
+// --- IMPORTS CATEGORIES ---
 import MovieCategories from './components/MovieCategories';
 import GenreMovies from './components/GenreMovies';
 import ActorMovies from './components/ActorMovies';
 import DirectorMovies from './components/DirectorMovies';
 import YearMovies from './components/YearMovies';
 
-// --- CSS ---
 import './App.css';
 
-
-// --- LAYOUT COMPONENT ---
-// Αυτό περιέχει τη δομή της εφαρμογής (Header, Menu, Footer)
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(prev => !prev);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <div className="app-container">
-      <Header onMenuToggle={toggleMenu} />
-      <SideMenu isOpen={isMenuOpen} onClose={closeMenu} />
+    <>
+      {/* 1. Placing the Easter Egg here so it overlays everything when offline */}
+      <BugInvaders />
 
-      {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
+      {/* 2. Your Actual App Structure */}
+      <div className="app-container">
+        <Header onMenuToggle={toggleMenu} />
+        <SideMenu isOpen={isMenuOpen} onClose={closeMenu} />
+        {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
-      {/* Εδώ εμφανίζονται οι σελίδες */}
-      <Outlet />
+        {/* Main Content */}
+        <Outlet />
 
-      {/* Το κουμπί Scroll To Top */}
-      <ScrollToTop />
-
-      <Footer />
-    </div>
+        <ScrollToTop />
+        <Footer />
+      </div>
+    </>
   );
 };
-
 
 const App = () => {
   return (
     <Routes>
-
-      {/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Header/Footer) */}
       <Route path="/" element={<WelcomePage />} />
-
-      {/* 2. PROTECTED ROUTES: Όλες οι εσωτερικές σελίδες */}
-      {/* Ελέγχει αν είσαι συνδεδεμένος και μετά φορτώνει το Layout */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
-        {/* Αρχική Εφαρμογής */}
+      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
         <Route path="/browse" element={<HomePage />} />
-
-        {/* Λεπτομέρειες Ταινίας */}
         <Route path="/movie/:id" element={<MovieDetailPage />} />
-
-        {/* Κατηγορίες */}
         <Route path="/movies" element={<MovieCategories />} />
         <Route path="/category/:genreId" element={<GenreMovies />} />
-        <Route path="/movies/:genreId" element={<GenreMovies />} /> {/* Fallback */}
-
-        {/* Ηθοποιοί & Σκηνοθέτες */}
+        <Route path="/movies/:genreId" element={<GenreMovies />} />
         <Route path="/actors/:actorId" element={<ActorMovies />} />
         <Route path="/directors/:directorId" element={<DirectorMovies />} />
-
-        {/* Χρονιά */}
         <Route path="/year/:year" element={<YearMovies />} />
-
-        {/* Αναζήτηση */}
         <Route path="/search" element={<SearchResultsPage />} />
-
-        {/* Quiz Section */}
         <Route path="/quiz" element={<QuizSelectionPage />} />
         <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
         <Route path="/history" element={<QuizHistoryPage />} />
-
       </Route>
-
     </Routes>
   );
 };

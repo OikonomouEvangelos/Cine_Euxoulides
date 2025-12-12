@@ -1,0 +1,122 @@
+/* Container Layout */
+.emotion-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    text-align: center;
+}
+
+.emotion-container h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #e5e5e5;
+}
+
+/* Webcam Styling - Making it look like a scanner */
+.webcam-wrapper {
+    width: 100%;
+    max-width: 320px; /* Keep it compact */
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid #333;
+    box-shadow: 0 0 20px rgba(229, 9, 20, 0.2); /* Subtle red glow */
+    background: black;
+}
+
+/* Ensure the video scales correctly */
+.webcam-wrapper video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* The Scan Button */
+.scan-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #e50914; /* Netflix Red */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.scan-btn:hover:not(:disabled) {
+    background-color: #b20710;
+}
+
+.scan-btn:disabled {
+    background-color: #404040;
+    cursor: wait;
+    opacity: 0.7;
+}
+
+/* --- THE SCROLLING RESULTS GRID --- */
+.movie-grid {
+    display: grid;
+    /* Create 3 columns automatically */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+
+    /* This creates the internal scrollbar */
+    max-height: 280px;
+    overflow-y: auto;
+
+    padding: 5px; /* Space for shadow */
+    margin-top: 10px;
+    border-top: 1px solid #333;
+    padding-top: 15px;
+}
+
+/* Custom Scrollbar for the Grid */
+.movie-grid::-webkit-scrollbar {
+    width: 8px;
+}
+.movie-grid::-webkit-scrollbar-track {
+    background: #1f1f1f;
+    border-radius: 4px;
+}
+.movie-grid::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+.movie-grid::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* Individual Movie Cards */
+.movie-card {
+    background-color: #2f2f2f;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.movie-card img {
+    width: 100%;
+    height: 140px; /* Fixed height for uniformity */
+    object-fit: cover;
+}
+
+.movie-card h3 {
+    font-size: 0.8rem;
+    padding: 8px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds "..." if title is too long */
+    color: #dedede;
+}
