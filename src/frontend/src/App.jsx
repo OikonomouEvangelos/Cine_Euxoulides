@@ -9,6 +9,7 @@ import WelcomePage from './pages/WelcomePage';
 import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import SearchResultsPage from './pages/SearchResultsPage';
+import FavoritesPage from './pages/FavoritesPage'; // --- ΝΕΟ IMPORT ---
 
 // --- IMPORTS QUIZ ---
 import QuizSelectionPage from './pages/QuizSelectionPage';
@@ -51,12 +52,12 @@ const AppLayout = () => {
 
   // --- ΛΟΓΙΚΗ ΑΠΟΚΡΥΨΗΣ SEARCH BAR ---
   // Ορίζουμε σε ποιες σελίδες ΔΕΝ θέλουμε την κεντρική μπάρα
-  // επειδή έχουμε βάλει δική μας (custom) μέσα στο αρχείο της σελίδας.
   const shouldHideGlobalSearch =
-      location.pathname.startsWith('/movie/') ||   // Σελίδα Ταινίας (Custom toolbar)
-      location.pathname.startsWith('/movies') ||   // Σελίδα Κατηγοριών (Custom toolbar)
-      location.pathname.startsWith('/category') || // Σελίδα Κατηγοριών (εναλλακτικό)
-      location.pathname === '/browse';             // Αρχική Σελίδα (Custom toolbar δίπλα στο Quiz)
+      location.pathname.startsWith('/movie/') ||   // Σελίδα Ταινίας
+      location.pathname.startsWith('/movies') ||   // Σελίδα Κατηγοριών
+      location.pathname.startsWith('/category') || // Σελίδα Κατηγοριών
+      location.pathname.startsWith('/favorites') || // Σελίδα Favorites (δεν χρειάζεται search bar)
+      location.pathname === '/browse';             // Αρχική Σελίδα
 
   return (
     <div className="app-container">
@@ -66,20 +67,16 @@ const AppLayout = () => {
       {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
       {/* --- ΕΛΕΓΧΟΣ ΕΜΦΑΝΙΣΗΣ ΚΕΝΤΡΙΚΗΣ ΜΠΑΡΑΣ --- */}
-      {/* Εμφανίζεται ΜΟΝΟ αν ΔΕΝ είμαστε σε σελίδα της λίστας shouldHideGlobalSearch.
-         Άρα στο '/search' θα εμφανιστεί κανονικά.
-      */}
       {!shouldHideGlobalSearch && (
         <div
           className="global-search-wrapper"
           style={{
             margin: '30px 0',
             display: 'flex',
-            justifyContent: 'center', /* Κεντράρισμα */
+            justifyContent: 'center',
             padding: '0 20px'
           }}
         >
-          {/* Περιορίζουμε το πλάτος για να μην είναι τεράστια */}
           <div style={{ width: '100%', maxWidth: '500px' }}>
             <SearchBar />
           </div>
@@ -98,13 +95,13 @@ const AppLayout = () => {
 
 const App = () => {
   return (
-    // Το Router υπάρχει ήδη στο main.jsx, οπότε εδώ βάζουμε μόνο Routes
+    // Το Router υπάρχει ήδη στο main.jsx
     <Routes>
 
-      {/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Layout) */}
+      {/* 1. PUBLIC ROUTE: Welcome Page */}
       <Route path="/" element={<WelcomePage />} />
 
-      {/* 2. PROTECTED ROUTES: Όλες οι εσωτερικές σελίδες */}
+      {/* 2. PROTECTED ROUTES */}
       <Route
         element={
           <ProtectedRoute>
@@ -117,6 +114,9 @@ const App = () => {
 
         {/* Λεπτομέρειες Ταινίας */}
         <Route path="/movie/:id" element={<MovieDetailPage />} />
+
+        {/* --- ΝΕΟ ROUTE FAVORITES --- */}
+        <Route path="/favorites" element={<FavoritesPage />} />
 
         {/* Κατηγορίες */}
         <Route path="/movies" element={<MovieCategories />} />

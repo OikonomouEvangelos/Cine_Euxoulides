@@ -1,0 +1,89 @@
+.favorites-page-wrapper {
+    min-height: 100vh;
+    background-color: #0f172a;
+    color: white;
+    padding-bottom: 40px;
+}
+
+/* Reusing toolbar styles via inline in JSX or global CSS,
+   but ensuring container respects the header */
+.favorites-container {
+    padding: 20px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.fav-title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+}
+
+.empty-state {
+    text-align: center;
+    margin-top: 50px;
+    color: #94a3b8;
+}
+
+/* Grid Layout */
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+}
+
+.fav-card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    background: #1e293b;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    aspect-ratio: 2/3;
+    display: block;
+}
+
+.fav-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.5);
+}
+
+.fav-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Hover Overlay */
+.fav-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    padding: 20px 10px 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.fav-card:hover .fav-overlay {
+    opacity: 1;
+}
+
+.fav-movie-title {
+    color: white;
+    font-weight: bold;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.fav-year {
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
