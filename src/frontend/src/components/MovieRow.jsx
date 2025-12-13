@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { getAuthHeaders } from '../services/auth'; // Import για το Token
 import './MovieRow.css';
 import MovieCard from './MovieCard';
-
 
 const MovieRow = ({ title, fetchUrl }) => {
   const [movies, setMovies] = useState([]);
@@ -12,15 +12,41 @@ const MovieRow = ({ title, fetchUrl }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Προσθέτουμε το API KEY στο URL που λαμβάνουμε
-      const request = await fetch(`${fetchUrl}&api_key=${API_KEY}&language=el-GR`);
-      const data = await request.json();
-      setMovies(data.results);
+      try {
+        let data = [];
+
+        // ΕΛΕΓΧΟΣ: Είναι URL του TMDB ή του δικού μας Backend;
+        if (fetchUrl.includes('api.themoviedb.org')) {
+            // Λογική για εξωτερικό TMDB API (Υπάρχουσα)
+            const request = await fetch(`${fetchUrl}&api_key=${API_KEY}&language=el-GR`);
+            const jsonData = await request.json();
+            data = jsonData.results;
+        } else {
+            // Λογική για το δικό μας Backend (Recommendations)
+            // Πρέπει να στείλουμε το Token!
+            const request = await fetch(fetchUrl, {
+                headers: getAuthHeaders()
+            });
+            if (request.ok) {
+                // Το Backend επιστρέφει απευθείας λίστα (Array), όχι { results: ... }
+                data = await request.json();
+            }
+        }
+
+        if (data && Array.isArray(data)) {
+            setMovies(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch movies for row:", title, error);
+      }
     };
-    fetchData();
+
+    if (fetchUrl) {
+        fetchData();
+    }
   }, [fetchUrl, API_KEY]);
 
-  // Κύλιση με τα βελάκια
+  // Κύλιση με τα βελάκια (Ίδια λογική)
   const scroll = (direction) => {
     if (rowRef.current) {
       const { scrollLeft, clientWidth } = rowRef.current;
@@ -31,6 +57,9 @@ const MovieRow = ({ title, fetchUrl }) => {
       rowRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
+
+  // Αν δεν υπάρχουν ταινίες (π.χ. χρήστης αποσυνδεδεμένος ή άδεια λίστα), κρύψε τη σειρά
+  if (!movies || movies.length === 0) return null;
 
   return (
     <div className="movie-row">
@@ -44,7 +73,6 @@ const MovieRow = ({ title, fetchUrl }) => {
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>
-
 
         <button className="handle right-handle" onClick={() => scroll('right')}>›</button>
       </div>

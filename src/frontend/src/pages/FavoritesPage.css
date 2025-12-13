@@ -1,8 +1,16 @@
-.favorites-container {
-    padding: 100px 40px 40px; /* Top padding clears the fixed header */
+.favorites-page-wrapper {
     min-height: 100vh;
     background-color: #0f172a;
     color: white;
+    padding-bottom: 40px;
+}
+
+/* Reusing toolbar styles via inline in JSX or global CSS,
+   but ensuring container respects the header */
+.favorites-container {
+    padding: 20px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .fav-title {
@@ -16,21 +24,6 @@
     text-align: center;
     margin-top: 50px;
     color: #94a3b8;
-}
-
-.btn-home {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #2563eb;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: bold;
-}
-
-.btn-home:hover {
-    background-color: #1d4ed8;
 }
 
 /* Grid Layout */
@@ -48,6 +41,8 @@
     text-decoration: none;
     background: #1e293b;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    aspect-ratio: 2/3;
+    display: block;
 }
 
 .fav-card:hover {
