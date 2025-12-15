@@ -44,24 +44,27 @@
     display: flex;
     max-width: 1200px;
     margin: 40px auto;
-    gap: 40px; /* Reduced gap to keep structure tight */
+    gap: 40px;
     padding: 0 20px;
+    /* Allow wrapping on mobile so columns stack */
+    flex-wrap: wrap;
 }
 
 .poster-column {
-    flex: 0 0 280px; /* Slightly smaller to save space */
+    flex: 0 0 280px;
+    /* On mobile, center the poster */
+    margin: 0 auto;
 }
 
 .poster-img {
     width: 100%;
-    border-radius: 8px; /* Sharper corners */
+    border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .interaction-panel {
     text-align: center;
     margin-top: 15px;
-    /* Removed heavy background/padding to blend in */
 }
 
 .community-rating-box {
@@ -86,7 +89,7 @@
 }
 
 .cr-value {
-    font-size: 1.4rem; /* Smaller font */
+    font-size: 1.4rem;
     font-weight: 700;
     color: #fff;
 }
@@ -100,7 +103,7 @@
     background-color: #2563eb;
     color: white;
     border: none;
-    padding: 8px 12px; /* Smaller button */
+    padding: 8px 12px;
     border-radius: 4px;
     font-weight: 600;
     cursor: pointer;
@@ -118,6 +121,8 @@
 .info-column {
     flex: 1;
     padding-top: 10px;
+    /* CRITICAL FIX: prevents flex child from overflowing parent width */
+    min-width: 0;
 }
 
 .movie-title {
@@ -139,10 +144,16 @@
 }
 
 .synopsis {
-    line-height: 1.5;
+    line-height: 1.6;
     margin-bottom: 25px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #e2e8f0;
+
+    /* CRITICAL TEXT WRAPPING FIXES */
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .btn-trailer {
@@ -167,6 +178,8 @@
 
 .comment-input {
     width: 100%;
+    /* Fix: account for padding in width calculation */
+    box-sizing: border-box;
     background-color: rgba(30, 41, 59, 0.6);
     color: #ffffff;
     border: 1px solid #334155;
@@ -266,4 +279,31 @@
 /* Reviews Tab specific */
 .reviews-tab-container {
     margin-top: 20px;
+}
+
+/* Responsive Fix for mobile screens */
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .poster-column {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .info-column {
+        width: 100%;
+    }
+
+    .movie-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .director-line, .tagline {
+        text-align: center;
+    }
 }
