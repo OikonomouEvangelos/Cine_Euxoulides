@@ -6,6 +6,7 @@ import DetailTabs from '../components/ui/DetailTabs';
 import SearchBar from '../components/SearchBar';
 import ReviewsList from '../components/ReviewsList';
 import StarRating from '../components/StarRating';
+import TrailerModal from '../components/ui/TraillerModal'; // 1. IMPORT MODAL
 
 // CSS
 import './MovieDetailPage.css';
@@ -30,21 +31,22 @@ const MovieDetailPage = () => {
     const [myRating, setMyRating] = useState(0);
     const [myComment, setMyComment] = useState("");
     const [existingReviewId, setExistingReviewId] = useState(null);
-    const [refreshKey, setRefreshKey] = useState(0); // Triggers list refresh
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const [isFavorite, setIsFavorite] = useState(false);
+
+    // --- NEW: TRAILER STATE ---
+    const [trailerKey, setTrailerKey] = useState(null); // 2. TRAILER STATE
 
     // --- 1. FETCH DATA ---
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Movie Details
                 const movieRes = await fetch(`/api/movie/${id}`);
                 if (!movieRes.ok) throw new Error("Could not fetch movie.");
                 const movieData = await movieRes.json();
                 setMovie(movieData);
 
-                // Credits
                 const credsRes = await fetch(`/api/movie/${id}/credits`);
                 if (credsRes.ok) setCredits(await credsRes.json());
 
@@ -57,10 +59,9 @@ const MovieDetailPage = () => {
         fetchData();
     }, [id]);
 
-    // --- 2. FETCH DYNAMIC DATA (Stats, Reviews, Favorite) ---
+    // --- 2. FETCH DYNAMIC DATA ---
     useEffect(() => {
         const fetchUserData = async () => {
-            // A. Fetch Community Stats
             try {
                 const statsRes = await fetch(`http://localhost:8080/api/reviews/movie/${currentMovieId}/stats`);
                 if (statsRes.ok) {
@@ -71,21 +72,16 @@ const MovieDetailPage = () => {
 
             if (currentUserId) {
                 const headers = getAuthHeaders();
-
-                // B. Check if I already reviewed
                 try {
                     const reviewsRes = await fetch(`http://localhost:8080/api/reviews/movie/${currentMovieId}`, { headers });
                     const reviewsData = await reviewsRes.json();
                     const myReview = reviewsData.content.find(r => r.userId === String(currentUserId));
                     if (myReview) {
                         setMyRating(myReview.rating || 0);
-                        // CHANGED: We do NOT fill the comment box anymore.
-                        // The user sees their review in the list below.
                         setExistingReviewId(myReview.id);
                     }
                 } catch (e) { console.error(e); }
 
-                // C. Check Favorite
                 try {
                     const favRes = await fetch(`http://localhost:8080/api/favorites/check?movieId=${currentMovieId}`, { headers });
                     const isFav = await favRes.json();
@@ -95,14 +91,32 @@ const MovieDetailPage = () => {
         };
 
         fetchUserData();
-    }, [currentMovieId, currentUserId, refreshKey]); // Re-run when refreshKey changes
+    }, [currentMovieId, currentUserId, refreshKey]);
 
     // --- HANDLERS ---
+
+    // 3. NEW: HANDLE TRAILER CLICK
+    const handleWatchTrailer = async () => {
+        try {
+            // Calls your Java Backend
+            const response = await fetch(`http://localhost:8080/api/movie/${currentMovieId}/trailer`);
+
+            if (response.ok) {
+                const key = await response.text(); // Backend returns raw string key
+                setTrailerKey(key);
+            } else {
+                alert("Sorry, no trailer available for this movie.");
+            }
+        } catch (error) {
+            console.error("Error fetching trailer:", error);
+            alert("Could not load trailer.");
+        }
+    };
 
     const handleToggleFavorite = async () => {
         if (!isAuthenticated()) { alert("Please login first!"); return; }
         const prev = isFavorite;
-        setIsFavorite(!prev); // Optimistic
+        setIsFavorite(!prev);
 
         try {
             await fetch("http://localhost:8080/api/favorites/toggle", {
@@ -111,12 +125,11 @@ const MovieDetailPage = () => {
                 body: JSON.stringify({ movieId: currentMovieId })
             });
         } catch (error) {
-            setIsFavorite(prev); // Revert
+            setIsFavorite(prev);
             console.error(error);
         }
     };
 
-    // SUBMIT RATING ONLY (Left Box)
     const handleSubmitRating = async () => {
         if (!isAuthenticated()) { alert("Please login first!"); return; }
         if (myRating === 0) { alert("Please select a star rating!"); return; }
@@ -128,20 +141,19 @@ const MovieDetailPage = () => {
                 body: JSON.stringify({
                     movieId: currentMovieId,
                     rating: myRating,
-                    comment: existingReviewId ? null : "" // Don't overwrite comment if just rating
+                    comment: existingReviewId ? null : ""
                 })
             });
 
             if (response.ok) {
                 alert("Rating submitted!");
-                setRefreshKey(old => old + 1); // Refresh stats
+                setRefreshKey(old => old + 1);
             }
         } catch (error) {
             console.error("Rating error:", error);
         }
     };
 
-    // SUBMIT COMMENT (Right Tab)
     const handleSubmitComment = async () => {
         if (!isAuthenticated()) { alert("Please login first!"); return; }
         if (!myComment.trim()) { alert("Write a comment first!"); return; }
@@ -152,14 +164,14 @@ const MovieDetailPage = () => {
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
                     movieId: currentMovieId,
-                    rating: myRating > 0 ? myRating : null, // Send rating if it exists
+                    rating: myRating > 0 ? myRating : null,
                     comment: myComment
                 })
             });
 
             if (response.ok) {
-                setMyComment(""); // CLEAR INPUT
-                setRefreshKey(old => old + 1); // UPDATE LIST & STATS
+                setMyComment("");
+                setRefreshKey(old => old + 1);
             } else {
                 alert("Failed to save comment.");
             }
@@ -186,13 +198,10 @@ const MovieDetailPage = () => {
 
             <div className="content-wrapper">
 
-                {/* --- LEFT COLUMN: POSTER & RATING --- */}
                 <div className="poster-column">
                     <img src={posterUrl} alt={movie.title} className="poster-img" />
 
                     <div className="interaction-panel">
-
-                        {/* 1. Community Rating */}
                         <div className="community-rating-box">
                             <span className="cr-label">Community Rating</span>
                             <div className="cr-score">
@@ -204,7 +213,6 @@ const MovieDetailPage = () => {
 
                         <hr style={{borderColor: 'rgba(255,255,255,0.1)', margin:'15px 0'}} />
 
-                        {/* 2. User Rating */}
                         <div style={{marginBottom: '10px'}}>
                             <small style={{color:'#00e054', fontWeight:'bold'}}>YOUR RATING</small>
                             <div style={{ margin: '5px 0' }}>
@@ -219,7 +227,6 @@ const MovieDetailPage = () => {
                             </div>
                         </div>
 
-                        {/* 3. Submit Rating Button */}
                         <button
                             className="btn-submit-rating"
                             onClick={handleSubmitRating}
@@ -228,15 +235,14 @@ const MovieDetailPage = () => {
                             Submit Rating
                         </button>
 
-                        <button className="btn-trailer" onClick={() => alert("Trailer coming soon")}>
+                        {/* 4. UPDATED BUTTON: Calls handleWatchTrailer */}
+                        <button className="btn-trailer" onClick={handleWatchTrailer}>
                             ▶ Trailer
                         </button>
                     </div>
                 </div>
 
-                {/* --- RIGHT COLUMN: INFO & COMMENTS --- */}
                 <div className="info-column">
-
                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                         <h1 className="movie-title" style={{ margin: 0 }}>
                             {movie.title} <span className="year">{year}</span>
@@ -248,7 +254,6 @@ const MovieDetailPage = () => {
 
                     <div className="synopsis">{movie.overview}</div>
 
-                    {/* --- TABS --- */}
                     <div style={{marginTop: '40px'}}>
                         <DetailTabs
                             activeTab={activeTab}
@@ -286,7 +291,6 @@ const MovieDetailPage = () => {
                                         Community Reviews ({stats.totalComments})
                                     </h3>
 
-                                    {/* INPUT */}
                                     <div className="comment-input-area" style={{ marginBottom: '30px' }}>
                                         <textarea
                                             value={myComment}
@@ -300,16 +304,21 @@ const MovieDetailPage = () => {
                                             Post Comment
                                         </button>
                                     </div>
-
-                                    {/* LIST */}
                                     <ReviewsList movieId={currentMovieId} refreshTrigger={refreshKey} />
                                 </div>
                             )}
                         </div>
                     </div>
-
                 </div>
             </div>
+
+            {/* 5. RENDER MODAL: If key exists, show it */}
+            {trailerKey && (
+                <TrailerModal
+                    videoKey={trailerKey}
+                    onClose={() => setTrailerKey(null)}
+                />
+            )}
         </div>
     );
 };
