@@ -140,12 +140,26 @@ const ratingText = (m) =>
       {isOpen && (
         <div className="wheel-modal-overlay" onClick={closeWheel}>
           <div className="wheel-modal" onClick={(e) => e.stopPropagation()}>
+
             <div className="wheel-header">
               <h3>{title}</h3>
               <button className="wheel-close" onClick={closeWheel}>
                 ✕
               </button>
             </div>
+
+            {/* RIGHT: info panel */}
+                       <div className="wheel-sideinfo">
+                           <div className="wheel-sideinfo-label">Movie</div>
+
+                             <div className="wheel-sideinfo-title">
+                                 {hovered ? hovered.title : "Hover a movie"}
+                               </div>
+
+                             <div className="wheel-sideinfo-rating">
+                                 ⭐ {hovered?.vote_average != null ? hovered.vote_average.toFixed(1) : "—"}
+                               </div>
+                              </div>
 
             {loading && <p className="wheel-status">Φόρτωση ταινιών...</p>}
 
@@ -165,6 +179,8 @@ const ratingText = (m) =>
                            : "none",
                        }}
                      />
+
+
 
                      {/* SVG WHEEL */}
                      <svg className="wheel-svg" viewBox="0 0 620 620" width="620" height="620">
@@ -218,20 +234,11 @@ const ratingText = (m) =>
                    </div>
                  </div>
 
-                 {/* RIGHT: info panel */}
-                 <div className="wheel-sideinfo">
-                   <div className="wheel-sideinfo-label">Movie</div>
 
-                   <div className="wheel-sideinfo-title">
-                     {hovered ? hovered.title : "Hover a movie"}
-                   </div>
-
-                   <div className="wheel-sideinfo-rating">
-                     ⭐ {hovered?.vote_average != null ? hovered.vote_average.toFixed(1) : "—"}
-                   </div>
-                 </div>
                </div>
              )}
+
+
 
 
             {!loading && candidates.length === 0 && (

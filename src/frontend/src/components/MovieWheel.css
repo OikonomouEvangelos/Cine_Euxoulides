@@ -53,6 +53,8 @@
   overflow: hidden;
 }
 
+
+
 /* Header */
 .wheel-header {
   display: flex;
@@ -290,35 +292,47 @@
 }
 .wheel-slice-g.faded{ opacity:0; }
 
-/* right info panel */
-.wheel-sideinfo{
-  width:260px;
-  margin-top:22px;
-  padding:12px 14px;
-  border-radius:12px;
-  background:rgba(0,0,0,0.35);
-  color:#fff;
-  backdrop-filter:blur(6px);
+.wheel-sideinfo {
+  position: absolute;
+
+  /* ΔΕΞΙΑ & ΚΑΤΩ ΑΠΟ ΤΟ X */
+  top: 78px;        /* tweak εδώ αν θες πιο κάτω */
+  right: 32px;
+
+  width: 360px;
+  padding: 18px 22px;
+  border-radius: 16px;
+
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  backdrop-filter: blur(10px);
+
+  z-index: 20;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
-.wheel-sideinfo-label{
-  font-size:12px;
-  opacity:.75;
-  font-weight:700;
-  margin-bottom:6px;
+/* text sizes */
+.wheel-sideinfo-label {
+  font-size: 13px;
+  font-weight: 800;
+  opacity: 0.75;
+  margin-bottom: 10px;
+  letter-spacing: 0.4px;
 }
 
-.wheel-sideinfo-title{
-  font-size:14px;
-  font-weight:800;
-  line-height:1.25;
-  margin-bottom:8px;
+.wheel-sideinfo-title {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 12px;
 }
 
-.wheel-sideinfo-rating{
-  font-size:13px;
-  font-weight:800;
+.wheel-sideinfo-rating {
+  font-size: 18px;
+  font-weight: 900;
 }
+
 
 /* responsive: stack under on small screens */
 @media (max-width: 900px){
