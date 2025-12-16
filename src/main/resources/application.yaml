@@ -29,3 +29,14 @@ tmdb:
 google:
   client-id: 1005494521790-5tisd69v12pj2cqsjmfi7eru6lhhv7lh.apps.googleusercontent.com
   key: d166af459b20ece5176f1e92a23e3aa1
+
+logging:
+  file:
+    name: logs/cine-euxoulides.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
+  level:
+    root: INFO
+    com.CineEuxoulides: DEBUG
