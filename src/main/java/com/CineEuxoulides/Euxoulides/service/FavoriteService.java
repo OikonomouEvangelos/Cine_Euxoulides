@@ -1,6 +1,6 @@
 package com.CineEuxoulides.Euxoulides.service;
 
-import com.CineEuxoulides.Euxoulides.model.Favorite;
+import com.CineEuxoulides.Euxoulides.domain.Favorite;
 import com.CineEuxoulides.Euxoulides.repository.FavoriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,17 +15,32 @@ public class FavoriteService {
     private FavoriteRepository favoriteRepository;
 
     @Transactional
-    // CHANGED: Arguments are now String
-    public boolean toggleFavorite(String userId, String movieId) {
+    public boolean toggleFavorite(String userId, String movieIdString, String genreIds) {
+
+        // Μετατροπή του ID από String σε Long (γιατί έτσι το θέλει η βάση πλέον)
+        Long movieId;
+        try {
+            movieId = Long.parseLong(movieIdString);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid movie ID format: " + movieIdString);
+            return false;
+        }
+
+        // Έλεγχος αν υπάρχει ήδη
         Optional<Favorite> existing = favoriteRepository.findByUserIdAndMovieId(userId, movieId);
 
         if (existing.isPresent()) {
+            // Αν υπάρχει, το σβήνουμε (Un-like)
             favoriteRepository.delete(existing.get());
-            return false;
+            return false; // Επιστρέφουμε false (δεν είναι πια αγαπημένο)
         } else {
-            Favorite favorite = new Favorite(userId, movieId);
+            // Αν δεν υπάρχει, το προσθέτουμε (Like)
+            // ΣΗΜΑΝΤΙΚΟ: Αποθηκεύουμε και τα genreIds για να δουλεύει το Blend
+            if (genreIds == null) genreIds = ""; // Ασφάλεια αν λείπουν τα είδη
+
+            Favorite favorite = new Favorite(userId, movieId, genreIds);
             favoriteRepository.save(favorite);
-            return true;
+            return true; // Επιστρέφουμε true (έγινε αγαπημένο)
         }
     }
 }

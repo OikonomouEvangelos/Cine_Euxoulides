@@ -6,7 +6,7 @@ import DetailTabs from '../components/ui/DetailTabs';
 import SearchBar from '../components/SearchBar';
 import ReviewsList from '../components/ReviewsList';
 import StarRating from '../components/StarRating';
-import TrailerModal from '../components/ui/TraillerModal'; // 1. IMPORT MODAL
+import TrailerModal from '../components/ui/TraillerModal';
 
 // CSS
 import './MovieDetailPage.css';
@@ -18,6 +18,7 @@ const MovieDetailPage = () => {
     const { id } = useParams();
     const currentMovieId = id;
     const currentUserId = getCurrentUserId();
+    const API_BASE = 'http://localhost:8080/api'; // Κεντρικό URL για ευκολία
 
     // --- MOVIE DATA STATE ---
     const [movie, setMovie] = useState(null);
@@ -34,20 +35,19 @@ const MovieDetailPage = () => {
     const [refreshKey, setRefreshKey] = useState(0);
 
     const [isFavorite, setIsFavorite] = useState(false);
-
-    // --- NEW: TRAILER STATE ---
-    const [trailerKey, setTrailerKey] = useState(null); // 2. TRAILER STATE
+    const [trailerKey, setTrailerKey] = useState(null);
 
     // --- 1. FETCH DATA ---
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const movieRes = await fetch(`/api/movie/${id}`);
+                // Χρησιμοποιούμε το API_BASE για συνέπεια
+                const movieRes = await fetch(`${API_BASE}/movie/${id}`);
                 if (!movieRes.ok) throw new Error("Could not fetch movie.");
                 const movieData = await movieRes.json();
                 setMovie(movieData);
 
-                const credsRes = await fetch(`/api/movie/${id}/credits`);
+                const credsRes = await fetch(`${API_BASE}/movie/${id}/credits`);
                 if (credsRes.ok) setCredits(await credsRes.json());
 
             } catch (err) {
@@ -59,11 +59,11 @@ const MovieDetailPage = () => {
         fetchData();
     }, [id]);
 
-    // --- 2. FETCH DYNAMIC DATA ---
+    // --- 2. FETCH DYNAMIC DATA (Stats, Reviews, Favorite Status) ---
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const statsRes = await fetch(`http://localhost:8080/api/reviews/movie/${currentMovieId}/stats`);
+                const statsRes = await fetch(`${API_BASE}/reviews/movie/${currentMovieId}/stats`);
                 if (statsRes.ok) {
                     const statsData = await statsRes.json();
                     setStats(statsData);
@@ -73,7 +73,7 @@ const MovieDetailPage = () => {
             if (currentUserId) {
                 const headers = getAuthHeaders();
                 try {
-                    const reviewsRes = await fetch(`http://localhost:8080/api/reviews/movie/${currentMovieId}`, { headers });
+                    const reviewsRes = await fetch(`${API_BASE}/reviews/movie/${currentMovieId}`, { headers });
                     const reviewsData = await reviewsRes.json();
                     const myReview = reviewsData.content.find(r => r.userId === String(currentUserId));
                     if (myReview) {
@@ -82,11 +82,15 @@ const MovieDetailPage = () => {
                     }
                 } catch (e) { console.error(e); }
 
+                // ΕΛΕΓΧΟΣ ΑΓΑΠΗΜΕΝΩΝ
                 try {
-                    const favRes = await fetch(`http://localhost:8080/api/favorites/check?movieId=${currentMovieId}`, { headers });
-                    const isFav = await favRes.json();
-                    setIsFavorite(isFav);
-                } catch (e) { console.error(e); }
+                    // Στέλνουμε το ID ως string στο URL
+                    const favRes = await fetch(`${API_BASE}/favorites/check?movieId=${currentMovieId}`, { headers });
+                    if (favRes.ok) {
+                        const isFav = await favRes.json();
+                        setIsFavorite(isFav);
+                    }
+                } catch (e) { console.error("Favorite check failed", e); }
             }
         };
 
@@ -95,14 +99,11 @@ const MovieDetailPage = () => {
 
     // --- HANDLERS ---
 
-    // 3. NEW: HANDLE TRAILER CLICK
     const handleWatchTrailer = async () => {
         try {
-            // Calls your Java Backend
-            const response = await fetch(`http://localhost:8080/api/movie/${currentMovieId}/trailer`);
-
+            const response = await fetch(`${API_BASE}/movie/${currentMovieId}/trailer`);
             if (response.ok) {
-                const key = await response.text(); // Backend returns raw string key
+                const key = await response.text();
                 setTrailerKey(key);
             } else {
                 alert("Sorry, no trailer available for this movie.");
@@ -113,20 +114,35 @@ const MovieDetailPage = () => {
         }
     };
 
+    // --- ΔΙΟΡΘΩΜΕΝΟ TOGGLE FAVORITE ---
     const handleToggleFavorite = async () => {
         if (!isAuthenticated()) { alert("Please login first!"); return; }
+
+        // 1. Ετοιμάζουμε τα Genres (π.χ. "28,12,878")
+        // Το TMDB επιστρέφει τα genres ως array [{id: 28, name: "Action"}, ...]
+        const genreIdsString = movie?.genres?.map(g => g.id).join(',') || "";
+
         const prev = isFavorite;
-        setIsFavorite(!prev);
+        setIsFavorite(!prev); // Optimistic Update (αλλάζει χρώμα αμέσως)
 
         try {
-            await fetch("http://localhost:8080/api/favorites/toggle", {
+            const response = await fetch(`${API_BASE}/favorites/toggle`, {
                 method: "POST",
                 headers: getAuthHeaders(),
-                body: JSON.stringify({ movieId: currentMovieId })
+                body: JSON.stringify({
+                    movieId: currentMovieId,
+                    genreIds: genreIdsString // <--- ΣΗΜΑΝΤΙΚΗ ΠΡΟΣΘΗΚΗ!
+                })
             });
+
+            if (!response.ok) {
+                throw new Error("Failed to toggle");
+            }
+            // Αν όλα πήγαν καλά, δεν κάνουμε τίποτα, το UI έχει ήδη ενημερωθεί
         } catch (error) {
-            setIsFavorite(prev);
-            console.error(error);
+            setIsFavorite(prev); // Αν αποτύχει, το γυρνάμε πίσω
+            console.error("Favorite Toggle Error:", error);
+            alert("Sfalma: Den egine i apothikeusi sta agapimena.");
         }
     };
 
@@ -135,7 +151,7 @@ const MovieDetailPage = () => {
         if (myRating === 0) { alert("Please select a star rating!"); return; }
 
         try {
-            const response = await fetch("http://localhost:8080/api/reviews/add", {
+            const response = await fetch(`${API_BASE}/reviews/add`, {
                 method: "POST",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
@@ -159,7 +175,7 @@ const MovieDetailPage = () => {
         if (!myComment.trim()) { alert("Write a comment first!"); return; }
 
         try {
-            const response = await fetch("http://localhost:8080/api/reviews/add", {
+            const response = await fetch(`${API_BASE}/reviews/add`, {
                 method: "POST",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
@@ -235,7 +251,6 @@ const MovieDetailPage = () => {
                             Submit Rating
                         </button>
 
-                        {/* 4. UPDATED BUTTON: Calls handleWatchTrailer */}
                         <button className="btn-trailer" onClick={handleWatchTrailer}>
                             ▶ Trailer
                         </button>
@@ -281,6 +296,7 @@ const MovieDetailPage = () => {
                                         <p><strong>Original Title:</strong> {movie.original_title}</p>
                                         <p><strong>Status:</strong> {movie.status}</p>
                                         <p><strong>Release Date:</strong> {movie.release_date}</p>
+                                        <p><strong>Genres:</strong> {movie.genres?.map(g => g.name).join(', ')}</p>
                                     </div>
                                 </div>
                             )}
@@ -312,7 +328,6 @@ const MovieDetailPage = () => {
                 </div>
             </div>
 
-            {/* 5. RENDER MODAL: If key exists, show it */}
             {trailerKey && (
                 <TrailerModal
                     videoKey={trailerKey}
