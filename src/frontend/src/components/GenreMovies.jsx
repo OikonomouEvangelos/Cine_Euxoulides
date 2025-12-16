@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import SearchBar from './SearchBar'; // Βεβαιώσου ότι είναι στον ίδιο φάκελο
 import './MovieCard.css';
+import MovieWheel from "./MovieWheel";
+
 
 const GenreMovies = () => {
   const { genreId } = useParams();
@@ -48,10 +50,18 @@ const GenreMovies = () => {
            <span>←</span> Πίσω στις Κατηγορίες
         </Link>
 
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+
+          {/* Τροχός για την συγκεκριμένη κατηγορία */}
+          <MovieWheel genreId={genreId} title="Δεν ξέρεις τι να δεις; " />
+        </div>
+
+
         {/* ΔΕΞΙΑ: Μπάρα Αναζήτησης */}
         <div style={{ width: '400px' }}>
             <SearchBar />
         </div>
+
 
       </div>
       {/* --------------------------------------------- */}

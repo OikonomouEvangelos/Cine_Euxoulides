@@ -1,0 +1,178 @@
+/* Το κουμπί */
+.wheel-open-btn {
+  position: absolute;
+  top: 130px;
+  right: 450px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 50px;
+  height: 45px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #fbbf24;
+  color: #111;
+  font-weight: 700;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 10;
+}
+
+.wheel-open-btn:hover {
+  box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Modal overlay */
+.wheel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Modal box */
+.wheel-modal {
+  width: min(1100px, 98vw);
+  min-height: 90vh;
+
+  background: #6f8797;
+  border-radius: 0;
+  padding: 24px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.wheel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+}
+
+.wheel-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* Status text */
+.wheel-status {
+  color: #fff;
+  margin-top: 10px;
+}
+
+/* Wheel area */
+.wheel-area {
+  margin: 22px 0;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+/* Pointer */
+.wheel-pointer {
+  position: absolute;
+  top: -8px;
+  z-index: 2;
+  color: #fbbf24;
+  font-size: 26px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Wheel */
+.wheel {
+  width: 620px;
+  height: 620px;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 0, 0, 0.35);
+
+  position: relative;
+  transition: transform 2.5s cubic-bezier(0.17, 0.67, 0.18, 0.99);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+/* Labels */
+.wheel-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 190px;
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  transform-origin: center center;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+
+  pointer-events: none; /* να μην “κλέβει” clicks */
+}
+
+/* Buttons κάτω */
+.wheel-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.wheel-btn {
+  background: #fbbf24;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wheel-btn.secondary {
+  background: #2b2b2b;
+  color: #fff;
+  border: 1px solid #3a3a3a;
+}
+
+.wheel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Poster thumbnails πάνω στον τροχό */
+.wheel-thumb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 80px;
+  height: 100px;
+
+  border-radius: 10px;
+  object-fit: cover;
+
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+
+  pointer-events: none; /* να μην “κλέβει” clicks */
+}
