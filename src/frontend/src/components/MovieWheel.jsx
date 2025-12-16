@@ -22,10 +22,19 @@ const MovieWheel = ({ genreId, title = "Δεν ξέρεις τι να δεις;"
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [hovered, setHovered] = useState(null);
+
 
   const sliceAngle = useMemo(() => {
     return candidates.length ? 360 / candidates.length : 0;
   }, [candidates.length]);
+
+const posterUrl = (m, size = "w1280") =>
+  m?.poster_path ? `https://image.tmdb.org/t/p/${size}${m.poster_path}` : null;
+
+const ratingText = (m) =>
+  typeof m?.vote_average === "number" ? m.vote_average.toFixed(1) : "—";
+
 
   const loadCandidates = async () => {
     if (!API_KEY || !genreId) return;
@@ -140,88 +149,90 @@ const MovieWheel = ({ genreId, title = "Δεν ξέρεις τι να δεις;"
 
             {loading && <p className="wheel-status">Φόρτωση ταινιών...</p>}
 
-            {!loading && candidates.length > 0 && (
-              <div className="wheel-area">
-                <div className="wheel-pointer" title="Εδώ σταματάει">
-                  ▼
-                </div>
+             {!loading && candidates.length > 0 && (
+               <div className="wheel-layout">
+                 {/* LEFT: wheel */}
+                 <div className="wheel-area">
+                   <div className="wheel-pointer" title="Here it stops">▼</div>
 
-                <div
-                  className="wheel"
-                  style={{ transform: `rotate(${rotation}deg)` }}
-                >
-                  <svg
-                    className="wheel-svg"
-                    viewBox="0 0 620 620"
-                    width="620"
-                    height="620"
-                  >
-                    <defs>
-                      {candidates.map((m, idx) => (
-                        <clipPath key={`cp-${m.id}`} id={`slice-${m.id}`}>
-                          <path d={slicePathD(idx)} />
-                        </clipPath>
-                      ))}
-                    </defs>
+                   <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
+                     {/* FULL POSTER REVEAL (behind slices) */}
+                     <div
+                       className={`wheel-full-poster ${hovered?.poster_path ? "show" : ""}`}
+                       style={{
+                         backgroundImage: hovered?.poster_path
+                           ? `url(https://image.tmdb.org/t/p/w1280${hovered.poster_path})`
+                           : "none",
+                       }}
+                     />
 
-                    {/* ΦΕΤΕΣ ΜΕ ΑΦΙΣΕΣ */}
-                    {candidates.map((m, idx) => {
-                      const poster = m.poster_path
-                        ? `https://image.tmdb.org/t/p/w500${m.poster_path}`
-                        : null;
+                     {/* SVG WHEEL */}
+                     <svg className="wheel-svg" viewBox="0 0 620 620" width="620" height="620">
+                       <defs>
+                         {candidates.map((m, idx) => (
+                           <clipPath key={`cp-${m.id}`} id={`slice-${m.id}`}>
+                             <path d={slicePathD(idx)} />
+                           </clipPath>
+                         ))}
+                       </defs>
 
-                     const theta = sliceAngle; // degrees
-                     const rectH = r; // from center to rim
-                     const rectW = 2 * r * Math.tan(((theta / 2) * Math.PI) / 180); // width at the rim
-                     const mid = idx * sliceAngle + sliceAngle / 2 - 90;
+                       {candidates.map((m, idx) => {
+                         const isFaded = hovered && hovered.id !== m.id;
+                         const poster = m.poster_path
+                           ? `https://image.tmdb.org/t/p/w1280${m.poster_path}`
+                           : null;
 
-                      return (
-                        <g key={`sl-${m.id}`} clipPath={`url(#slice-${m.id})`}>
-                          {/* fallback background αν λείπει poster */}
-                          {!poster && (
-                            <rect
-                              x="0"
-                              y="0"
-                              width="620"
-                              height="620"
-                              fill={idx % 2 === 0 ? "#2c3e4d" : "#6f8797"}
-                            />
-                          )}
+                         return (
+                           <g
+                             key={`sl-${m.id}`}
+                             clipPath={`url(#slice-${m.id})`}
+                             className={`wheel-slice-g ${isFaded ? "faded" : ""}`}
+                             onMouseEnter={() => setHovered(m)}
+                             onMouseLeave={() => setHovered(null)}
+                           >
+                             {!poster && (
+                               <rect x="0" y="0" width="620" height="620" fill="#2c3e4d" />
+                             )}
 
-                          {poster && (
-                            <image
-                              href={poster}
-                              x="0"
-                              y="0"
-                              width="620"
-                              height="620"
-                              preserveAspectRatio="xMidYMid slice"
-                              transform={`rotate(${mid} ${cx} ${cy})`}
-                            />
-                          )}
+                             {poster && (
+                               <image
+                                 href={poster}
+                                 x="0"
+                                 y="0"
+                                 width="620"
+                                 height="620"
+                                 preserveAspectRatio="xMidYMid slice"
+                               />
+                             )}
 
-                          {/* γραμμή διαχωρισμού φέτας */}
-                          <path
-                            d={slicePathD(idx)}
-                            fill="none"
-                            stroke="rgba(0,0,0,0.28)"
-                            strokeWidth="2"
-                          />
-                        </g>
-                      );
-                    })}
+                             <path
+                               d={slicePathD(idx)}
+                               fill="none"
+                               stroke="rgba(0,0,0,0.28)"
+                               strokeWidth="2"
+                             />
+                           </g>
+                         );
+                       })}
+                     </svg>
+                   </div>
+                 </div>
 
-                    {/* κέντρο */}
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r="10"
-                      fill="rgba(0,0,0,0.25)"
-                    />
-                  </svg>
-                </div>
-              </div>
-            )}
+                 {/* RIGHT: info panel */}
+                 <div className="wheel-sideinfo">
+                   <div className="wheel-sideinfo-label">Movie</div>
+
+                   <div className="wheel-sideinfo-title">
+                     {hovered ? hovered.title : "Hover a movie"}
+                   </div>
+
+                   <div className="wheel-sideinfo-rating">
+                     ⭐ {hovered?.vote_average != null ? hovered.vote_average.toFixed(1) : "—"}
+                   </div>
+                 </div>
+               </div>
+             )}
+
 
             {!loading && candidates.length === 0 && (
               <p className="wheel-status">Δεν βρέθηκαν ταινίες για τον τροχό.</p>

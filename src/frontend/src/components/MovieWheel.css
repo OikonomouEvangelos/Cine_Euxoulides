@@ -142,3 +142,190 @@
   width: 100%;
   height: 100%;
 }
+
+/* Allow hovering the SVG slices */
+.wheel-svg {
+  pointer-events: none; /* default off */
+}
+
+
+/* Full poster reveal overlay */
+.wheel-hover-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  pointer-events: none; /* do not block hover */
+}
+
+.wheel-hover-overlay.show {
+  opacity: 1;
+}
+
+/* Hover info box */
+.wheel-hover-info {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  max-width: 70%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.wheel-hover-title {
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.wheel-hover-rating {
+  margin-top: 4px;
+  font-weight: 700;
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+.wheel {
+  position: relative;
+}
+
+/* Full poster behind slices */
+.wheel-full-poster {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 900ms ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.wheel-full-poster.show {
+  opacity: 1;
+}
+
+/* Keep SVG above the full poster */
+.wheel-svg {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Fade other slices out completely */
+.wheel-slice-g {
+  pointer-events: all;
+  transition: opacity 900ms ease;
+  cursor: pointer;
+}
+
+.wheel-slice-g.faded {
+  opacity: 0;
+}
+
+/* Hover info above everything */
+.wheel-hover-info {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 2;
+  max-width: 70%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+.wheel-hover-title { font-weight: 800; font-size: 14px; }
+.wheel-hover-rating { margin-top: 4px; font-weight: 700; font-size: 13px; }
+
+/* layout: wheel left + info right */
+.wheel-layout{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap:18px;
+}
+
+/* keep wheel stacking context correct */
+.wheel{
+  position:relative;
+}
+
+/* full poster reveal behind slices */
+.wheel-full-poster{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  transition:opacity 900ms ease;
+  z-index:0;
+  pointer-events:none;
+}
+.wheel-full-poster.show{ opacity:1; }
+
+/* svg above background */
+.wheel-svg{
+  position:relative;
+  z-index:1;
+  pointer-events:auto;  /* IMPORTANT: hover must work */
+}
+
+/* slices hover + fade others */
+.wheel-slice-g{
+  pointer-events:all;
+  transition:opacity 900ms ease;
+  cursor:pointer;
+}
+.wheel-slice-g.faded{ opacity:0; }
+
+/* right info panel */
+.wheel-sideinfo{
+  width:260px;
+  margin-top:22px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:rgba(0,0,0,0.35);
+  color:#fff;
+  backdrop-filter:blur(6px);
+}
+
+.wheel-sideinfo-label{
+  font-size:12px;
+  opacity:.75;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.wheel-sideinfo-title{
+  font-size:14px;
+  font-weight:800;
+  line-height:1.25;
+  margin-bottom:8px;
+}
+
+.wheel-sideinfo-rating{
+  font-size:13px;
+  font-weight:800;
+}
+
+/* responsive: stack under on small screens */
+@media (max-width: 900px){
+  .wheel-layout{ flex-direction:column; align-items:center; }
+  .wheel-sideinfo{ width:min(620px, 92vw); margin-top:10px; }
+}
+
+
+
+
