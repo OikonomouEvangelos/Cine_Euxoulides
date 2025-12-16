@@ -1,6 +1,6 @@
 package com.CineEuxoulides.Euxoulides.service;
 
-import com.CineEuxoulides.Euxoulides.model.Favorite;
+import com.CineEuxoulides.Euxoulides.domain.Favorite;
 import com.CineEuxoulides.Euxoulides.repository.FavoriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +34,8 @@ public class RecommendationService {
         ).getContent();
 
         List<String> favoriteIds = favorites.stream()
-                .map(Favorite::getMovieId)
+                // Μετατρέπουμε τον αριθμό σε String
+                .map(favorite -> String.valueOf(favorite.getMovieId()))
                 .collect(Collectors.toList());
 
         // 2. If no favorites, fallback to Trending

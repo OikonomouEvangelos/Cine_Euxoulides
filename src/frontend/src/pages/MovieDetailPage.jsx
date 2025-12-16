@@ -6,6 +6,7 @@ import DetailTabs from '../components/ui/DetailTabs';
 import SearchBar from '../components/SearchBar';
 import ReviewsList from '../components/ReviewsList';
 import StarRating from '../components/StarRating';
+import TrailerModal from '../components/ui/TraillerModal';
 
 // CSS
 import './MovieDetailPage.css';
@@ -17,6 +18,7 @@ const MovieDetailPage = () => {
     const { id } = useParams();
     const currentMovieId = id;
     const currentUserId = getCurrentUserId();
+    const API_BASE = 'http://localhost:8080/api'; // Κεντρικό URL για ευκολία
 
     // --- MOVIE DATA STATE ---
     const [movie, setMovie] = useState(null);
@@ -30,22 +32,22 @@ const MovieDetailPage = () => {
     const [myRating, setMyRating] = useState(0);
     const [myComment, setMyComment] = useState("");
     const [existingReviewId, setExistingReviewId] = useState(null);
-    const [refreshKey, setRefreshKey] = useState(0); // Triggers list refresh
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const [isFavorite, setIsFavorite] = useState(false);
+    const [trailerKey, setTrailerKey] = useState(null);
 
     // --- 1. FETCH DATA ---
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Movie Details
-                const movieRes = await fetch(`/api/movie/${id}`);
+                // Χρησιμοποιούμε το API_BASE για συνέπεια
+                const movieRes = await fetch(`${API_BASE}/movie/${id}`);
                 if (!movieRes.ok) throw new Error("Could not fetch movie.");
                 const movieData = await movieRes.json();
                 setMovie(movieData);
 
-                // Credits
-                const credsRes = await fetch(`/api/movie/${id}/credits`);
+                const credsRes = await fetch(`${API_BASE}/movie/${id}/credits`);
                 if (credsRes.ok) setCredits(await credsRes.json());
 
             } catch (err) {
@@ -57,12 +59,11 @@ const MovieDetailPage = () => {
         fetchData();
     }, [id]);
 
-    // --- 2. FETCH DYNAMIC DATA (Stats, Reviews, Favorite) ---
+    // --- 2. FETCH DYNAMIC DATA (Stats, Reviews, Favorite Status) ---
     useEffect(() => {
         const fetchUserData = async () => {
-            // A. Fetch Community Stats
             try {
-                const statsRes = await fetch(`http://localhost:8080/api/reviews/movie/${currentMovieId}/stats`);
+                const statsRes = await fetch(`${API_BASE}/reviews/movie/${currentMovieId}/stats`);
                 if (statsRes.ok) {
                     const statsData = await statsRes.json();
                     setStats(statsData);
@@ -71,95 +72,122 @@ const MovieDetailPage = () => {
 
             if (currentUserId) {
                 const headers = getAuthHeaders();
-
-                // B. Check if I already reviewed
                 try {
-                    const reviewsRes = await fetch(`http://localhost:8080/api/reviews/movie/${currentMovieId}`, { headers });
+                    const reviewsRes = await fetch(`${API_BASE}/reviews/movie/${currentMovieId}`, { headers });
                     const reviewsData = await reviewsRes.json();
                     const myReview = reviewsData.content.find(r => r.userId === String(currentUserId));
                     if (myReview) {
                         setMyRating(myReview.rating || 0);
-                        // CHANGED: We do NOT fill the comment box anymore.
-                        // The user sees their review in the list below.
                         setExistingReviewId(myReview.id);
                     }
                 } catch (e) { console.error(e); }
 
-                // C. Check Favorite
+                // ΕΛΕΓΧΟΣ ΑΓΑΠΗΜΕΝΩΝ
                 try {
-                    const favRes = await fetch(`http://localhost:8080/api/favorites/check?movieId=${currentMovieId}`, { headers });
-                    const isFav = await favRes.json();
-                    setIsFavorite(isFav);
-                } catch (e) { console.error(e); }
+                    // Στέλνουμε το ID ως string στο URL
+                    const favRes = await fetch(`${API_BASE}/favorites/check?movieId=${currentMovieId}`, { headers });
+                    if (favRes.ok) {
+                        const isFav = await favRes.json();
+                        setIsFavorite(isFav);
+                    }
+                } catch (e) { console.error("Favorite check failed", e); }
             }
         };
 
         fetchUserData();
-    }, [currentMovieId, currentUserId, refreshKey]); // Re-run when refreshKey changes
+    }, [currentMovieId, currentUserId, refreshKey]);
 
     // --- HANDLERS ---
 
-    const handleToggleFavorite = async () => {
-        if (!isAuthenticated()) { alert("Please login first!"); return; }
-        const prev = isFavorite;
-        setIsFavorite(!prev); // Optimistic
-
+    const handleWatchTrailer = async () => {
         try {
-            await fetch("http://localhost:8080/api/favorites/toggle", {
-                method: "POST",
-                headers: getAuthHeaders(),
-                body: JSON.stringify({ movieId: currentMovieId })
-            });
+            const response = await fetch(`${API_BASE}/movie/${currentMovieId}/trailer`);
+            if (response.ok) {
+                const key = await response.text();
+                setTrailerKey(key);
+            } else {
+                alert("Sorry, no trailer available for this movie.");
+            }
         } catch (error) {
-            setIsFavorite(prev); // Revert
-            console.error(error);
+            console.error("Error fetching trailer:", error);
+            alert("Could not load trailer.");
         }
     };
 
-    // SUBMIT RATING ONLY (Left Box)
+    // --- ΔΙΟΡΘΩΜΕΝΟ TOGGLE FAVORITE ---
+    const handleToggleFavorite = async () => {
+        if (!isAuthenticated()) { alert("Please login first!"); return; }
+
+        // 1. Ετοιμάζουμε τα Genres (π.χ. "28,12,878")
+        // Το TMDB επιστρέφει τα genres ως array [{id: 28, name: "Action"}, ...]
+        const genreIdsString = movie?.genres?.map(g => g.id).join(',') || "";
+
+        const prev = isFavorite;
+        setIsFavorite(!prev); // Optimistic Update (αλλάζει χρώμα αμέσως)
+
+        try {
+            const response = await fetch(`${API_BASE}/favorites/toggle`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    movieId: currentMovieId,
+                    genreIds: genreIdsString // <--- ΣΗΜΑΝΤΙΚΗ ΠΡΟΣΘΗΚΗ!
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to toggle");
+            }
+            // Αν όλα πήγαν καλά, δεν κάνουμε τίποτα, το UI έχει ήδη ενημερωθεί
+        } catch (error) {
+            setIsFavorite(prev); // Αν αποτύχει, το γυρνάμε πίσω
+            console.error("Favorite Toggle Error:", error);
+            alert("Sfalma: Den egine i apothikeusi sta agapimena.");
+        }
+    };
+
     const handleSubmitRating = async () => {
         if (!isAuthenticated()) { alert("Please login first!"); return; }
         if (myRating === 0) { alert("Please select a star rating!"); return; }
 
         try {
-            const response = await fetch("http://localhost:8080/api/reviews/add", {
+            const response = await fetch(`${API_BASE}/reviews/add`, {
                 method: "POST",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
                     movieId: currentMovieId,
                     rating: myRating,
-                    comment: existingReviewId ? null : "" // Don't overwrite comment if just rating
+                    comment: existingReviewId ? null : ""
                 })
             });
 
             if (response.ok) {
                 alert("Rating submitted!");
-                setRefreshKey(old => old + 1); // Refresh stats
+                setRefreshKey(old => old + 1);
             }
         } catch (error) {
             console.error("Rating error:", error);
         }
     };
 
-    // SUBMIT COMMENT (Right Tab)
     const handleSubmitComment = async () => {
         if (!isAuthenticated()) { alert("Please login first!"); return; }
         if (!myComment.trim()) { alert("Write a comment first!"); return; }
 
         try {
-            const response = await fetch("http://localhost:8080/api/reviews/add", {
+            const response = await fetch(`${API_BASE}/reviews/add`, {
                 method: "POST",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
                     movieId: currentMovieId,
-                    rating: myRating > 0 ? myRating : null, // Send rating if it exists
+                    rating: myRating > 0 ? myRating : null,
                     comment: myComment
                 })
             });
 
             if (response.ok) {
-                setMyComment(""); // CLEAR INPUT
-                setRefreshKey(old => old + 1); // UPDATE LIST & STATS
+                setMyComment("");
+                setRefreshKey(old => old + 1);
             } else {
                 alert("Failed to save comment.");
             }
@@ -186,13 +214,10 @@ const MovieDetailPage = () => {
 
             <div className="content-wrapper">
 
-                {/* --- LEFT COLUMN: POSTER & RATING --- */}
                 <div className="poster-column">
                     <img src={posterUrl} alt={movie.title} className="poster-img" />
 
                     <div className="interaction-panel">
-
-                        {/* 1. Community Rating */}
                         <div className="community-rating-box">
                             <span className="cr-label">Community Rating</span>
                             <div className="cr-score">
@@ -204,7 +229,6 @@ const MovieDetailPage = () => {
 
                         <hr style={{borderColor: 'rgba(255,255,255,0.1)', margin:'15px 0'}} />
 
-                        {/* 2. User Rating */}
                         <div style={{marginBottom: '10px'}}>
                             <small style={{color:'#00e054', fontWeight:'bold'}}>YOUR RATING</small>
                             <div style={{ margin: '5px 0' }}>
@@ -219,7 +243,6 @@ const MovieDetailPage = () => {
                             </div>
                         </div>
 
-                        {/* 3. Submit Rating Button */}
                         <button
                             className="btn-submit-rating"
                             onClick={handleSubmitRating}
@@ -228,15 +251,13 @@ const MovieDetailPage = () => {
                             Submit Rating
                         </button>
 
-                        <button className="btn-trailer" onClick={() => alert("Trailer coming soon")}>
+                        <button className="btn-trailer" onClick={handleWatchTrailer}>
                             ▶ Trailer
                         </button>
                     </div>
                 </div>
 
-                {/* --- RIGHT COLUMN: INFO & COMMENTS --- */}
                 <div className="info-column">
-
                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                         <h1 className="movie-title" style={{ margin: 0 }}>
                             {movie.title} <span className="year">{year}</span>
@@ -248,7 +269,6 @@ const MovieDetailPage = () => {
 
                     <div className="synopsis">{movie.overview}</div>
 
-                    {/* --- TABS --- */}
                     <div style={{marginTop: '40px'}}>
                         <DetailTabs
                             activeTab={activeTab}
@@ -276,6 +296,7 @@ const MovieDetailPage = () => {
                                         <p><strong>Original Title:</strong> {movie.original_title}</p>
                                         <p><strong>Status:</strong> {movie.status}</p>
                                         <p><strong>Release Date:</strong> {movie.release_date}</p>
+                                        <p><strong>Genres:</strong> {movie.genres?.map(g => g.name).join(', ')}</p>
                                     </div>
                                 </div>
                             )}
@@ -286,7 +307,6 @@ const MovieDetailPage = () => {
                                         Community Reviews ({stats.totalComments})
                                     </h3>
 
-                                    {/* INPUT */}
                                     <div className="comment-input-area" style={{ marginBottom: '30px' }}>
                                         <textarea
                                             value={myComment}
@@ -300,16 +320,20 @@ const MovieDetailPage = () => {
                                             Post Comment
                                         </button>
                                     </div>
-
-                                    {/* LIST */}
                                     <ReviewsList movieId={currentMovieId} refreshTrigger={refreshKey} />
                                 </div>
                             )}
                         </div>
                     </div>
-
                 </div>
             </div>
+
+            {trailerKey && (
+                <TrailerModal
+                    videoKey={trailerKey}
+                    onClose={() => setTrailerKey(null)}
+                />
+            )}
         </div>
     );
 };

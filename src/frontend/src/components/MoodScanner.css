@@ -1,0 +1,168 @@
+/* --- The Dark Backdrop --- */
+.scanner-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+/* --- The Main Window --- */
+.scanner-window {
+    position: relative;
+    width: 90%;
+    max-width: 510px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+
+    background-color: #14181c;
+    border: 1px solid #444;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+    overflow: hidden;
+}
+
+/* --- Header --- */
+.scanner-header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #1e2328;
+    border-bottom: 1px solid #333;
+}
+
+.scanner-title {
+    margin: 0;
+    /* 💥 CHANGED: Green -> Letterboxd Blue */
+    color: #40bcf4;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close-btn:hover { color: white; }
+
+/* --- Scrollable Content Area --- */
+.scanner-content-scroll {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #555 #14181c;
+}
+.scanner-content-scroll::-webkit-scrollbar { width: 8px; }
+.scanner-content-scroll::-webkit-scrollbar-track { background: #14181c; }
+.scanner-content-scroll::-webkit-scrollbar-thumb { background-color: #555; border-radius: 4px; }
+
+/* --- Camera Area --- */
+.camera-container {
+    background: black;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 2px solid #333;
+    position: relative;
+    height: 280px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.webcam-view {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+
+/* --- Buttons --- */
+.primary-btn {
+    width: 100%;
+    padding: 14px;
+    /* 💥 CHANGED: Green -> Letterboxd Blue */
+    background-color: #40bcf4;
+    color: #14181c; /* Kept dark text for contrast, or use white if preferred */
+    border: none;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.primary-btn:hover {
+    /* 💥 CHANGED: Hover state -> Lighter Blue */
+    background-color: #5acdf6;
+    transform: translateY(-1px);
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 1px solid #666;
+    color: #ccc;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.secondary-btn:hover {
+    /* 💥 CHANGED: Hover Border/Text -> Letterboxd Blue */
+    border-color: #40bcf4;
+    color: #40bcf4;
+}
+
+/* --- Movie Results Grid --- */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.result-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.result-card:hover {
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+.result-poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    object-fit: cover;
+}
+
+.result-title {
+    color: #ddd;
+    font-size: 0.75rem;
+    margin-top: 6px;
+    text-align: center;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
