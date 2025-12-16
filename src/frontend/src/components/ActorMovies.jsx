@@ -1,12 +1,12 @@
-// src/frontend/src/components/ActorMovies.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import MovieCard from './MovieCard';
+import SearchBar from './SearchBar';
 
 const ActorMovies = () => {
-  const { actorId } = useParams(); // Παίρνουμε το ID του ηθοποιού από το URL
+  const { actorId } = useParams();
   const [movies, setMovies] = useState([]);
-  const [actorName, setActorName] = useState(""); // Για να δείξουμε το όνομά του στον τίτλο
+  const [actorName, setActorName] = useState("");
   const [loading, setLoading] = useState(true);
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -15,19 +15,14 @@ const ActorMovies = () => {
     const fetchActorCredits = async () => {
       try {
         setLoading(true);
-
-        // 1. Ζητάμε τις ταινίες που έπαιξε ο ηθοποιός (movie_credits)
         const creditsUrl = `https://api.themoviedb.org/3/person/${actorId}/movie_credits?api_key=${API_KEY}&language=el-GR`;
         const creditsRes = await fetch(creditsUrl);
         const creditsData = await creditsRes.json();
 
-        // 2. Ζητάμε και το όνομα του ηθοποιού για τον τίτλο
         const personUrl = `https://api.themoviedb.org/3/person/${actorId}?api_key=${API_KEY}&language=el-GR`;
         const personRes = await fetch(personUrl);
         const personData = await personRes.json();
 
-        // Ταξινομούμε τις ταινίες βάσει δημοτικότητας (για να βγουν οι γνωστές πρώτες)
-        // και κρατάμε αυτές που έχουν poster
         const sortedMovies = creditsData.cast
           .filter(movie => movie.poster_path)
           .sort((a, b) => b.popularity - a.popularity);
@@ -49,9 +44,23 @@ const ActorMovies = () => {
 
   return (
     <div className="trending-section" style={{ minHeight: '100vh' }}>
-      <div style={{ padding: '20px' }}>
-        {/* Κουμπί επιστροφής */}
-        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none' }}>← Πίσω στην Αρχική</Link>
+
+      {/* --- ΚΟΥΤΙ ΠΛΟΗΓΗΣΗΣ ΚΑΙ ΑΝΑΖΗΤΗΣΗΣ --- */}
+      <div style={{
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'space-between', // Αριστερά το Πίσω, Δεξιά το Search
+        alignItems: 'center'
+      }}>
+        {/* Αριστερά: Κουμπί επιστροφής */}
+        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
+          ← Πίσω στην Αρχική
+        </Link>
+
+        {/* Δεξιά: Search Bar */}
+        <div style={{ width: '300px' }}> {/* Ορίζουμε πλάτος για να μην είναι τεράστιο */}
+            <SearchBar />
+        </div>
       </div>
 
       <h2 style={{ paddingLeft: '20px' }}>Ταινίες με: <span style={{color: '#fbbf24'}}>{actorName}</span></h2>

@@ -22,7 +22,7 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import SearchBar from './components/SearchBar';
-import OfflineGame from './components/OfflineGame'; // <-- NEW: Import the Offline Game
+import OfflineGame from './components/OfflineGame';
 
 // --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -36,7 +36,6 @@ import './App.css';
 
 
 // --- LAYOUT COMPONENT ---
-// This component now receives the isOnline status as a prop
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -50,13 +49,18 @@ const AppLayout = () => {
   };
 
   // --- ΛΟΓΙΚΗ ΑΠΟΚΡΥΨΗΣ SEARCH BAR ---
-  // The logic remains the same
+  // Εδώ ορίζουμε πού ΔΕΝ θέλουμε να φαίνεται η κεντρική μπάρα
   const shouldHideGlobalSearch =
       location.pathname.startsWith('/movie/') ||
       location.pathname.startsWith('/movies') ||
       location.pathname.startsWith('/category') ||
       location.pathname.startsWith('/favorites') ||
-      location.pathname === '/browse';
+      location.pathname === '/browse' ||
+      // Νέες προσθήκες για να φύγει η μπάρα από τις σελίδες που έφτιαξες:
+      location.pathname.startsWith('/actors') ||
+      location.pathname.startsWith('/directors') ||
+      location.pathname.startsWith('/year') ||
+      location.pathname.startsWith('/search');
 
   return (
     <div className="app-container">
@@ -93,7 +97,7 @@ const AppLayout = () => {
 
 
 const App = () => {
-  // --- 1. NEW STATE: Track Online Status ---
+  // --- 1. STATE: Track Online Status ---
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
@@ -113,10 +117,9 @@ const App = () => {
 
 
   return (
-    // The Router is outside of this component (in main.jsx)
     <>
-      {/* --- 3. RENDER THE GAME FIRST! --- */}
-      {/* It will cover the screen when isOnline is false */}
+      {/* --- 3. OFFLINE GAME --- */}
+      {/* Καλύπτει την οθόνη όταν δεν υπάρχει ίντερνετ */}
       <OfflineGame isOnline={isOnline} />
 
       <Routes>
@@ -128,12 +131,11 @@ const App = () => {
         <Route
           element={
             <ProtectedRoute>
-              {/* Note: AppLayout doesn't need isOnline, as the game renders over it */}
               <AppLayout />
             </ProtectedRoute>
           }
         >
-          {/* All other application routes */}
+          {/* Όλα τα routes της εφαρμογής */}
           <Route path="/browse" element={<HomePage />} />
           <Route path="/movie/:id" element={<MovieDetailPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
