@@ -1,92 +1,289 @@
-/* Overlay: Σκοτεινό φόντο πίσω από το παράθυρο */
+/* FriendsModal.css */
+
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
-  z-index: 2000; /* Πάνω από όλα */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
 }
 
-/* Το κυρίως παράθυρο */
 .modal-container {
-  background: #1f2933;
-  color: white;
+  /* Χρώμα ίδιο με το MovieDetail background */
+  background-color: #0f172a;
+  color: #ffffff;
   width: 90%;
-  max-width: 500px;
+  max-width: 700px; /* Λίγο πιο φαρδύ για να αναπνέουν οι ταινίες */
+  height: 85vh;
   border-radius: 12px;
-  padding: 20px;
+  padding: 25px;
   position: relative;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); /* Έντονη σκιά */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #334155; /* Λεπτό περίγραμμα για definition */
 }
 
 .close-modal-btn {
   position: absolute;
-  top: 10px; right: 15px;
-  background: none; border: none;
-  color: #ccc; font-size: 24px; cursor: pointer;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #94a3b8; /* Slate color */
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s;
 }
-.close-modal-btn:hover { color: white; }
 
-h2 { text-align: center; margin-bottom: 20px; color: #fbbf24; }
+.close-modal-btn:hover {
+  color: #fff;
+}
 
-/* Tabs */
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* --- TABS --- */
 .modal-tabs {
   display: flex;
-  justify-content: space-around;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid #334155;
   margin-bottom: 20px;
 }
 
 .modal-tabs button {
-  background: none; border: none;
-  color: #ccc; padding: 10px; cursor: pointer;
-  font-weight: bold; position: relative;
+  flex: 1;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  position: relative;
 }
 
 .modal-tabs button.active {
-  color: white;
-  border-bottom: 2px solid #E50914; /* Netflix Red */
+  color: #60a5fa; /* Μπλε φωτεινό αντί για κόκκινο, ταιριάζει με το MovieDetail theme */
+}
+
+.modal-tabs button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #60a5fa;
+}
+
+.modal-tabs button:hover {
+  color: #e2e8f0;
 }
 
 .badge {
-  background: #E50914; color: white;
-  padding: 2px 6px; border-radius: 10px;
-  font-size: 0.8rem; margin-left: 5px;
+  background: #ef5350;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 10px;
+  margin-left: 5px;
 }
 
-/* Φόρμα Προσθήκης */
-.add-section form {
-  display: flex; gap: 10px; margin-top: 15px;
+/* --- CONTENT --- */
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
 }
-.add-section input {
-  flex: 1; padding: 10px; border-radius: 4px; border: none;
+
+/* Custom Scrollbar - Matching dark theme */
+.tab-content::-webkit-scrollbar {
+  width: 6px;
 }
+.tab-content::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+.tab-content::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+.tab-content::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Forms & Inputs */
+input[type="email"] {
+  width: 100%;
+  background-color: rgba(30, 41, 59, 0.6);
+  color: #ffffff;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+input[type="email"]:focus {
+  border-color: #60a5fa;
+  background-color: rgba(30, 41, 59, 0.9);
+}
+
 .action-btn {
-  background: #E50914; color: white; border: none;
-  padding: 0 20px; border-radius: 4px; cursor: pointer;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
 }
 
-/* Λίστες */
-.list-section ul { list-style: none; padding: 0; }
+.action-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Lists */
+ul { list-style: none; padding: 0; }
+
 .friend-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px; background: rgba(255,255,255,0.05);
-  margin-bottom: 8px; border-radius: 6px;
-}
-.friend-info { display: flex; align-items: center; gap: 10px; }
-.avatar-circle {
-  width: 30px; height: 30px; background: #fbbf24; color: black;
-  border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e293b; /* Dark Slate */
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #334155;
 }
 
-/* Κουμπιά Ενεργειών */
-.accept-btn { background: #4caf50; border: none; cursor: pointer; padding: 5px 10px; border-radius: 4px; margin-right: 5px; }
-.reject-btn { background: #f44336; border: none; cursor: pointer; padding: 5px 10px; border-radius: 4px; }
+.friend-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.friend-info strong { color: #fff; display: block; }
+.friend-info small { color: #94a3b8; }
+.friend-info span { font-weight: 600; }
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  background: #3b82f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  font-size: 1.1rem;
+}
+
+/* Buttons inside lists */
 .blend-btn {
-  background: linear-gradient(45deg, #6a11cb, #2575fc);
-  border: none; color: white; padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899); /* Μοντέρνο gradient */
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.blend-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(236, 72, 153, 0.5);
+}
+
+/* --- BLEND RESULTS GRID (Movie Detail Style) --- */
+.blend-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+  padding: 10px 5px 20px 5px;
+}
+
+.movie-card-blend {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #1e293b;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.movie-card-blend:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Σκιά όπως στο movie-detail */
+  z-index: 5;
+  border: 1px solid #60a5fa; /* Λεπτό μπλε περίγραμμα στο hover */
+}
+
+.movie-card-blend img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-info-blend {
+  padding: 10px;
+  background: linear-gradient(to top, #1e293b 0%, rgba(30, 41, 59, 0.95) 100%);
+}
+
+.movie-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-meta {
+  font-size: 0.8rem;
+  color: #94a3b8; /* Matching tagline color */
+  display: flex;
+  justify-content: space-between;
+}
+
+.rating {
+  color: #4ade80; /* Green for score, like the chart fill */
+  font-weight: bold;
+}
+
+.back-btn {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: #334155;
+  color: white;
 }

@@ -1,12 +1,12 @@
 package com.CineEuxoulides.Euxoulides.controller;
 
-import com.CineEuxoulides.Euxoulides.model.Favorite;
+// 1. ΔΙΟΡΘΩΣΗ: Σωστό Import (domain αντί για model)
+import com.CineEuxoulides.Euxoulides.domain.Favorite;
 import com.CineEuxoulides.Euxoulides.repository.FavoriteRepository;
 import com.CineEuxoulides.Euxoulides.service.FavoriteService;
 import com.CineEuxoulides.Euxoulides.security.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/favorites")
@@ -34,7 +35,6 @@ public class FavoriteController {
         return JwtUtil.extractAllClaims(token);
     }
 
-    // NEW HELPER: Converts ID to String
     private String getUserIdAsString(Claims claims) {
         return String.valueOf(claims.get("id"));
     }
@@ -48,10 +48,18 @@ public class FavoriteController {
             Claims claims = getClaimsFromHeader(authHeader);
             String userId = getUserIdAsString(claims);
 
-            // Convert incoming Movie ID to String safely
+            // Μετατροπή Movie ID σε String
             String movieId = String.valueOf(payload.get("movieId"));
 
-            boolean isFavorite = favoriteService.toggleFavorite(userId, movieId);
+            // 2. ΔΙΟΡΘΩΣΗ: Διαβάζουμε και τα genreIds για το Blend
+            String genreIds = (String) payload.get("genreIds");
+            if (genreIds == null) {
+                genreIds = ""; // Ασφάλεια για να μην σκάσει αν λείπει
+            }
+
+            // Καλούμε το Service με τις 3 παραμέτρους
+            boolean isFavorite = favoriteService.toggleFavorite(userId, movieId, genreIds);
+
             return ResponseEntity.ok(Map.of("isFavorite", isFavorite));
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,14 +70,18 @@ public class FavoriteController {
     @GetMapping("/check")
     public ResponseEntity<?> checkFavorite(
             @RequestHeader("Authorization") String authHeader,
-            @RequestParam String movieId // Receive as String
+            @RequestParam String movieId // Έρχεται ως String από το URL
     ) {
         try {
             Claims claims = getClaimsFromHeader(authHeader);
             String userId = getUserIdAsString(claims);
 
-            boolean exists = favoriteRepository.existsByUserIdAndMovieId(userId, movieId);
-            return ResponseEntity.ok(exists);
+            // 3. ΔΙΟΡΘΩΣΗ: Μετατροπή σε Long και χρήση του findBy...
+            Long movieIdLong = Long.parseLong(movieId);
+
+            Optional<Favorite> fav = favoriteRepository.findByUserIdAndMovieId(userId, movieIdLong);
+
+            return ResponseEntity.ok(fav.isPresent());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(false);
@@ -87,6 +99,8 @@ public class FavoriteController {
             String userId = getUserIdAsString(claims);
 
             Pageable pageable = PageRequest.of(page, size, Sort.by("addedAt").descending());
+
+            // Επιστρέφει Page<Favorite> όπως το ορίσαμε στο Repository
             return ResponseEntity.ok(favoriteRepository.findByUserId(userId, pageable));
         } catch (Exception e) {
             e.printStackTrace();
