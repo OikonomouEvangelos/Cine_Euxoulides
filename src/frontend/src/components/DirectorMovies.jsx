@@ -1,68 +1,69 @@
-// src/frontend/src/components/DirectorMovies.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import './MovieCard.css';
+import "../components/MovieCard.css";
+import SearchBar from './SearchBar';
 
-const DirectorMovies = () => {
-  const { directorId } = useParams();
+const YearMovies = () => {
+  const { year } = useParams();
   const [movies, setMovies] = useState([]);
-  const [directorName, setDirectorName] = useState("");
   const [loading, setLoading] = useState(true);
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
   useEffect(() => {
-    const fetchDirectorCredits = async () => {
+    const fetchMoviesByYear = async () => {
       try {
         setLoading(true);
+        const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=el-GR&sort_by=popularity.desc&primary_release_year=${year}`;
 
-        // 1. Ζητάμε τα credits (ταινίες) του προσώπου
-        const creditsUrl = `https://api.themoviedb.org/3/person/${directorId}/movie_credits?api_key=${API_KEY}&language=el-GR`;
-        const creditsRes = await fetch(creditsUrl);
-        const creditsData = await creditsRes.json();
+        const res = await fetch(url);
+        const data = await res.json();
 
-        // 2. Ζητάμε το όνομα
-        const personUrl = `https://api.themoviedb.org/3/person/${directorId}?api_key=${API_KEY}&language=el-GR`;
-        const personRes = await fetch(personUrl);
-        const personData = await personRes.json();
-
-        // 3. ΤΟ ΣΗΜΑΝΤΙΚΟ: Ψάχνουμε στο CREW για job === 'Director'
-        const directorWorks = creditsData.crew.filter(movie => movie.job === 'Director');
-
-        // Ταξινόμηση και φιλτράρισμα (να έχουν εικόνα)
-        const sortedMovies = directorWorks
-          .filter(movie => movie.poster_path)
-          .sort((a, b) => b.popularity - a.popularity);
-
-        setMovies(sortedMovies);
-        setDirectorName(personData.name);
+        setMovies(data.results || []);
         setLoading(false);
 
       } catch (error) {
-        console.error("Error fetching director movies:", error);
+        console.error("Error fetching movies by year:", error);
         setLoading(false);
       }
     };
 
-    fetchDirectorCredits();
-  }, [directorId]);
+    fetchMoviesByYear();
+  }, [year]);
 
-    if (loading) return <div className="search-page" style={{color:'white', padding:'20px'}}>Φόρτωση...</div>;
+  if (loading) return <div className="trending-section" style={{color:'white', padding:'20px'}}>Φόρτωση...</div>;
 
   return (
     <div className="search-page" style={{ minHeight: '100vh' }}>
-      <div style={{ padding: '20px' }}>
-        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none' }}>← Πίσω στην Αρχική</Link>
+
+      {/* --- ΚΟΥΤΙ ΠΛΟΗΓΗΣΗΣ ΚΑΙ ΑΝΑΖΗΤΗΣΗΣ --- */}
+      <div style={{
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
+          ← Πίσω στην Αρχική
+        </Link>
+
+        <div style={{ width: '300px' }}>
+            <SearchBar />
+        </div>
       </div>
 
-      <h2 style={{ paddingLeft: '20px' }}>Σκηνοθεσία: <span style={{color: '#fbbf24'}}>{directorName}</span></h2>
+      <h2 style={{ paddingLeft: '20px' }}>Ταινίες του <span style={{color: '#fbbf24'}}>{year}</span></h2>
 
       <div className="movies-grid">
         {movies.map((movie) => (
           <Link to={`/movie/${movie.id}`} key={movie.id} className="movie-card-link">
             <div className="movie-card">
               <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                src={
+                  movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w342${movie.poster_path}`
+                    : 'https://via.placeholder.com/342x513'
+                }
                 alt={movie.title} className="movie-poster"
               />
               <div className="movie-info">
@@ -70,6 +71,7 @@ const DirectorMovies = () => {
                 <p className="movie-rating">
                   ⭐ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}
                 </p>
+
               </div>
             </div>
           </Link>
@@ -79,4 +81,4 @@ const DirectorMovies = () => {
   );
 };
 
-export default DirectorMovies;
+export default YearMovies;
