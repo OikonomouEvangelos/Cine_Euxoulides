@@ -1,3 +1,4 @@
+// src/components/MovieWheel.jsx
 import React, { useMemo, useState } from "react";
 import MovieCard from "./MovieCard";
 import "./MovieWheel.css";
@@ -25,24 +26,6 @@ const MovieWheel = ({ genreId, title = "Δεν ξέρεις τι να δεις;"
   const sliceAngle = useMemo(() => {
     return candidates.length ? 360 / candidates.length : 0;
   }, [candidates.length]);
-
-  // Φτιάχνει conic-gradient με εναλλαγή 2 χρωμάτων (σταθερά, χωρίς nth-child)
-  const wheelBackground = useMemo(() => {
-    if (!candidates.length) return "transparent";
-
-    const c1 = "#2c3e4d";
-    const c2 = "#6f8797";
-
-    const parts = candidates.map((_, i) => {
-      const start = i * sliceAngle;
-      const end = (i + 1) * sliceAngle;
-      const col = i % 2 === 0 ? c1 : c2;
-      return `${col} ${start}deg ${end}deg`;
-    });
-
-    return `conic-gradient(from -90deg, ${parts.join(", ")})`;
-    // from -90deg => “0 μοίρες” να ξεκινάει από πάνω (εκεί που είναι ο δείκτης)
-  }, [candidates.length, sliceAngle]);
 
   const loadCandidates = async () => {
     if (!API_KEY || !genreId) return;
@@ -99,12 +82,8 @@ const MovieWheel = ({ genreId, title = "Δεν ξέρεις τι να δεις;"
 
     const winnerIndex = Math.floor(Math.random() * candidates.length);
 
-    // Στόχος: να “κάτσει” το κέντρο της νικητήριας φέτας ακριβώς στο pointer (πάνω).
     const fullSpins = 5 + Math.floor(Math.random() * 3); // 5–7
-    const targetAngle = winnerIndex * sliceAngle + sliceAngle / 2;
-
-    // Επειδή ο pointer είναι “πάνω” και βάλαμε from -90deg στο gradient,
-    // κρατάμε το ίδιο μαθηματικό: σταμάτα ώστε το targetAngle να έρθει στο 0deg (πάνω).
+    const targetAngle = winnerIndex * sliceAngle + sliceAngle / 2; // κέντρο φέτας
     const finalRotation = fullSpins * 360 + (360 - targetAngle);
 
     setRotation(finalRotation);
@@ -115,8 +94,36 @@ const MovieWheel = ({ genreId, title = "Δεν ξέρεις τι να δεις;"
     }, 2600);
   };
 
+  // Helpers για SVG slice path
+  const cx = 310;
+  const cy = 310;
+  const r = 310;
+
+  const polar = (angDeg) => {
+    const rad = (Math.PI / 180) * angDeg;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  };
+
+  const slicePathD = (idx) => {
+    const start = idx * sliceAngle - 90; // ξεκινάει από πάνω
+    const end = (idx + 1) * sliceAngle - 90;
+
+    const p1 = polar(start);
+    const p2 = polar(end);
+
+    const largeArc = sliceAngle > 180 ? 1 : 0;
+
+    return [
+      `M ${cx} ${cy}`,
+      `L ${p1.x} ${p1.y}`,
+      `A ${r} ${r} 0 ${largeArc} 1 ${p2.x} ${p2.y}`,
+      "Z",
+    ].join(" ");
+  };
+
   return (
     <>
+      {/* Κουμπί που μπαίνει στη σελίδα κατηγορίας */}
       <button className="wheel-open-btn" onClick={openWheel}>
         🎡 Τροχός
       </button>
@@ -135,58 +142,83 @@ const MovieWheel = ({ genreId, title = "Δεν ξέρεις τι να δεις;"
 
             {!loading && candidates.length > 0 && (
               <div className="wheel-area">
-                <div className="wheel-pointer" title="Εδώ σταματάει">▼</div>
+                <div className="wheel-pointer" title="Εδώ σταματάει">
+                  ▼
+                </div>
 
                 <div
                   className="wheel"
-                  style={{
-                    transform: `rotate(${rotation}deg)`,
-                    background: wheelBackground,
-                  }}
+                  style={{ transform: `rotate(${rotation}deg)` }}
                 >
-                  {/* LABELS */}
-                  {candidates.map((m, idx) => {
-                    const angle = idx * sliceAngle + sliceAngle / 2;
-                    return (
-                      <span
-                        key={`lbl-${m.id}`}
-                        className="wheel-label"
-                        title={m.title}
-                        style={{
-                          // rotate(angle) => πάει στη σωστή φέτα
-                          // translateY(-radius) => πάει προς τα έξω
-                          // rotate(90deg) => να είναι οριζόντια (όχι κάθετα/ανάποδα)
-                          transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-235px) rotate(90deg)`,
-                        }}
-                      >
-                        {m.title}
-                      </span>
-                    );
-                  })}
-              {/* THUMBS (poster thumbnails) */}
-              {candidates.map((m, idx) => {
-                const angle = idx * sliceAngle + sliceAngle / 2;
-                const poster = m.poster_path
-                  ? `https://image.tmdb.org/t/p/w185${m.poster_path}`
-                  : null;
+                  <svg
+                    className="wheel-svg"
+                    viewBox="0 0 620 620"
+                    width="620"
+                    height="620"
+                  >
+                    <defs>
+                      {candidates.map((m, idx) => (
+                        <clipPath key={`cp-${m.id}`} id={`slice-${m.id}`}>
+                          <path d={slicePathD(idx)} />
+                        </clipPath>
+                      ))}
+                    </defs>
 
-                if (!poster) return null;
+                    {/* ΦΕΤΕΣ ΜΕ ΑΦΙΣΕΣ */}
+                    {candidates.map((m, idx) => {
+                      const poster = m.poster_path
+                        ? `https://image.tmdb.org/t/p/w500${m.poster_path}`
+                        : null;
 
-                return (
-                  <img
-                    key={`th-${m.id}`}
-                    className="wheel-thumb"
-                    src={poster}
-                    alt={m.title}
-                    title={m.title}
-                    style={{
-                      transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-250px) rotate(-${angle}deg)`,
-                    }}
-                    loading="lazy"
-                  />
-                );
-              })}
+                     const theta = sliceAngle; // degrees
+                     const rectH = r; // from center to rim
+                     const rectW = 2 * r * Math.tan(((theta / 2) * Math.PI) / 180); // width at the rim
+                     const mid = idx * sliceAngle + sliceAngle / 2 - 90;
 
+                      return (
+                        <g key={`sl-${m.id}`} clipPath={`url(#slice-${m.id})`}>
+                          {/* fallback background αν λείπει poster */}
+                          {!poster && (
+                            <rect
+                              x="0"
+                              y="0"
+                              width="620"
+                              height="620"
+                              fill={idx % 2 === 0 ? "#2c3e4d" : "#6f8797"}
+                            />
+                          )}
+
+                          {poster && (
+                            <image
+                              href={poster}
+                              x="0"
+                              y="0"
+                              width="620"
+                              height="620"
+                              preserveAspectRatio="xMidYMid slice"
+                              transform={`rotate(${mid} ${cx} ${cy})`}
+                            />
+                          )}
+
+                          {/* γραμμή διαχωρισμού φέτας */}
+                          <path
+                            d={slicePathD(idx)}
+                            fill="none"
+                            stroke="rgba(0,0,0,0.28)"
+                            strokeWidth="2"
+                          />
+                        </g>
+                      );
+                    })}
+
+                    {/* κέντρο */}
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r="10"
+                      fill="rgba(0,0,0,0.25)"
+                    />
+                  </svg>
                 </div>
               </div>
             )}

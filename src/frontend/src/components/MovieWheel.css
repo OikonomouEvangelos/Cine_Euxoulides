@@ -42,7 +42,7 @@
 
 /* Modal box */
 .wheel-modal {
-  width: min(1100px, 98vw);
+  width: min(1500px, 98vw);
   min-height: 90vh;
 
   background: #6f8797;
@@ -96,40 +96,17 @@
 
 /* Wheel */
 .wheel {
-  width: 620px;
-  height: 620px;
-  border-radius: 50%;
-  border: 3px solid rgba(0, 0, 0, 0.35);
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 0, 0, 0.35);
+    position: relative;
+    transition: transform 2.5s cubic-bezier(0.17, 0.67, 0.18, 0.99);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    background: #6f8797;
 
-  position: relative;
-  transition: transform 2.5s cubic-bezier(0.17, 0.67, 0.18, 0.99);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  overflow: hidden;
-}
 
-/* Labels */
-.wheel-label {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-
-  width: 190px;
-  text-align: center;
-
-  font-size: 14px;
-  font-weight: 700;
-  color: #ffffff;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  transform-origin: center center;
-  letter-spacing: 0.3px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-
-  pointer-events: none; /* να μην “κλέβει” clicks */
-}
 
 /* Buttons κάτω */
 .wheel-actions {
@@ -159,20 +136,9 @@
   cursor: not-allowed;
 }
 
-/* Poster thumbnails πάνω στον τροχό */
-.wheel-thumb {
-  position: absolute;
-  top: 50%;
-  left: 50%;
 
-  width: 80px;
-  height: 100px;
-
-  border-radius: 10px;
-  object-fit: cover;
-
-  border: 2px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-
-  pointer-events: none; /* να μην “κλέβει” clicks */
+.wheel-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
