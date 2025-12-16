@@ -1,0 +1,346 @@
+/* Το κουμπί */
+.wheel-open-btn {
+  position: absolute;
+  top: 130px;
+  right: 450px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 50px;
+  height: 45px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #fbbf24;
+  color: #111;
+  font-weight: 700;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 10;
+}
+
+.wheel-open-btn:hover {
+  box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Modal overlay */
+.wheel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Modal box */
+.wheel-modal {
+  width: min(1500px, 98vw);
+  min-height: 90vh;
+
+  background: #6f8797;
+  border-radius: 0;
+  padding: 24px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+/* Header */
+.wheel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+}
+
+.wheel-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* Status text */
+.wheel-status {
+  color: #fff;
+  margin-top: 10px;
+}
+
+/* Wheel area */
+.wheel-area {
+  margin: 22px 0;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+/* Pointer */
+.wheel-pointer {
+  position: absolute;
+  top: -8px;
+  z-index: 2;
+  color: #fbbf24;
+  font-size: 26px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Wheel */
+.wheel {
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 0, 0, 0.35);
+    position: relative;
+    transition: transform 2.5s cubic-bezier(0.17, 0.67, 0.18, 0.99);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    background: #6f8797;
+    }
+
+
+
+/* Buttons κάτω */
+.wheel-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.wheel-btn {
+  background: #fbbf24;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wheel-btn.secondary {
+  background: #2b2b2b;
+  color: #fff;
+  border: 1px solid #3a3a3a;
+}
+
+.wheel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+.wheel-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Full poster reveal overlay */
+.wheel-hover-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  pointer-events: none; /* do not block hover */
+}
+
+.wheel-hover-overlay.show {
+  opacity: 1;
+}
+
+/* Hover info box */
+.wheel-hover-info {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  max-width: 70%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.wheel-hover-title {
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.wheel-hover-rating {
+  margin-top: 4px;
+  font-weight: 700;
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+.wheel {
+  position: relative;
+}
+
+/* Full poster behind slices */
+.wheel-full-poster {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 900ms ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.wheel-full-poster.show {
+  opacity: 1;
+}
+
+/* Keep SVG above the full poster */
+.wheel-svg {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Fade other slices out completely */
+.wheel-slice-g {
+  pointer-events: all;
+  transition: opacity 900ms ease;
+  cursor: pointer;
+}
+
+.wheel-slice-g.faded {
+  opacity: 0;
+}
+
+/* Hover info above everything */
+.wheel-hover-info {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 2;
+  max-width: 70%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+.wheel-hover-title { font-weight: 800; font-size: 14px; }
+.wheel-hover-rating { margin-top: 4px; font-weight: 700; font-size: 13px; }
+
+/* layout: wheel left + info right */
+.wheel-layout{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap:18px;
+}
+
+/* keep wheel stacking context correct */
+.wheel{
+  position:relative;
+}
+
+/* full poster reveal behind slices */
+.wheel-full-poster{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  transition:opacity 900ms ease;
+  z-index:0;
+  pointer-events:none;
+}
+.wheel-full-poster.show{ opacity:1; }
+
+/* svg above background */
+.wheel-svg{
+  position:relative;
+  z-index:1;
+  pointer-events:auto;  /* IMPORTANT: hover must work */
+}
+
+/* slices hover + fade others */
+.wheel-slice-g{
+  pointer-events:all;
+  transition:opacity 900ms ease;
+  cursor:pointer;
+}
+.wheel-slice-g.faded{ opacity:0; }
+
+.wheel-sideinfo {
+  position: absolute;
+
+  /* ΔΕΞΙΑ & ΚΑΤΩ ΑΠΟ ΤΟ X */
+  top: 78px;        /* tweak εδώ αν θες πιο κάτω */
+  right: 32px;
+
+  width: 360px;
+  padding: 18px 22px;
+  border-radius: 16px;
+
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  backdrop-filter: blur(10px);
+
+  z-index: 20;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+
+/* text sizes */
+.wheel-sideinfo-label {
+  font-size: 13px;
+  font-weight: 800;
+  opacity: 0.75;
+  margin-bottom: 10px;
+  letter-spacing: 0.4px;
+}
+
+.wheel-sideinfo-title {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.wheel-sideinfo-rating {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+
+/* responsive: stack under on small screens */
+@media (max-width: 900px){
+  .wheel-layout{ flex-direction:column; align-items:center; }
+  .wheel-sideinfo{ width:min(620px, 92vw); margin-top:10px; }
+}
+
+.wheel.clickable {
+  cursor: pointer;
+}
+
+
+
+
+
