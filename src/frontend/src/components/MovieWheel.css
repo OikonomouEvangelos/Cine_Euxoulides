@@ -336,6 +336,11 @@
   .wheel-sideinfo{ width:min(620px, 92vw); margin-top:10px; }
 }
 
+.wheel.clickable {
+  cursor: pointer;
+}
+
+
 
 
 
