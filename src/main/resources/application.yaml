@@ -33,3 +33,14 @@ google:
 # ΤΟ CLARIFAI ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΕΔΩ (ΧΩΡΙΣ ΚΕΝΑ ΑΡΙΣΤΕΡΑ)
 clarifai:
   api-key: "d84a14a7fb8445e39239793af5eff3e7"
+
+logging:
+  file:
+    name: logs/cine-euxoulides.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
+  level:
+    root: INFO
+    com.CineEuxoulides: DEBUG
