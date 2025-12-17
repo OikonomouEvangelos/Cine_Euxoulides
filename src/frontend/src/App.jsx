@@ -22,7 +22,7 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import SearchBar from './components/SearchBar';
-import OfflineGame from './components/OfflineGame'; // <-- NEW: Import the Offline Game
+import OfflineGame from './components/OfflineGame';
 
 // --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -36,7 +36,6 @@ import './App.css';
 
 
 // --- LAYOUT COMPONENT ---
-// This component now receives the isOnline status as a prop
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -50,13 +49,13 @@ const AppLayout = () => {
   };
 
   // --- ΛΟΓΙΚΗ ΑΠΟΚΡΥΨΗΣ SEARCH BAR ---
-  // The logic remains the same
+  // Εδώ ορίζουμε πού ΔΕΝ θέλουμε να φαίνεται η γενική μπάρα
   const shouldHideGlobalSearch =
       location.pathname.startsWith('/movie/') ||
       location.pathname.startsWith('/movies') ||
       location.pathname.startsWith('/category') ||
       location.pathname.startsWith('/favorites') ||
-      location.pathname === '/browse';
+      location.pathname === '/browse'; // Στο browse (HomePage) την κρύβουμε γιατί έχει τη δικιά της
 
   return (
     <div className="app-container">
@@ -65,19 +64,16 @@ const AppLayout = () => {
 
       {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
-      {/* --- ΕΛΕΓΧΟΣ ΕΜΦΑΝΙΣΗΣ ΚΕΝΤΡΙΚΗΣ ΜΠΑΡΑΣ --- */}
+      {/* --- ΕΛΕΓΧΟΣ ΕΜΦΑΝΙΣΗΣ ΓΕΝΙΚΗΣ ΜΠΑΡΑΣ --- */}
       {!shouldHideGlobalSearch && (
-        <div
-          className="global-search-wrapper"
-          style={{
-            margin: '30px 0',
-            display: 'flex',
-            justifyContent: 'center',
-            padding: '0 20px'
-          }}
-        >
-          <div style={{ width: '100%', maxWidth: '500px' }}>
-            <SearchBar />
+        <div className="global-search-wrapper">
+          <div className="search-row-container" style={{ justifyContent: 'center' }}>
+
+            {/* ΜΟΝΟ Η ΜΠΑΡΑ ΑΝΑΖΗΤΗΣΗΣ (Χωρίς το κουμπί δίπλα) */}
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+              <SearchBar />
+            </div>
+
           </div>
         </div>
       )}
@@ -93,7 +89,7 @@ const AppLayout = () => {
 
 
 const App = () => {
-  // --- 1. NEW STATE: Track Online Status ---
+  // --- 1. STATE: Track Online Status ---
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
@@ -113,7 +109,6 @@ const App = () => {
 
 
   return (
-    // The Router is outside of this component (in main.jsx)
     <>
       {/* --- 3. RENDER THE GAME FIRST! --- */}
       {/* It will cover the screen when isOnline is false */}
@@ -128,7 +123,6 @@ const App = () => {
         <Route
           element={
             <ProtectedRoute>
-              {/* Note: AppLayout doesn't need isOnline, as the game renders over it */}
               <AppLayout />
             </ProtectedRoute>
           }
@@ -137,6 +131,8 @@ const App = () => {
           <Route path="/browse" element={<HomePage />} />
           <Route path="/movie/:id" element={<MovieDetailPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
+
+          {/* Categories & Filters */}
           <Route path="/movies" element={<MovieCategories />} />
           <Route path="/category/:genreId" element={<GenreMovies />} />
           <Route path="/movies/:genreId" element={<GenreMovies />} />
@@ -144,6 +140,8 @@ const App = () => {
           <Route path="/directors/:directorId" element={<DirectorMovies />} />
           <Route path="/year/:year" element={<YearMovies />} />
           <Route path="/search" element={<SearchResultsPage />} />
+
+          {/* Quiz Routes */}
           <Route path="/quiz" element={<QuizSelectionPage />} />
           <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
           <Route path="/history" element={<QuizHistoryPage />} />
