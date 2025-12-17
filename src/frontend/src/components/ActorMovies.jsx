@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+
+// ΣΗΜΑΝΤΙΚΟ: Εισάγουμε το CSS που έχει το στυλ για το overlay (όπως στο MovieRow)
+import './TrendingSection.css';
 import MovieCard from './MovieCard';
 import SearchBar from './SearchBar';
 
@@ -67,10 +70,48 @@ const ActorMovies = () => {
 
       <div
         className="movies-row"
-        style={{ flexWrap: 'wrap', justifyContent: 'center', overflow: 'visible' }}
+        style={{ flexWrap: 'wrap', justifyContent: 'center', display: 'flex' }}
       >
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+
+          // ΑΛΛΑΓΗ: Αντί για <MovieCard>, βάζουμε τη δομή με το Overlay
+          <Link
+            to={`/movie/${movie.id}`}
+            key={movie.id}
+            className="movie-card-link"
+            style={{ margin: '10px' }} // Λίγο κενό γύρω από κάθε κάρτα
+          >
+            <div className="movie-card">
+
+              {/* Εικόνα */}
+              <img
+                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
+                alt={movie.title}
+                className="movie-poster"
+              />
+
+              {/* ΤΟ OVERLAY (Εδώ είναι η μαγεία για να φαίνεται όπως θες) */}
+              <div className="movie-overlay">
+
+                {/* Βαθμολογία */}
+                <div className="overlay-stars">
+                   ★ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}
+                   <span className="vote-count"> ({movie.vote_count})</span>
+                </div>
+
+                {/* Χρονολογία */}
+                <div className="overlay-meta" style={{ color: '#ccc', fontSize: '0.9rem', margin: '5px 0' }}>
+                   {movie.release_date ? movie.release_date.substring(0, 4) : ''}
+                </div>
+
+                {/* Τίτλος */}
+                <div className="overlay-title">{movie.title}</div>
+
+              </div>
+
+            </div>
+          </Link>
+
         ))}
       </div>
 
