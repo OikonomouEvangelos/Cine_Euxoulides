@@ -27,7 +27,6 @@ body {
 /* --- 4. Main Content Area --- */
 main {
   flex-grow: 1;
-  /* ΚΡΙΣΙΜΟ: Για την απόλυτη τοποθέτηση του Quiz Spot */
   position: relative;
   padding: 20px 40px;
 }
@@ -39,27 +38,21 @@ main h1 {
 }
 
 /* ========================================================================= */
-/* --- 5. QUIZ LANDING SPOT (Simple Circle, Position & Animation) --- */
+/* --- 5. QUIZ LANDING SPOT --- */
 /* ========================================================================= */
 
 .quiz-landing-spot {
     position: absolute;
-    /* ΡΥΘΜΙΣΗ ΘΕΣΗΣ: Ευθυγραμμίζεται με την περιοχή Αναζήτησης/Τάσεων */
     top: 30px;
     left: 40px;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* ΣΤΥΛ ΚΥΚΛΟΥ */
-    width: 70px; /* Μέγεθος κύκλου */
-    height: 70px; /* Μέγεθος κύκλου */
+    width: 70px;
+    height: 70px;
     background-color: transparent;
     border:none;
-    border-radius: 50%; /* Απλός κύκλος */
-
-
+    border-radius: 50%;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     text-decoration: none;
     color: white;
@@ -67,7 +60,6 @@ main h1 {
     z-index: 10;
 }
 
-/* Εξασφαλίζουμε ότι δεν υπάρχει κείμενο */
 .quiz-content {
     display: flex;
     flex-direction: column;
@@ -78,8 +70,6 @@ main h1 {
     padding-bottom: 0;
 }
 
-
-/* --- Εικονίδιο & Animation --- */
 .quiz-icon-container {
     position: relative;
     width: 100%;
@@ -90,18 +80,15 @@ main h1 {
     margin: 0;
 }
 
-/* Ερωτηματικό */
 .quiz-icon span {
     font-size: 4em;
     z-index: 2;
     position: relative;
     transition: transform 0.3s ease;
-    color: #ffc107; /* Χρυσό/Κίτρινο */
-    /* Για να φέρουμε το ερωτηματικό στο κέντρο του κύκλου */
+    color: #ffc107;
     line-height: 0.8;
 }
 
-/* Εφέ Δόνησης (Pulse Ring) */
 .quiz-ring {
     position: absolute;
     width: 100%;
@@ -114,7 +101,6 @@ main h1 {
     left: 0;
 }
 
-/* Όταν ο χρήστης περνάει τον κέρσορα */
 .quiz-landing-spot:hover .quiz-ring {
     animation: none;
     opacity: 0;
@@ -122,11 +108,9 @@ main h1 {
 
 .quiz-landing-spot:hover {
     background-color: #4a637d;
-    transform: scale(1.05); /* Ελαφρύ zoom */
+    transform: scale(1.05);
 }
 
-
-/* ΔΙΑΓΡΑΦΗ ΤΟΥ ΚΕΙΜΕΝΟΥ (Δεν χρειάζονται πλέον) */
 .quiz-slogan,
 .quiz-title,
 .quiz-cta {
@@ -136,51 +120,73 @@ main h1 {
 
 /* --- 6. Media Queries & Keyframes --- */
 @keyframes pulse {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-    70% {
-        transform: scale(1.2);
-        opacity: 0.2;
-    }
-    100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
+    0% { transform: scale(0.9); opacity: 0.7; }
+    70% { transform: scale(1.2); opacity: 0.2; }
+    100% { transform: scale(0.9); opacity: 0.7; }
 }
 
 
 @media (max-width: 768px) {
-  main {
-    padding: 15px 15px;
-  }
-
-  main h1 {
-    font-size: 2rem;
-  }
-
- .quiz-landing-spot {
-     left: 15px;
-     top: 30px;
-     width: 60px;
-     height: 60px;
- }
-
- .quiz-icon span {
-     font-size: 3em;
- }
+  main { padding: 15px 15px; }
+  main h1 { font-size: 2rem; }
+  .quiz-landing-spot { left: 15px; top: 30px; width: 60px; height: 60px; }
+  .quiz-icon span { font-size: 3em; }
 }
+
 /* --- Γενικό Toolbar για σελίδες Κατηγοριών/Λιστών --- */
 .page-toolbar {
-  display: flex; /* Τα βάζει στην ίδια ευθεία */
-  justify-content: space-between; /* Σπρώχνει τα άκρα (αριστερά-δεξιά) */
-  align-items: center; /* Κεντράρισμα στον κάθετο άξονα */
-  padding: 20px 40px; /* Λίγο "αέρα" γύρω γύρω */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
   margin-bottom: 20px;
 }
 
-/* Το κουτί της αναζήτησης να μην είναι τεράστιο */
 .toolbar-search-box {
-  width: 300px; /* Σταθερό πλάτος για να φαίνεται ωραίο */
+  width: 300px;
+}
+
+
+/* ========================================================================= */
+/* --- NEW STYLES: GLOBAL SEARCH BAR & ICON LAYOUT --- */
+/* ========================================================================= */
+
+/* Το εξωτερικό wrapper που κεντράρει τα πάντα */
+.global-search-wrapper {
+  margin: 30px 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+/* Το container που κρατάει Μπάρα + Νέο Κουμπί σε σειρά */
+.search-row-container {
+  width: 100%;
+  max-width: 550px; /* Λίγο πιο φαρδύ για να χωρέσει και το κουμπί άνετα */
+  display: flex;
+  align-items: center; /* Κάθετο κεντράρισμα */
+  gap: 15px; /* Απόσταση ανάμεσα σε μπάρα και κουμπί */
+}
+
+/* Στυλ για το νέο στρογγυλό κουμπί */
+.new-feature-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: none;
+  background-color: #3b4252; /* Ταιριάζει με το σκούρο θέμα */
+  color: #ffffff;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  flex-shrink: 0; /* Για να μην "ζουλιέται" αν μικρύνει η οθόνη */
+}
+
+.new-feature-btn:hover {
+  background-color: #4c566a;
+  transform: translateY(-2px); /* Μικρή κίνηση προς τα πάνω */
 }

@@ -4,6 +4,10 @@ import { useParams, Link } from 'react-router-dom';
 
 // Χρησιμοποιούμε το TrendingSection.css για να έχουμε κοινό στυλ
 import './TrendingSection.css';
+import SearchBar from './SearchBar'; // Βεβαιώσου ότι είναι στον ίδιο φάκελο
+import './MovieCard.css';
+import MovieWheel from "./MovieWheel";
+
 
 const GenreMovies = () => {
   const { genreId } = useParams();
@@ -28,6 +32,20 @@ const GenreMovies = () => {
         <Link to="/movies" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold' }}>
            ← Πίσω στις Κατηγορίες
         </Link>
+
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+
+          {/* Τροχός για την συγκεκριμένη κατηγορία */}
+          <MovieWheel genreId={genreId} title="Δεν ξέρεις τι να δεις; " />
+        </div>
+
+
+        {/* ΔΕΞΙΑ: Μπάρα Αναζήτησης */}
+        <div style={{ width: '400px' }}>
+            <SearchBar />
+        </div>
+
+
       </div>
 
       <h2 style={{ color: 'white', borderLeft: '5px solid #fbbf24', paddingLeft: '15px' }}>
