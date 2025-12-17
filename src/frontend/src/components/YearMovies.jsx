@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import "../components/MovieCard.css";
-import SearchBar from './SearchBar'; // <--- 1. ΣΙΓΟΥΡΕΨΟΥ ΟΤΙ ΥΠΑΡΧΕΙ ΑΥΤΟ ΤΟ IMPORT
+import SearchBar from './SearchBar';
 
 // ΣΗΜΑΝΤΙΚΟ: Εισάγουμε το CSS για το overlay
 import './TrendingSection.css';
@@ -38,7 +38,7 @@ const YearMovies = () => {
   if (loading) return <div className="trending-section" style={{color:'white', padding:'20px'}}>Φόρτωση...</div>;
 
   return (
-// Κρατάμε το "trending-section" για το στυλ, αλλά τη δομή του main
+    // Κρατάμε το "trending-section" για το στυλ, αλλά τη δομή του main
     <div className="trending-section" style={{ minHeight: '100vh' }}>
 
       {/* --- 2. ΤΟ ΚΟΥΤΙ ΠΟΥ ΠΕΡΙΕΧΕΙ ΤΟ "ΠΙΣΩ" ΚΑΙ ΤΗΝ "ΑΝΑΖΗΤΗΣΗ" --- */}
@@ -58,7 +58,7 @@ const YearMovies = () => {
             <SearchBar />
         </div>
       </div>
-      </div>
+
 
       <h2 style={{ paddingLeft: '20px' }}>Ταινίες του <span style={{color: '#fbbf24'}}>{year}</span></h2>
 
