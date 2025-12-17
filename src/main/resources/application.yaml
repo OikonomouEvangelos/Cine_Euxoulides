@@ -30,6 +30,10 @@ google:
   client-id: 1005494521790-5tisd69v12pj2cqsjmfi7eru6lhhv7lh.apps.googleusercontent.com
   key: d166af459b20ece5176f1e92a23e3aa1
 
+# ΤΟ CLARIFAI ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΕΔΩ (ΧΩΡΙΣ ΚΕΝΑ ΑΡΙΣΤΕΡΑ)
+clarifai:
+  api-key: "d84a14a7fb8445e39239793af5eff3e7"
+
 logging:
   file:
     name: logs/cine-euxoulides.log
