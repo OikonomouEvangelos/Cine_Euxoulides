@@ -1,6 +1,7 @@
-// src/frontend/src/components/YearMovies.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import "../components/MovieCard.css";
+import SearchBar from './SearchBar'; // <--- 1. ΣΙΓΟΥΡΕΨΟΥ ΟΤΙ ΥΠΑΡΧΕΙ ΑΥΤΟ ΤΟ IMPORT
 
 // ΣΗΜΑΝΤΙΚΟ: Εισάγουμε το CSS για το overlay
 import './TrendingSection.css';
@@ -16,7 +17,7 @@ const YearMovies = () => {
     const fetchMoviesByYear = async () => {
       try {
         setLoading(true);
-
+        // Ζητάμε ταινίες που κυκλοφόρησαν το συγκεκριμένο έτος
         const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=el-GR&sort_by=popularity.desc&primary_release_year=${year}`;
 
         const res = await fetch(url);
@@ -37,9 +38,26 @@ const YearMovies = () => {
   if (loading) return <div className="trending-section" style={{color:'white', padding:'20px'}}>Φόρτωση...</div>;
 
   return (
+// Κρατάμε το "trending-section" για το στυλ, αλλά τη δομή του main
     <div className="trending-section" style={{ minHeight: '100vh' }}>
-      <div style={{ padding: '20px' }}>
-        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none' }}>← Πίσω στην Αρχική</Link>
+
+      {/* --- 2. ΤΟ ΚΟΥΤΙ ΠΟΥ ΠΕΡΙΕΧΕΙ ΤΟ "ΠΙΣΩ" ΚΑΙ ΤΗΝ "ΑΝΑΖΗΤΗΣΗ" --- */}
+      <div style={{
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'space-between', // Αυτό τα στέλνει στα άκρα
+        alignItems: 'center'
+      }}>
+        {/* Αριστερά */}
+        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
+          ← Πίσω στην Αρχική
+        </Link>
+
+        {/* Δεξιά: Search Bar */}
+        <div style={{ width: '300px' }}>
+            <SearchBar />
+        </div>
+      </div>
       </div>
 
       <h2 style={{ paddingLeft: '20px' }}>Ταινίες του <span style={{color: '#fbbf24'}}>{year}</span></h2>

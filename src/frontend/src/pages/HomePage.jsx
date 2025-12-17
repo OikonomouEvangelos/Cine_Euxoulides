@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import TrendingSection from '../components/TrendingSection';
 import MovieRow from '../components/MovieRow';
+import MoodScanner from '../components/MoodScanner';
+import MoodScannerButton from '../components/MoodScannerButton';
+import { isAuthenticated } from '../services/auth';
 
 const HomePage = () => {
+  const [showScanner, setShowScanner] = useState(false);
 
-  // URLs για το API (TMDB)
+  // TMDB API URLs
   const requests = {
     topRated: `https://api.themoviedb.org/3/movie/top_rated?`,
     action: `https://api.themoviedb.org/3/discover/movie?with_genres=28`,
@@ -16,52 +20,72 @@ const HomePage = () => {
     documentaries: `https://api.themoviedb.org/3/discover/movie?with_genres=99`,
   };
 
+  const recommendationUrl = 'http://localhost:8080/api/recommendations';
+
   return (
     <main>
 
-      {/* --- 1. HEADER TOOLBAR (Quiz Αριστερά - Search Δεξιά) --- */}
+      {/* --- HEADER TOOLBAR --- */}
       <div style={{
           display: 'flex',
-          justifyContent: 'space-between', /* Σπρώχνει τα άκρα */
-          alignItems: 'center',            /* Κεντράρει κάθετα */
-          padding: '20px 40px',            /* Περιθώρια */
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '20px 40px',
           width: '100%',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          background: 'transparent',
+          position: 'relative',
+          zIndex: 10
       }}>
 
-        {/* ΑΡΙΣΤΕΡΑ: Το κουμπί Quiz */}
-        {/* Προσθέτουμε style για να εξουδετερώσουμε τυχόν position:fixed από το CSS */}
-        <Link to="/quiz" className="quiz-landing-spot" style={{
-            position: 'relative',
-            bottom: 'auto',
-            right: 'auto',
-            margin: 0,
-            textDecoration: 'none'
-        }}>
-          <div className="quiz-content">
-              <div className="quiz-icon-container">
-                  <div className="quiz-icon">
-                      <span role="img" aria-label="Ερωτηματικό">❓</span>
-                  </div>
-                  <div className="quiz-ring"></div>
-              </div>
-          </div>
-        </Link>
+        {/* LEFT: Side-by-Side Floating Icons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
 
-        {/* ΔΕΞΙΑ: Η Αναζήτηση */}
+            {/* 1. Quiz Icon (Now on the LEFT) */}
+            <Link
+                to="/quiz"
+                className="quiz-landing-spot"
+                title="Play Movie Quiz"
+                style={{
+                    textDecoration: 'none',
+                    transition: 'transform 0.2s',
+                    /* Force relative positioning to stop it from jumping */
+                    position: 'relative',
+                    left: 'auto',
+                    right: 'auto',
+                    top: 'auto',
+                    bottom: 'auto'
+                }}
+            >
+                <span role="img" aria-label="Quiz" style={{ fontSize: '28px', cursor: 'pointer' }}>❓</span>
+            </Link>
+
+            {/* 2. Mood Scanner (Now on the RIGHT) */}
+            <MoodScannerButton onClick={() => setShowScanner(true)} />
+
+        </div>
+
+        {/* RIGHT: Search */}
         <div style={{ width: '400px' }}>
             <SearchBar />
         </div>
 
       </div>
-      {/* ---------------------------------------------------- */}
 
+      {/* --- POPUP SCANNER --- */}
+      {showScanner && (
+        <MoodScanner onClose={() => setShowScanner(false)} />
+      )}
 
-      {/* 2. Το Trending Section */}
-      <TrendingSection title="Τάσεις Τώρα" />
+      {/* CONTENT SECTIONS */}
+      <div style={{ marginTop: '-10px' }}>
+          <TrendingSection title="Τάσεις Τώρα" />
+      </div>
 
-      {/* 3. ΟΙ ΛΙΣΤΕΣ ΤΑΙΝΙΩΝ */}
       <div className="movie-rows-container" style={{ marginTop: '20px' }}>
+        {isAuthenticated() && (
+            <MovieRow title="Προτεινόμενα για Εσάς" fetchUrl={recommendationUrl} />
+        )}
         <MovieRow title="Κορυφαία Βαθμολογία" fetchUrl={requests.topRated} />
         <MovieRow title="Δράση & Περιπέτεια" fetchUrl={requests.action} />
         <MovieRow title="Κωμωδίες" fetchUrl={requests.comedy} />

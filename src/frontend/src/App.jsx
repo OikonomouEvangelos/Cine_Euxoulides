@@ -1,7 +1,6 @@
 // src/App.jsx
 
-import React, { useState } from 'react';
-// ΑΦΑΙΡΕΣΑΜΕ το BrowserRouter από εδώ, γιατί υπάρχει ήδη στο main.jsx
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 
 // --- IMPORTS ΣΕΛΙΔΩΝ ---
@@ -9,6 +8,7 @@ import WelcomePage from './pages/WelcomePage';
 import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import SearchResultsPage from './pages/SearchResultsPage';
+import FavoritesPage from './pages/FavoritesPage';
 
 // --- IMPORTS QUIZ ---
 import QuizSelectionPage from './pages/QuizSelectionPage';
@@ -22,6 +22,7 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import SearchBar from './components/SearchBar';
+import OfflineGame from './components/OfflineGame';
 
 // --- IMPORTS ΚΑΤΗΓΟΡΙΩΝ ---
 import MovieCategories from './components/MovieCategories';
@@ -37,8 +38,6 @@ import './App.css';
 // --- LAYOUT COMPONENT ---
 const AppLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Το location χρειάζεται για να ξέρουμε σε ποια σελίδα είμαστε
   const location = useLocation();
 
   const toggleMenu = () => {
@@ -50,13 +49,18 @@ const AppLayout = () => {
   };
 
   // --- ΛΟΓΙΚΗ ΑΠΟΚΡΥΨΗΣ SEARCH BAR ---
-  // Ορίζουμε σε ποιες σελίδες ΔΕΝ θέλουμε την κεντρική μπάρα
-  // επειδή έχουμε βάλει δική μας (custom) μέσα στο αρχείο της σελίδας.
+  // Εδώ ορίζουμε πού ΔΕΝ θέλουμε να φαίνεται η κεντρική μπάρα
   const shouldHideGlobalSearch =
-      location.pathname.startsWith('/movie/') ||   // Σελίδα Ταινίας (Custom toolbar)
-      location.pathname.startsWith('/movies') ||   // Σελίδα Κατηγοριών (Custom toolbar)
-      location.pathname.startsWith('/category') || // Σελίδα Κατηγοριών (εναλλακτικό)
-      location.pathname === '/browse';             // Αρχική Σελίδα (Custom toolbar δίπλα στο Quiz)
+      location.pathname.startsWith('/movie/') ||
+      location.pathname.startsWith('/movies') ||
+      location.pathname.startsWith('/category') ||
+      location.pathname.startsWith('/favorites') ||
+      location.pathname === '/browse' ||
+      // Νέες προσθήκες για να φύγει η μπάρα από τις σελίδες που έφτιαξες:
+      location.pathname.startsWith('/actors') ||
+      location.pathname.startsWith('/directors') ||
+      location.pathname.startsWith('/year') ||
+      location.pathname.startsWith('/search');
 
   return (
     <div className="app-container">
@@ -66,20 +70,16 @@ const AppLayout = () => {
       {isMenuOpen && <div className="sidemenu-overlay" onClick={closeMenu}></div>}
 
       {/* --- ΕΛΕΓΧΟΣ ΕΜΦΑΝΙΣΗΣ ΚΕΝΤΡΙΚΗΣ ΜΠΑΡΑΣ --- */}
-      {/* Εμφανίζεται ΜΟΝΟ αν ΔΕΝ είμαστε σε σελίδα της λίστας shouldHideGlobalSearch.
-         Άρα στο '/search' θα εμφανιστεί κανονικά.
-      */}
       {!shouldHideGlobalSearch && (
         <div
           className="global-search-wrapper"
           style={{
             margin: '30px 0',
             display: 'flex',
-            justifyContent: 'center', /* Κεντράρισμα */
+            justifyContent: 'center',
             padding: '0 20px'
           }}
         >
-          {/* Περιορίζουμε το πλάτος για να μην είναι τεράστια */}
           <div style={{ width: '100%', maxWidth: '500px' }}>
             <SearchBar />
           </div>
@@ -97,50 +97,63 @@ const AppLayout = () => {
 
 
 const App = () => {
+  // --- 1. STATE: Track Online Status ---
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    // 2. EVENT LISTENERS: Update state when connection status changes
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Cleanup listeners
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+
   return (
-    // Το Router υπάρχει ήδη στο main.jsx, οπότε εδώ βάζουμε μόνο Routes
-    <Routes>
+    <>
+      {/* --- 3. OFFLINE GAME --- */}
+      {/* Καλύπτει την οθόνη όταν δεν υπάρχει ίντερνετ */}
+      <OfflineGame isOnline={isOnline} />
 
-      {/* 1. PUBLIC ROUTE: Welcome Page (Χωρίς Layout) */}
-      <Route path="/" element={<WelcomePage />} />
+      <Routes>
 
-      {/* 2. PROTECTED ROUTES: Όλες οι εσωτερικές σελίδες */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
-        {/* Αρχική Εφαρμογής */}
-        <Route path="/browse" element={<HomePage />} />
+        {/* 1. PUBLIC ROUTE: Welcome Page */}
+        <Route path="/" element={<WelcomePage />} />
 
-        {/* Λεπτομέρειες Ταινίας */}
-        <Route path="/movie/:id" element={<MovieDetailPage />} />
+        {/* 2. PROTECTED ROUTES */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Όλα τα routes της εφαρμογής */}
+          <Route path="/browse" element={<HomePage />} />
+          <Route path="/movie/:id" element={<MovieDetailPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/movies" element={<MovieCategories />} />
+          <Route path="/category/:genreId" element={<GenreMovies />} />
+          <Route path="/movies/:genreId" element={<GenreMovies />} />
+          <Route path="/actors/:actorId" element={<ActorMovies />} />
+          <Route path="/directors/:directorId" element={<DirectorMovies />} />
+          <Route path="/year/:year" element={<YearMovies />} />
+          <Route path="/search" element={<SearchResultsPage />} />
+          <Route path="/quiz" element={<QuizSelectionPage />} />
+          <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
+          <Route path="/history" element={<QuizHistoryPage />} />
 
-        {/* Κατηγορίες */}
-        <Route path="/movies" element={<MovieCategories />} />
-        <Route path="/category/:genreId" element={<GenreMovies />} />
-        <Route path="/movies/:genreId" element={<GenreMovies />} />
+        </Route>
 
-        {/* Ηθοποιοί & Σκηνοθέτες */}
-        <Route path="/actors/:actorId" element={<ActorMovies />} />
-        <Route path="/directors/:directorId" element={<DirectorMovies />} />
-
-        {/* Χρονιά */}
-        <Route path="/year/:year" element={<YearMovies />} />
-
-        {/* Αναζήτηση */}
-        <Route path="/search" element={<SearchResultsPage />} />
-
-        {/* Quiz Section */}
-        <Route path="/quiz" element={<QuizSelectionPage />} />
-        <Route path="/quiz/play/:difficulty" element={<QuizGamePage />} />
-        <Route path="/history" element={<QuizHistoryPage />} />
-
-      </Route>
-
-    </Routes>
+      </Routes>
+    </>
   );
 };
 

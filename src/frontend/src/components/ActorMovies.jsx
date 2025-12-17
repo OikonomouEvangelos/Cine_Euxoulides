@@ -1,9 +1,10 @@
-// src/frontend/src/components/ActorMovies.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 // ΣΗΜΑΝΤΙΚΟ: Εισάγουμε το CSS που έχει το στυλ για το overlay (όπως στο MovieRow)
 import './TrendingSection.css';
+import MovieCard from './MovieCard';
+import SearchBar from './SearchBar';
 
 const ActorMovies = () => {
   const { actorId } = useParams();
@@ -17,7 +18,6 @@ const ActorMovies = () => {
     const fetchActorCredits = async () => {
       try {
         setLoading(true);
-
         const creditsUrl = `https://api.themoviedb.org/3/person/${actorId}/movie_credits?api_key=${API_KEY}&language=el-GR`;
         const creditsRes = await fetch(creditsUrl);
         const creditsData = await creditsRes.json();
@@ -47,8 +47,23 @@ const ActorMovies = () => {
 
   return (
     <div className="trending-section" style={{ minHeight: '100vh' }}>
-      <div style={{ padding: '20px' }}>
-        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none' }}>← Πίσω στην Αρχική</Link>
+
+      {/* --- ΚΟΥΤΙ ΠΛΟΗΓΗΣΗΣ ΚΑΙ ΑΝΑΖΗΤΗΣΗΣ --- */}
+      <div style={{
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'space-between', // Αριστερά το Πίσω, Δεξιά το Search
+        alignItems: 'center'
+      }}>
+        {/* Αριστερά: Κουμπί επιστροφής */}
+        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
+          ← Πίσω στην Αρχική
+        </Link>
+
+        {/* Δεξιά: Search Bar */}
+        <div style={{ width: '300px' }}> {/* Ορίζουμε πλάτος για να μην είναι τεράστιο */}
+            <SearchBar />
+        </div>
       </div>
 
       <h2 style={{ paddingLeft: '20px' }}>Ταινίες με: <span style={{color: '#fbbf24'}}>{actorName}</span></h2>

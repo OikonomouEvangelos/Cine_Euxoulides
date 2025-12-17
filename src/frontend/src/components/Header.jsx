@@ -2,107 +2,95 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FriendsModal from './FriendsModal'; // <-- IMPORT ΤΟ ΝΕΟ MODAL
 import './Header.css';
 
-// Υποθετικά components/εικονίδια
 const MenuIcon = () => <div className="icon menu-icon">☰</div>;
 const HeartIcon = () => <div className="icon heart-icon">Favorites</div>;
 
-
 const AvatarIcon = ({ imageUrl, initial }) => (
   <div className="icon avatar-icon">
-    {imageUrl ? (
-      <img src={imageUrl} alt="User Avatar" />
-    ) : (
-      <span>{initial}</span>
-    )}
+    {imageUrl ? <img src={imageUrl} alt="Avatar" /> : <span>{initial}</span>}
   </div>
 );
 
-// ΑΛΛΑΓΗ 1: Το Header τώρα δέχεται το onMenuToggle ως prop
 const Header = ({ onMenuToggle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // ΔΙΑΓΡΑΦΗ: Η handleMenuClick δεν χρειάζεται πλέον, καθώς το App.jsx την παρέχει
-  // const handleMenuClick = () => {
-  //   console.log('Άνοιγμα Side Menu...');
-  // };
+  const [isFriendsOpen, setIsFriendsOpen] = useState(false); // <-- STATE ΓΙΑ ΤΟ MODAL ΦΙΛΩΝ
 
   const navigate = useNavigate();
 
   const handleLogout = (e) => {
     e.preventDefault();
-
-    // 🧹 Καθαρίζουμε ό,τι αφορά τον χρήστη
     localStorage.removeItem('token');
     localStorage.removeItem('userEmail');
-    localStorage.removeItem('userFirstName');
-
-    // Κλείνουμε το dropdown
+    // localStorage.removeItem('userId'); // Αν το αποθηκεύεις, καθάρισέ το κι αυτό
     setIsDropdownOpen(false);
-
-    // Πηγαίνουμε πίσω στην σελίδα welcome/login
     navigate('/');
   };
 
-
+// --- ΑΛΛΑΓΗ: Πλοήγηση στα Favorites (Από Favorites-Kouts) ---
   const handleFavoritesClick = () => {
-    console.log('Προβολή Αγαπημένων...');
+    navigate('/favorites');
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  // --- Dropdown Toggle (Συνδυασμένο) ---
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  // --- ΑΝΟΙΓΜΑ ΦΙΛΩΝ (Από develop) ---
+  const handleOpenFriends = (e) => {
+    e.preventDefault();
+    setIsFriendsOpen(true);   // Ανοίγει το Modal
+    setIsDropdownOpen(false); // Κλείνει το Dropdown
   };
 
   return (
-    <header className="app-header">
-      {/* 1. Αριστερό Μέρος: Κουμπί Side Menu */}
-      <button
-        className="header-button menu-button"
-        // ΑΛΛΑΓΗ 2: Αντικατάσταση της handleMenuClick με το onMenuToggle prop
-        onClick={onMenuToggle}
-        aria-label="Άνοιγμα μενού πλοήγησης"
-      >
-        <MenuIcon />
-      </button>
+    <>
+      <header className="app-header">
+        {/* Αριστερά: Menu */}
+        <button className="header-button menu-button" onClick={onMenuToggle}>
+          <MenuIcon />
+        </button>
 
-      {/* 2. Κέντρο: Logo της Εφαρμογής */}
-      <div className="header-logo">
-        CineEuxoulides
-      </div>
+        {/* Κέντρο: Logo */}
+        <div className="header-logo">CineEuxoulides</div>
 
-      {/* 3. Δεξιό Μέρος: Αγαπημένα και Avatar */}
-      <div className="right-group">
-        {/* Κουμπί Αγαπημένα */}
+        {/* Δεξιά: Εικονίδια */}
+        <div className="right-group">
+
+
         <button
           className="header-button favorites-button"
-          onClick={handleFavoritesClick}
-          aria-label="Αγαπημένα"
+          onClick={handleFavoritesClick} //
         >
           <HeartIcon />
         </button>
 
-        {/* Κουμπί Avatar Χρήστη */}
-        <div className="user-avatar-container">
-          <button
-            className="header-button avatar-button"
-            onClick={toggleDropdown}
-            aria-label="Μενού χρήστη"
-          >
-            <AvatarIcon initial="U" />
-          </button>
 
-          {/* Dropdown Menu */}
-          {isDropdownOpen && (
-            <div className="dropdown-menu">
-              <a href="#profile">Προφίλ</a>
-              <a href="#account">Λογαριασμός</a>
-              <a href="#logout" onClick={handleLogout}>Αποσύνδεση</a>
-            </div>
-          )}
+
+          {/* AVATAR + DROPDOWN */}
+          <div className="user-avatar-container">
+            <button className="header-button avatar-button" onClick={toggleDropdown}>
+              <AvatarIcon initial="U" />
+            </button>
+
+            {isDropdownOpen && (
+              <div className="dropdown-menu">
+                <a href="#profile">👤 Προφίλ</a>
+                {/* ΝΕΑ ΕΠΙΛΟΓΗ ΦΙΛΩΝ */}
+                <a href="#friends" onClick={handleOpenFriends}>👥 Φίλοι & Αιτήματα</a>
+                <a href="#account">⚙️ Λογαριασμός</a>
+                <div className="dropdown-divider"></div>
+                <a href="#logout" onClick={handleLogout} className="logout-link">🚪 Αποσύνδεση</a>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* ΕΜΦΑΝΙΣΗ MODAL ΑΝ ΕΙΝΑΙ TRUE */}
+      {isFriendsOpen && <FriendsModal onClose={() => setIsFriendsOpen(false)} />}
+    </>
   );
 };
 
