@@ -8,7 +8,7 @@ const SideMenu = ({ isOpen, onClose }) => {
   const [isMoviesOpen, setIsMoviesOpen] = useState(false);
   const [isActorsOpen, setIsActorsOpen] = useState(false);
   const [isDirectorsOpen, setIsDirectorsOpen] = useState(false);
-  const [isYearsOpen, setIsYearsOpen] = useState(false); // ΝΕΟ: Για τη χρονολογία
+  const [isYearsOpen, setIsYearsOpen] = useState(false);
 
   // State για τους Ηθοποιούς (που έρχονται από το API)
   const [topActors, setTopActors] = useState([]);
@@ -38,7 +38,7 @@ const SideMenu = ({ isOpen, onClose }) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from(new Array(30), (val, index) => currentYear - index);
 
-  // --- 3. Σταθερά Δεδομένα ---
+  // --- 3. Σταθερά Δεδομένα (IDs Σκηνοθετών) ---
   const famousDirectors = [
     { id: 525, name: "Christopher Nolan" },
     { id: 109533, name: "Yorgos Lanthimos" },
@@ -116,6 +116,7 @@ const SideMenu = ({ isOpen, onClose }) => {
               <ul className="submenu-list">
                 {famousDirectors.map(d => (
                   <li key={d.id}>
+                    {/* ΣΗΜΑΝΤΙΚΟ: Στέλνουμε το ID στο URL */}
                     <Link to={`/directors/${d.id}`} onClick={onClose} className="submenu-item">{d.name}</Link>
                   </li>
                 ))}
@@ -129,7 +130,7 @@ const SideMenu = ({ isOpen, onClose }) => {
               Χρονολογία <span className={`arrow ${isYearsOpen ? 'up' : 'down'}`}>▼</span>
             </a>
             {isYearsOpen && (
-              // Προσθέσαμε max-height και overflow για να μην πιάνει όλη την οθόνη
+              // Scrollbar αν η λίστα είναι μεγάλη
               <ul className="submenu-list" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {years.map(year => (
                   <li key={year}>

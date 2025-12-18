@@ -5,10 +5,12 @@ import TrendingSection from '../components/TrendingSection';
 import MovieRow from '../components/MovieRow';
 import MoodScanner from '../components/MoodScanner';
 import MoodScannerButton from '../components/MoodScannerButton';
+import LookalikeScanner from '../components/ui/LookalikeScanner';
 import { isAuthenticated } from '../services/auth';
 
 const HomePage = () => {
   const [showScanner, setShowScanner] = useState(false);
+  const [showLookalike, setShowLookalike] = useState(false);
 
   // TMDB API URLs
   const requests = {
@@ -38,10 +40,10 @@ const HomePage = () => {
           zIndex: 10
       }}>
 
-        {/* LEFT: Side-by-Side Floating Icons */}
+        {/* --- ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: Quiz & Mood Scanner --- */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
 
-            {/* 1. Quiz Icon (Now on the LEFT) */}
+            {/* 1. Quiz Icon */}
             <Link
                 to="/quiz"
                 className="quiz-landing-spot"
@@ -49,32 +51,72 @@ const HomePage = () => {
                 style={{
                     textDecoration: 'none',
                     transition: 'transform 0.2s',
-                    /* Force relative positioning to stop it from jumping */
                     position: 'relative',
+                    top: 'auto',
                     left: 'auto',
                     right: 'auto',
-                    top: 'auto',
-                    bottom: 'auto'
+                    bottom: 'auto',
+                    margin: '0',
+                    transform: 'none'
                 }}
             >
                 <span role="img" aria-label="Quiz" style={{ fontSize: '28px', cursor: 'pointer' }}>❓</span>
             </Link>
 
-            {/* 2. Mood Scanner (Now on the RIGHT) */}
+            {/* 2. Mood Scanner */}
             <MoodScannerButton onClick={() => setShowScanner(true)} />
-
         </div>
 
-        {/* RIGHT: Search */}
-        <div style={{ width: '400px' }}>
-            <SearchBar />
+
+        {/* --- ΔΕΞΙΑ ΠΛΕΥΡΑ: Actor Shazam & Search --- */}
+        <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '15px'
+        }}>
+
+            {/* Actor Shazam Button (ΓΚΡΙ/ΔΙΑΦΑΝΕΣ) */}
+            <button
+                onClick={() => setShowLookalike(true)}
+                style={{
+                    height: '42px',
+                    padding: '0 20px',
+                    borderRadius: '25px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.15)', // Επαναφορά χρώματος
+                    border: '1px solid rgba(255, 255, 255, 0.2)', // Λεπτό περίγραμμα
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s ease',
+                    whiteSpace: 'nowrap'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)'}
+                title="Βρες με ποιον ηθοποιό μοιάζεις!"
+            >
+                <span style={{ fontSize: '1.2rem' }}>🎭</span>
+                <span style={{ fontSize: '0.95rem', fontWeight: 'bold' }}>Actor Shazam</span>
+            </button>
+
+            {/* Search Bar */}
+            <div style={{ width: '350px' }}>
+                <SearchBar />
+            </div>
+
         </div>
 
       </div>
 
-      {/* --- POPUP SCANNER --- */}
+      {/* --- POPUPS --- */}
       {showScanner && (
         <MoodScanner onClose={() => setShowScanner(false)} />
+      )}
+
+      {showLookalike && (
+        <LookalikeScanner onClose={() => setShowLookalike(false)} />
       )}
 
       {/* CONTENT SECTIONS */}
