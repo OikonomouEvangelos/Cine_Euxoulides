@@ -9,10 +9,12 @@ import java.util.Optional;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    // ΑΛΛΑΓΗ: Από findByUser(User user) -> σε findByUserId(String userId)
+    // Valid: Returns a list of favorites for one user
     List<Favorite> findByUserId(String userId);
 
+    // Valid: Returns a specific page of favorites for one user
     Page<Favorite> findByUserId(String userId, Pageable pageable);
 
+    // FIX THIS LINE: You need both userId AND movieId arguments
     Optional<Favorite> findByUserIdAndMovieId(String userId, Long movieId);
 }

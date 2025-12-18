@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "favorites", uniqueConstraints = {
-        // Αυτό εξασφαλίζει ότι ο ίδιος χρήστης δεν θα έχει την ίδια ταινία 2 φορές
-        @UniqueConstraint(columnNames = {"userId", "movieId"})
+        // FIX 1: Use database column names (with underscores), not Java field names
+        @UniqueConstraint(columnNames = {"user_id", "movie_id"})
 })
 public class Favorite {
 
@@ -14,23 +14,27 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    // FIX 2: Explicitly map "userId" to the database column "user_id"
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(nullable = false)
-    private Long movieId; // Το κρατάμε Long (αριθμό) για να ταιριάζει με τη νέα βάση
+    // FIX 3: Explicitly map "movieId" to the database column "movie_id"
+    // Keeps it as Long to match your plan for BigInt in the DB
+    @Column(name = "movie_id", nullable = false)
+    private Long movieId;
 
-    // Απαραίτητο για το Blend
+    @Column(name = "genre_ids") // Good practice to map this explicitly too if your DB uses snake_case
     private String genreIds;
 
+    @Column(name = "added_at")
     private LocalDateTime addedAt;
 
-    // Κενός κατασκευαστής (Υποχρεωτικός)
+    // --- Constructors ---
+
     public Favorite() {
         this.addedAt = LocalDateTime.now();
     }
 
-    // Ο κατασκευαστής που χρησιμοποιούμε
     public Favorite(String userId, Long movieId, String genreIds) {
         this.userId = userId;
         this.movieId = movieId;
