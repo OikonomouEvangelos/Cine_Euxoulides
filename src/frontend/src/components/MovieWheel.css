@@ -30,7 +30,7 @@
 }
 
 /* Modal overlay */
-.wheel-modal-overlay {
+.wheel-modal-overlay{
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
@@ -38,22 +38,26 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Modal box */
-.wheel-modal {
-  width: min(1500px, 98vw);
-  min-height: 90vh;
+/* Scaled wrapper (scales the entire UI as ONE piece) */
+.wheel-stage-wrap{
+  transform: scale(var(--s, 1));
+  transform-origin: center center;
+}
 
+/* Fixed-size stage (LOCKED layout) */
+.wheel-modal{
+  width: 1500px;     /* fixed */
+  height: 860px;     /* fixed */
   background: #6f8797;
   border-radius: 0;
   padding: 24px;
-
   position: relative;
   overflow: hidden;
 }
-
-
 
 /* Header */
 .wheel-header {
@@ -98,8 +102,8 @@
 
 /* Wheel */
 .wheel {
-    width: 800px;
-    height: 800px;
+    width: 600px;
+    height: 600px;
     border-radius: 50%;
     border: 3px solid rgba(0, 0, 0, 0.35);
     position: relative;
@@ -329,18 +333,7 @@
   font-weight: 900;
 }
 
-
-/* responsive: stack under on small screens */
-@media (max-width: 900px){
-  .wheel-layout{ flex-direction:column; align-items:center; }
-  .wheel-sideinfo{ width:min(620px, 92vw); margin-top:10px; }
-}
-
 .wheel.clickable {
   cursor: pointer;
 }
-
-
-
-
 
