@@ -2,12 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
-// Χρησιμοποιούμε το TrendingSection.css για να έχουμε κοινό στυλ
 import './TrendingSection.css';
-import SearchBar from './SearchBar'; // Βεβαιώσου ότι είναι στον ίδιο φάκελο
+import SearchBar from './SearchBar';
 import './MovieCard.css';
 import MovieWheel from "./MovieWheel";
-
 
 const GenreMovies = () => {
   const { genreId } = useParams();
@@ -27,24 +25,30 @@ const GenreMovies = () => {
   return (
     <div className="trending-section">
 
-      {/* Κουμπί επιστροφής */}
-      <div style={{ marginBottom: '20px' }}>
-        <Link to="/movies" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold' }}>
-           ← Πίσω στις Κατηγορίες
-        </Link>
+      {/* HEADER: Flex container to align items horizontally */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        flexWrap: 'wrap', // Ensures it looks good on mobile
+        gap: '20px'
+      }}>
 
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        {/* LEFT GROUP: Back Button + Wheel */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <Link to="/movies" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold' }}>
+             ← Πίσω στις Κατηγορίες
+          </Link>
 
           {/* Τροχός για την συγκεκριμένη κατηγορία */}
           <MovieWheel genreId={genreId} title="Δεν ξέρεις τι να δεις; " />
         </div>
 
-
-        {/* ΔΕΞΙΑ: Μπάρα Αναζήτησης */}
-        <div style={{ width: '400px' }}>
+        {/* RIGHT GROUP: Search Bar */}
+        <div style={{ width: '400px', maxWidth: '100%' }}>
             <SearchBar />
         </div>
-
 
       </div>
 
@@ -69,7 +73,7 @@ const GenreMovies = () => {
                 className="movie-poster"
               />
 
-              {/* 2. ΤΟ OVERLAY (ΙΔΙΟ ΜΕ ΤΗΝ ΑΡΧΙΚΗ) */}
+              {/* 2. ΤΟ OVERLAY */}
               <div className="movie-overlay">
                 <div className="overlay-stars">
                    ★ {movie.vote_average ? movie.vote_average.toFixed(1) : '-'}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
-// ΣΗΜΑΝΤΙΚΟ: Εισάγουμε το CSS που έχει το στυλ για το overlay (όπως στο MovieRow)
+
 import './TrendingSection.css';
 import MovieCard from './MovieCard';
 import SearchBar from './SearchBar';
@@ -48,7 +48,7 @@ const ActorMovies = () => {
   return (
     <div className="trending-section" style={{ minHeight: '100vh' }}>
 
-      {/* --- ΚΟΥΤΙ ΠΛΟΗΓΗΣΗΣ ΚΑΙ ΑΝΑΖΗΤΗΣΗΣ --- */}
+
       <div style={{
         padding: '20px',
         display: 'flex',
@@ -56,7 +56,7 @@ const ActorMovies = () => {
         alignItems: 'center'
       }}>
         {/* Αριστερά: Κουμπί επιστροφής */}
-        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
+        <Link to="/browse" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold' }}>
           ← Πίσω στην Αρχική
         </Link>
 

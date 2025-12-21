@@ -1,8 +1,6 @@
-// src/components/Header.jsx
-
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import FriendsModal from './FriendsModal'; // <-- IMPORT ΤΟ ΝΕΟ MODAL
+import { useNavigate, Link } from 'react-router-dom';
+import FriendsModal from './FriendsModal';
 import './Header.css';
 
 const MenuIcon = () => <div className="icon menu-icon">☰</div>;
@@ -16,7 +14,7 @@ const AvatarIcon = ({ imageUrl, initial }) => (
 
 const Header = ({ onMenuToggle }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isFriendsOpen, setIsFriendsOpen] = useState(false); // <-- STATE ΓΙΑ ΤΟ MODAL ΦΙΛΩΝ
+  const [isFriendsOpen, setIsFriendsOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -24,71 +22,67 @@ const Header = ({ onMenuToggle }) => {
     e.preventDefault();
     localStorage.removeItem('token');
     localStorage.removeItem('userEmail');
-    // localStorage.removeItem('userId'); // Αν το αποθηκεύεις, καθάρισέ το κι αυτό
     setIsDropdownOpen(false);
     navigate('/');
   };
 
-// --- ΑΛΛΑΓΗ: Πλοήγηση στα Favorites (Από Favorites-Kouts) ---
   const handleFavoritesClick = () => {
     navigate('/favorites');
   };
 
-  // --- Dropdown Toggle (Συνδυασμένο) ---
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  // --- ΑΝΟΙΓΜΑ ΦΙΛΩΝ (Από develop) ---
   const handleOpenFriends = (e) => {
     e.preventDefault();
-    setIsFriendsOpen(true);   // Ανοίγει το Modal
-    setIsDropdownOpen(false); // Κλείνει το Dropdown
+    setIsFriendsOpen(true);
+    setIsDropdownOpen(false);
   };
 
   return (
     <>
       <header className="app-header">
-        {/* Αριστερά: Menu */}
+        {/* Left: Menu */}
         <button className="header-button menu-button" onClick={onMenuToggle}>
           <MenuIcon />
         </button>
 
-        {/* Κέντρο: Logo */}
-        <div className="header-logo">CineEuxoulides</div>
+        {/* --- Center: Logo (SECRET LINK) --- */}
+        {/* Keeps original styling, but links to 3D world */}
+        <Link to="/3d-favorites" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="header-logo" style={{ cursor: 'pointer' }}>
+                CineEuxoulides
+            </div>
+        </Link>
 
-        {/* Δεξιά: Εικονίδια */}
+        {/* Right: Icons */}
         <div className="right-group">
-
-
-        <button
-          className="header-button favorites-button"
-          onClick={handleFavoritesClick} //
-        >
-          <HeartIcon />
-        </button>
-
-
-
-          {/* AVATAR + DROPDOWN */}
-          <div className="user-avatar-container">
-            <button className="header-button avatar-button" onClick={toggleDropdown}>
-              <AvatarIcon initial="U" />
+            <button
+              className="header-button favorites-button"
+              onClick={handleFavoritesClick}
+            >
+              <HeartIcon />
             </button>
 
-            {isDropdownOpen && (
-              <div className="dropdown-menu">
-                <a href="#profile">👤 Προφίλ</a>
-                {/* ΝΕΑ ΕΠΙΛΟΓΗ ΦΙΛΩΝ */}
-                <a href="#friends" onClick={handleOpenFriends}>👥 Φίλοι & Αιτήματα</a>
-                <a href="#account">⚙️ Λογαριασμός</a>
-                <div className="dropdown-divider"></div>
-                <a href="#logout" onClick={handleLogout} className="logout-link">🚪 Αποσύνδεση</a>
-              </div>
-            )}
-          </div>
+            {/* AVATAR + DROPDOWN */}
+            <div className="user-avatar-container">
+                <button className="header-button avatar-button" onClick={toggleDropdown}>
+                <AvatarIcon initial="U" />
+                </button>
+
+                {isDropdownOpen && (
+                <div className="dropdown-menu">
+                    <a href="#profile">👤 Προφίλ</a>
+                    <a href="#friends" onClick={handleOpenFriends}>👥 Φίλοι & Αιτήματα</a>
+                    <a href="#account">⚙️ Λογαριασμός</a>
+                    <div className="dropdown-divider"></div>
+                    <a href="#logout" onClick={handleLogout} className="logout-link">🚪 Αποσύνδεση</a>
+                </div>
+                )}
+            </div>
         </div>
       </header>
 
-      {/* ΕΜΦΑΝΙΣΗ MODAL ΑΝ ΕΙΝΑΙ TRUE */}
+      {/* Friends Modal */}
       {isFriendsOpen && <FriendsModal onClose={() => setIsFriendsOpen(false)} />}
     </>
   );
