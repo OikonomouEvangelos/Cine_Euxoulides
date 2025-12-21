@@ -10,7 +10,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -19,15 +18,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Disable CSRF (Critical for POST requests with JWT)
+                // 1. Απενεργοποίηση CSRF για να δουλεύουν τα POST αιτήματα
                 .csrf(csrf -> csrf.disable())
 
-                // 2. Enable CORS using the configuration below
+                // 2. Ενεργοποίηση CORS με τις ρυθμίσεις που ορίζουμε παρακάτω
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // 3. Allow EVERYTHING.
-                // We do this because your Controllers handle the Security manually
-                // using the JwtUtil.extractAllClaims() logic we wrote.
+                // 3. Επιτρέπουμε όλα τα requests (Permit All)
+                // Επειδή οι Controllers σου διαχειρίζονται την ασφάλεια χειροκίνητα
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 );
@@ -39,16 +37,21 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allow the frontend URL (and localhost variants)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://127.0.0.1:5173"));
+        // ΕΠΙΤΡΕΠΟΥΜΕ ΚΑΙ ΤΟ 5173 ΚΑΙ ΤΟ 5174 ΓΙΑ ΝΑ ΜΗΝ ΥΠΑΡΧΕΙ ΜΠΛΟΚΑΡΙΣΜΑ CORS
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "http://localhost:5174",
+                "http://127.0.0.1:5174"
+        ));
 
-        // Allow all HTTP methods (GET, POST, DELETE, etc.)
+        // Επιτρέπουμε όλες τις μεθόδους HTTP
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // Allow headers (Authorization is crucial for JWT)
+        // Επιτρέπουμε τα απαραίτητα Headers (Authorization για το JWT token)
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
-        // Allow credentials if needed
+        // Επιτρέπουμε τα credentials (cookies, auth headers)
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
