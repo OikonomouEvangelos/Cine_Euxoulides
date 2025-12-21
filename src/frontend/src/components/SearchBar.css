@@ -1,15 +1,18 @@
 /* src/components/SearchBar.css */
 
-.search-bar-container {
-  display: flex;
-  align-items: center; /* Διόρθωση: Το 'right' δεν είναι έγκυρο, το center στοιχίζει κάθετα input και κουμπί */
+/* Το wrapper που κρατάει όλο το component */
+.search-bar-wrapper {
+  position: relative;
   max-width: 400px;
   width: 100%;
-
-  /* ΑΛΛΑΓΗ ΕΔΩ: */
-  /* 30px πάνω, 0 δεξιά, 30px κάτω, auto αριστερά */
+  /* 30px πάνω, 0 δεξιά, 30px κάτω, auto αριστερά (όπως το είχες) */
   margin: 30px 0 30px auto;
+}
 
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
   background-color: #52657a;
   border-radius: 8px;
   overflow: hidden;
@@ -17,29 +20,24 @@
 }
 
 .search-input {
-  flex-grow: 1; /* Καταλαμβάνει όλο τον διαθέσιμο χώρο */
+  flex-grow: 1;
   padding: 12px 15px;
   border: none;
   outline: none;
   font-size: 16px;
-  /* Χρώματα για το input */
   background-color: #52657a;
   color: #ffffff;
-
-  /* Στυλ για το placeholder */
-  /* Σημείωση: Χρειάζεται prefixing για συμβατότητα με παλαιότερους browsers */
-  color: #c0c0c0; /* Πιο ανοιχτό χρώμα για τον placeholder */
 }
 
-/* Αλλαγή χρώματος του placeholder όταν ο χρήστης γράφει */
+/* Στυλ για το placeholder */
 .search-input::placeholder {
     color: #c0c0c0;
-    opacity: 1; /* Πάντα ορατό */
+    opacity: 1;
 }
 
 /* Στυλ του κουμπιού αναζήτησης */
 .search-button {
-  background-color: #394c5e; /* Το χρώμα του header για αντίθεση */
+  background-color: #394c5e;
   border: none;
   cursor: pointer;
   padding: 12px 20px;
@@ -48,17 +46,48 @@
 }
 
 .search-button:hover {
-  background-color: #44596b; /* Ελαφρώς πιο ανοιχτό στο hover */
+  background-color: #44596b;
 }
 
-/* Στυλ του εικονιδίου μέσα στο κουμπί */
 .search-icon {
   font-size: 20px;
   color: white;
   line-height: 1;
 }
 
-/* Focus state: Όταν ο χρήστης κλικάρει στο πεδίο */
 .search-input:focus {
     box-shadow: 0 0 0 2px #192129;
+}
+
+/* --- ΠΡΟΣΘΗΚΗ: Dropdown Ιστορικού --- */
+.search-history-dropdown {
+  position: absolute;
+  top: 100%; /* Ακριβώς κάτω από τη μπάρα */
+  left: 0;
+  right: 0;
+  background-color: #52657a; /* Ίδιο χρώμα με τη μπάρα */
+  border: 1px solid #394c5e;
+  border-radius: 0 0 8px 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.history-item {
+  padding: 10px 15px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.history-item:hover {
+  background-color: #394c5e;
+}
+
+.history-clock {
+  margin-right: 10px;
+  opacity: 0.7;
 }
