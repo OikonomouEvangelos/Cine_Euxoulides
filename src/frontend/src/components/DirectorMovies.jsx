@@ -79,7 +79,7 @@ const DirectorMovies = () => {
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
+        <Link to="/browse" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
           ← Πίσω στην Αρχική
         </Link>
         <div style={{ width: '300px' }}>

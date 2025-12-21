@@ -49,7 +49,7 @@ const YearMovies = () => {
         alignItems: 'center'
       }}>
         {/* Αριστερά */}
-        <Link to="/" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
+        <Link to="/browse" style={{ color: '#fbbf24', textDecoration: 'none', fontSize: '1.1rem' }}>
           ← Πίσω στην Αρχική
         </Link>
 
