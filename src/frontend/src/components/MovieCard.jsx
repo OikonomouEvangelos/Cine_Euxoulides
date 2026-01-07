@@ -4,10 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './MovieCard.css';
 
-/**
- * Κοινή κάρτα ταινίας για ΟΛΟ το project.
- * Δέχεται ένα αντικείμενο movie και το εμφανίζει πάντα με τον ίδιο τρόπο.
- */
+
 const MovieCard = ({ movie }) => {
   if (!movie) return null;
 
@@ -18,7 +15,7 @@ const MovieCard = ({ movie }) => {
     vote_average,
   } = movie;
 
-  // Αν υπάρχει poster_path -> παίρνουμε από TMDB, αλλιώς placeholder
+
   const imageUrl = poster_path
     ? `https://image.tmdb.org/t/p/w342${poster_path}`
     : 'https://via.placeholder.com/342x513';
